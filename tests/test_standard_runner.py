@@ -405,8 +405,10 @@ class StandardRunnerContractTest(unittest.TestCase):
             models=models,
             seeds=[11, 17, 23, 29, 31],
             execution_status="complete",
-            explicit_reference_model="a0_backbone",
-            holm_candidates=["a5_vimd_full"],
+            explicit_reference_model=(
+                self.runner.FORMAL_PRIMARY_REFERENCE_MODEL
+            ),
+            holm_candidates=list(self.runner.FORMAL_HOLM_CANDIDATES),
         )
         self.assertFalse(eligible["eligible"])
         self.assertFalse(
@@ -421,8 +423,10 @@ class StandardRunnerContractTest(unittest.TestCase):
             models=models,
             seeds=[11, 17, 23, 29, 31],
             execution_status="complete",
-            explicit_reference_model="a0_backbone",
-            holm_candidates=["a5_vimd_full"],
+            explicit_reference_model=(
+                self.runner.FORMAL_PRIMARY_REFERENCE_MODEL
+            ),
+            holm_candidates=list(self.runner.FORMAL_HOLM_CANDIDATES),
         )
         self.assertFalse(no_checksum["eligible"])
         self.assertFalse(
@@ -437,8 +441,10 @@ class StandardRunnerContractTest(unittest.TestCase):
             models=models,
             seeds=[11, 17, 23],
             execution_status="complete",
-            explicit_reference_model="a0_backbone",
-            holm_candidates=["a5_vimd_full"],
+            explicit_reference_model=(
+                self.runner.FORMAL_PRIMARY_REFERENCE_MODEL
+            ),
+            holm_candidates=list(self.runner.FORMAL_HOLM_CANDIDATES),
         )
         self.assertFalse(too_few_seeds["eligible"])
         self.assertEqual(
@@ -533,8 +539,10 @@ class StandardRunnerContractTest(unittest.TestCase):
             models=models,
             seeds=seeds,
             execution_status="complete",
-            explicit_reference_model="a0_backbone",
-            holm_candidates=["a5_vimd_full"],
+            explicit_reference_model=(
+                self.runner.FORMAL_PRIMARY_REFERENCE_MODEL
+            ),
+            holm_candidates=list(self.runner.FORMAL_HOLM_CANDIDATES),
             training_configuration=training,
             training_results=training_results,
             jammer_training_support=jammer_support,
@@ -550,8 +558,10 @@ class StandardRunnerContractTest(unittest.TestCase):
             models=models,
             seeds=seeds,
             execution_status="complete",
-            explicit_reference_model="a0_backbone",
-            holm_candidates=["a5_vimd_full"],
+            explicit_reference_model=(
+                self.runner.FORMAL_PRIMARY_REFERENCE_MODEL
+            ),
+            holm_candidates=list(self.runner.FORMAL_HOLM_CANDIDATES),
             source_tree_unchanged=False,
             training_configuration=training,
             training_results=training_results,
@@ -578,8 +588,10 @@ class StandardRunnerContractTest(unittest.TestCase):
             models=models,
             seeds=seeds,
             execution_status="complete",
-            explicit_reference_model="a0_backbone",
-            holm_candidates=["a5_vimd_full"],
+            explicit_reference_model=(
+                self.runner.FORMAL_PRIMARY_REFERENCE_MODEL
+            ),
+            holm_candidates=list(self.runner.FORMAL_HOLM_CANDIDATES),
             training_configuration=training,
             training_results=fallback_results,
             jammer_training_support=jammer_support,

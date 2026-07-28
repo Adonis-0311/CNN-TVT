@@ -25,29 +25,10 @@ class PaperBuildGateTest(unittest.TestCase):
         placeholders: bool,
         release_sentinel: bool,
     ) -> str:
-        values = {name: "--" for name in gate.RESULT_MACROS}
-        if not placeholders:
-            for name in gate.RESULT_MACROS:
-                if name in gate.TEXT_RESULT_MACROS:
-                    values[name] = "fixture text"
-                elif name.endswith(("Accuracy", "MacroFOne", "WorstRecall")):
-                    values[name] = "70.00"
-                elif name.endswith("NLL"):
-                    values[name] = "0.50"
-                elif name.endswith("ECE"):
-                    values[name] = "0.05"
-                elif name.startswith("Regime") and name.endswith("Reference"):
-                    values[name] = "70.00"
-                elif name.startswith("Regime") and name.endswith("AFive"):
-                    values[name] = "72.00"
-                elif name.startswith("Regime") and name.endswith("Gain"):
-                    values[name] = "2.00"
-                elif name.startswith("Regime") and name.endswith("CILow"):
-                    values[name] = "1.00"
-                elif name.startswith("Regime") and name.endswith("CIHigh"):
-                    values[name] = "3.00"
-                else:
-                    values[name] = "0.50"
+        values = {
+            name: "--" if placeholders else "1.00"
+            for name in gate.RESULT_MACROS
+        }
         values["ResultSource"] = (
             "No eligible locked run"
             if placeholders
@@ -55,28 +36,26 @@ class PaperBuildGateTest(unittest.TestCase):
         )
         if "PrimaryReference" in values:
             values["PrimaryReference"] = (
-                "--" if placeholders else gate.PRIMARY_REFERENCE_VALUE
+                "--"
+                if placeholders
+                else "CSSL-AMC official-architecture supervised adaptation"
             )
-        if "VIMDLatencyDevice" in values:
-            values["VIMDLatencyDevice"] = (
-                "--" if placeholders else "CPU fixture device"
+        if release_sentinel:
+            return gate.release_contract.render_results_auto(
+                {
+                    "run_id": "formal_fixture",
+                    "cache_digest": "a" * 64,
+                },
+                {
+                    name: values[name]
+                    for name in gate.release_contract.RESULT_MACROS
+                },
             )
-        if "VIMDParameters" in values and not placeholders:
-            values["VIMDParameters"] = "39500"
-        if "VIMDLatencyP50" in values and not placeholders:
-            values["VIMDLatencyP50"] = "2.00"
-        if "VIMDLatencyP95" in values and not placeholders:
-            values["VIMDLatencyP95"] = "3.00"
-        lines = ["% Synthetic result-macro fixture."]
+        lines = ["% Synthetic internal result-macro fixture."]
         lines.extend(
             rf"\newcommand{{\{name}}}{{{values[name]}}}"
             for name in gate.RESULT_MACROS
         )
-        if release_sentinel:
-            lines.append(
-                rf"\newcommand{{\{gate.RELEASE_SENTINEL}}}"
-                rf"{{{gate.RELEASE_SENTINEL_VALUE}}}"
-            )
         return "\n".join(lines) + "\n"
 
     def _write_lock(
@@ -141,9 +120,9 @@ class PaperBuildGateTest(unittest.TestCase):
                 [
                     (
                         "Output written on C:\\fixture\\main.pdf "
-                        f"({pages} pag"
+                        f"({pages} pa"
                     ),
-                    f"es, {pdf_bytes} bytes).",
+                    f"ges, {pdf_bytes} bytes).",
                     "PDF statistics:",
                 ]
             )
@@ -256,6 +235,35 @@ class PaperBuildGateTest(unittest.TestCase):
                 (build_time, build_time),
             )
 
+    def _write_gate_main(
+        self,
+        paper_root: Path,
+        *,
+        internal_review: bool,
+        extra_lines: list[str] | None = None,
+    ) -> None:
+        review_token = "true" if internal_review else "false"
+        public_macro_references = " ".join(
+            rf"\{name}{{}}" for name in gate.RESULT_MACROS
+        )
+        lines = [
+            r"\documentclass{article}",
+            r"\newif\ifinternalreview",
+            rf"\internalreview{review_token}",
+            r"\input{results_auto.tex}",
+            *(extra_lines or []),
+            r"\begin{document}",
+            "Fixture",
+            r"\ifinternalreview\else",
+            public_macro_references,
+            r"\fi",
+            r"\end{document}",
+        ]
+        (paper_root / "main.tex").write_text(
+            "\n".join(lines) + "\n",
+            encoding="utf-8",
+        )
+
     def _fixture(
         self,
         root: Path,
@@ -272,27 +280,9 @@ class PaperBuildGateTest(unittest.TestCase):
         paper_root = root / "paper"
         build_root = paper_root / "build"
         build_root.mkdir(parents=True)
-        review_token = "true" if internal_review else "false"
-        public_macro_references = " ".join(
-            rf"\{name}{{}}" for name in gate.RESULT_MACROS
-        )
-        (paper_root / "main.tex").write_text(
-            "\n".join(
-                [
-                    r"\documentclass{article}",
-                    r"\newif\ifinternalreview",
-                    rf"\internalreview{review_token}",
-                    r"\input{results_auto.tex}",
-                    r"\begin{document}",
-                    "Fixture",
-                    r"\ifinternalreview\else",
-                    public_macro_references,
-                    r"\fi",
-                    r"\end{document}",
-                ]
-            )
-            + "\n",
-            encoding="utf-8",
+        self._write_gate_main(
+            paper_root,
+            internal_review=internal_review,
         )
         (paper_root / "results_auto.tex").write_text(
             self._results_text(
@@ -361,6 +351,40 @@ class PaperBuildGateTest(unittest.TestCase):
             )
             self.assertEqual(before, after)
 
+    def test_digit_bearing_tex_macro_name_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory(
+            prefix="vimd_paper_numeric_macro_"
+        ) as temporary:
+            paper_root = self._fixture(Path(temporary))
+            results_path = paper_root / "results_auto.tex"
+            results_path.write_text(
+                results_path.read_text(encoding="utf-8")
+                + r"\newcommand{\VIMDLatencyP50}{1.00}"
+                + "\n",
+                encoding="utf-8",
+            )
+            base = time.time() - 1_000
+            self._set_fixture_times(
+                paper_root,
+                source_time=base,
+                build_time=base + 10,
+            )
+
+            report = gate.audit_paper_build(
+                paper_root=paper_root,
+                mode="internal",
+            )
+            structure = self._checks(report)["results_macro_structure"]
+            self.assertFalse(report["ok"])
+            self.assertFalse(structure["passed"])
+            self.assertTrue(
+                any(
+                    "VIMDLatencyP50" in issue
+                    for issue in report["issues"]
+                ),
+                report["issues"],
+            )
+
     def test_release_build_accepts_locked_nonplaceholder_fourteen_pages(
         self,
     ) -> None:
@@ -409,6 +433,11 @@ class PaperBuildGateTest(unittest.TestCase):
             "rerun": (
                 "LaTeX Warning: Label(s) may have changed. Rerun to get "
                 "cross-references right.",
+                "log_no_rerun_required",
+            ),
+            "rerun_outlines": (
+                "Package rerunfilecheck Warning: File `main.out' has changed. "
+                "Rerun to get outlines right or use package `bookmark'.",
                 "log_no_rerun_required",
             ),
         }
@@ -477,6 +506,32 @@ class PaperBuildGateTest(unittest.TestCase):
             self.assertFalse(checks["log_pdf_byte_match"]["passed"])
             self.assertFalse(checks["pdf_signature"]["passed"])
 
+        with tempfile.TemporaryDirectory(
+            prefix="vimd_paper_missing_fls_"
+        ) as temporary:
+            paper_root = self._fixture(Path(temporary))
+            (paper_root / "build" / "main.fls").unlink()
+            report = gate.audit_paper_build(
+                paper_root=paper_root,
+                mode="internal",
+            )
+            self.assertFalse(report["ok"])
+            self.assertFalse(
+                self._checks(report)["artifact_fls"]["passed"]
+            )
+
+        with tempfile.TemporaryDirectory(
+            prefix="vimd_paper_missing_pdf_parser_"
+        ) as temporary:
+            paper_root = self._fixture(Path(temporary))
+            report = gate.audit_paper_build(
+                paper_root=paper_root,
+                mode="internal",
+                pdfinfo_path=paper_root / "missing-pdfinfo.exe",
+            )
+            self.assertFalse(report["ok"])
+            self.assertFalse(self._checks(report)["pdf_parser"]["passed"])
+
     def test_source_newer_than_build_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory(
             prefix="vimd_paper_stale_"
@@ -494,6 +549,240 @@ class PaperBuildGateTest(unittest.TestCase):
             self.assertFalse(report["ok"])
             self.assertFalse(
                 self._checks(report)["freshness_main_tex"]["passed"]
+            )
+
+    def test_parsed_pdf_page_count_must_match_log(self) -> None:
+        with tempfile.TemporaryDirectory(
+            prefix="vimd_paper_true_page_count_"
+        ) as temporary:
+            paper_root = self._fixture(
+                Path(temporary),
+                internal_review=False,
+                placeholders=False,
+                release_sentinel=True,
+                release_lock=True,
+                pages=16,
+            )
+            pdf = paper_root / "build" / "main.pdf"
+            self._write_log(
+                paper_root / "build" / "main.log",
+                pdf_bytes=pdf.stat().st_size,
+                pages=14,
+            )
+            base = time.time() - 1_000
+            self._set_fixture_times(
+                paper_root,
+                source_time=base,
+                build_time=base + 10,
+            )
+            report = gate.audit_paper_build(
+                paper_root=paper_root,
+                mode="release",
+            )
+            checks = self._checks(report)
+            self.assertFalse(report["ok"])
+            self.assertEqual(report["log_page_count"], 14)
+            self.assertEqual(report["page_count"], 16)
+            self.assertFalse(checks["log_pdf_page_match"]["passed"])
+            self.assertFalse(checks["release_page_limit"]["passed"])
+
+    def test_decoy_results_override_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory(
+            prefix="vimd_paper_decoy_results_"
+        ) as temporary:
+            paper_root = self._fixture(
+                Path(temporary),
+                internal_review=False,
+                placeholders=False,
+                release_sentinel=True,
+                release_lock=True,
+            )
+            actual = paper_root / "results_auto.tex"
+            decoy = paper_root / "decoy_release_results.tex"
+            decoy.write_bytes(actual.read_bytes())
+            actual.write_text(
+                self._results_text(
+                    placeholders=True,
+                    release_sentinel=False,
+                ),
+                encoding="utf-8",
+            )
+            self._write_lock(paper_root, results_path=decoy)
+            base = time.time() - 1_000
+            self._set_fixture_times(
+                paper_root,
+                source_time=base,
+                build_time=base + 10,
+            )
+            report = gate.audit_paper_build(
+                paper_root=paper_root,
+                mode="release",
+                results_path=Path(decoy.name),
+            )
+            checks = self._checks(report)
+            self.assertFalse(report["ok"])
+            self.assertFalse(checks["results_path_binding"]["passed"])
+            self.assertFalse(checks["fls_results_input"]["passed"])
+
+    def test_fls_and_declared_dependencies_must_be_fresh(self) -> None:
+        stale_targets = (
+            "authors_verified.tex",
+            "references.bib",
+            "figures/plot.pdf",
+            "IEEEtran.cls",
+            "sections/transitive.tex",
+        )
+        for relative_target in stale_targets:
+            with self.subTest(
+                target=relative_target
+            ), tempfile.TemporaryDirectory(
+                prefix="vimd_paper_dependency_"
+            ) as temporary:
+                paper_root = self._fixture(
+                    Path(temporary),
+                    internal_review=False,
+                    placeholders=False,
+                    release_sentinel=True,
+                    release_lock=True,
+                )
+                self._write_gate_main(
+                    paper_root,
+                    internal_review=False,
+                    extra_lines=[
+                        r"\ifinternalreview\else",
+                        r"\input{authors_verified.tex}",
+                        r"\fi",
+                        r"\includegraphics[width=\textwidth]{figures/plot.pdf}",
+                        r"\bibliography{references}",
+                    ],
+                )
+                main = paper_root / "main.tex"
+                main.write_text(
+                    main.read_text(encoding="utf-8").replace(
+                        r"\documentclass{article}",
+                        r"\documentclass{IEEEtran}",
+                        1,
+                    ),
+                    encoding="utf-8",
+                )
+                dependencies = {
+                    "authors_verified.tex": b"\\author{Fixture Author}\n",
+                    "references.bib": b"@misc{fixture,title={Fixture}}\n",
+                    "figures/plot.pdf": self._pdf_bytes(
+                        pages=1,
+                        text="Figure fixture",
+                    ),
+                    "IEEEtran.cls": b"\\NeedsTeXFormat{LaTeX2e}\n",
+                    "sections/transitive.tex": b"Transitive fixture\n",
+                }
+                for relative, data in dependencies.items():
+                    path = paper_root / relative
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_bytes(data)
+                fls_inputs = [
+                    paper_root / "main.tex",
+                    paper_root / "results_auto.tex",
+                    paper_root / "authors_verified.tex",
+                    paper_root / "figures/plot.pdf",
+                    paper_root / "IEEEtran.cls",
+                    paper_root / "sections/transitive.tex",
+                ]
+                self._write_fls(paper_root, inputs=fls_inputs)
+                base = time.time() - 1_000
+                self._set_fixture_times(
+                    paper_root,
+                    source_time=base,
+                    build_time=base + 10,
+                )
+                stale = paper_root / relative_target
+                os.utime(stale, (base + 40, base + 40))
+                report = gate.audit_paper_build(
+                    paper_root=paper_root,
+                    mode="release",
+                )
+                checks = self._checks(report)
+                self.assertTrue(
+                    checks["declared_source_dependencies"]["passed"],
+                    report["issues"],
+                )
+                self.assertTrue(
+                    checks["fls_declared_input_binding"]["passed"],
+                    report["issues"],
+                )
+                failed_freshness = [
+                    check
+                    for check in report["checks"]
+                    if check["id"].startswith("freshness_dependency_")
+                    and not check["passed"]
+                ]
+                self.assertFalse(report["ok"])
+                self.assertTrue(failed_freshness, report["issues"])
+                self.assertTrue(
+                    any(
+                        relative_target.replace("/", os.sep)
+                        in check["actual"]["path"]
+                        for check in failed_freshness
+                    ),
+                    failed_freshness,
+                )
+
+    def test_release_rejects_public_source_and_pdf_placeholders(self) -> None:
+        with tempfile.TemporaryDirectory(
+            prefix="vimd_paper_public_source_placeholder_"
+        ) as temporary:
+            paper_root = self._fixture(
+                Path(temporary),
+                internal_review=False,
+                placeholders=False,
+                release_sentinel=True,
+                release_lock=True,
+            )
+            main = paper_root / "main.tex"
+            main.write_text(
+                main.read_text(encoding="utf-8").replace(
+                    r"\end{document}",
+                    "\\ifinternalreview pending\\else generated\\fi\n"
+                    r"\end{document}",
+                ),
+                encoding="utf-8",
+            )
+            base = time.time() - 1_000
+            self._set_fixture_times(
+                paper_root,
+                source_time=base,
+                build_time=base + 10,
+            )
+            report = gate.audit_paper_build(
+                paper_root=paper_root,
+                mode="release",
+            )
+            self.assertFalse(report["ok"])
+            self.assertFalse(
+                self._checks(report)[
+                    "release_public_source_nonplaceholder"
+                ]["passed"]
+            )
+
+        with tempfile.TemporaryDirectory(
+            prefix="vimd_paper_public_pdf_placeholder_"
+        ) as temporary:
+            paper_root = self._fixture(
+                Path(temporary),
+                internal_review=False,
+                placeholders=False,
+                release_sentinel=True,
+                release_lock=True,
+                pdf_text="generated",
+            )
+            report = gate.audit_paper_build(
+                paper_root=paper_root,
+                mode="release",
+            )
+            self.assertFalse(report["ok"])
+            self.assertFalse(
+                self._checks(report)["release_pdf_text_nonplaceholder"][
+                    "passed"
+                ]
             )
 
     def test_release_rejects_wrong_mode_placeholders_missing_lock_and_pages(
@@ -600,6 +889,97 @@ class PaperBuildGateTest(unittest.TestCase):
             self.assertFalse(report["ok"])
             self.assertFalse(
                 self._checks(report)["release_lock_results_digest"]["passed"]
+            )
+
+    def test_validate_release_writer_output_passes_paper_gate(self) -> None:
+        from tests.test_macro_generator import MacroGeneratorTest
+        from tvt_submission import generate_macro_values
+
+        with tempfile.TemporaryDirectory(
+            prefix="vimd_writer_to_paper_gate_"
+        ) as temporary:
+            root = Path(temporary)
+            macro_fixture = MacroGeneratorTest(
+                "test_generates_release_compatible_manifest_from_artifacts"
+            )
+            macro_fixture.runner = (
+                generate_macro_values.validate_release._load_runner_module()
+            )
+            run_json, macro_manifest = macro_fixture._fixture(root)
+            generated = generate_macro_values.write_macro_manifest(
+                run_json=run_json,
+                output=macro_manifest,
+            )
+            self.assertEqual(
+                generated["macro_count"],
+                len(gate.release_contract.RESULT_MACROS),
+            )
+            manifest = gate.release_contract.load_strict_json(macro_manifest)
+            self.assertTrue(manifest["scientific_release_gate"]["passed"])
+            self.assertEqual(
+                set(manifest["macros"]),
+                set(gate.release_contract.RESULT_MACROS),
+            )
+            paper_root = root / "paper"
+            paper_root.mkdir()
+            self._write_gate_main(
+                paper_root,
+                internal_review=False,
+            )
+            gate.release_contract.write_release(
+                run_json=run_json,
+                paper_root=paper_root,
+                macro_values=macro_manifest,
+            )
+            build_root = paper_root / "build"
+            build_root.mkdir()
+            pdf = build_root / "main.pdf"
+            pdf.write_bytes(self._pdf_bytes(pages=1, text="Released fixture"))
+            self._write_log(
+                build_root / "main.log",
+                pdf_bytes=pdf.stat().st_size,
+                pages=1,
+            )
+            self._write_fls(paper_root)
+            base = time.time() - 1_000
+            self._set_fixture_times(
+                paper_root,
+                source_time=base,
+                build_time=base + 10,
+            )
+            report = gate.audit_paper_build(
+                paper_root=paper_root,
+                mode="release",
+            )
+            checks = self._checks(report)
+            self.assertTrue(report["ok"], report["issues"])
+            self.assertTrue(report["release_eligible"])
+            parsed = gate.release_contract.parse_results_auto(
+                paper_root / "results_auto.tex"
+            )
+            self.assertEqual(
+                set(parsed),
+                set(gate.release_contract.ALL_MACROS),
+            )
+            self.assertFalse(
+                any(
+                    any(character.isdigit() for character in name)
+                    for name in gate.release_contract.ALL_MACROS
+                )
+            )
+            self.assertIn("VIMDLatencyPFifty", parsed)
+            self.assertIn("VIMDLatencyPNinetyFive", parsed)
+            lock = gate.release_contract.load_strict_json(
+                paper_root / "release_lock.json"
+            )
+            self.assertEqual(
+                len(lock["macro_provenance"]),
+                len(gate.release_contract.RESULT_MACROS),
+            )
+            self.assertTrue(checks["release_results_contract"]["passed"])
+            self.assertTrue(checks["release_lock_state"]["passed"])
+            self.assertTrue(
+                checks["release_lock_results_digest"]["passed"]
             )
 
     def test_cli_emits_failure_json_on_stdout_and_nonzero(self) -> None:

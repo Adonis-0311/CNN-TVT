@@ -116,6 +116,26 @@ MECHANISM_MACRO_FIELDS = {
     "MechanismThirdRoutePermutationP": "overlap_permutation_p_value",
     "OracleSpectralRatioGain": "counterfactual_tf_sir_gain_db",
 }
+HEADLINE_PROVENANCE_MACROS = tuple(
+    f"HeadlineHard{model}{metric}"
+    for model in HEADLINE_MODELS
+    for metric in HEADLINE_METRIC_SUFFIXES.values()
+)
+REGIME_PROVENANCE_MACROS = tuple(
+    f"Regime{regime}{field}"
+    for regime in OOD_REGIMES
+    for field in ("Reference", "AFive", "Gain", "CILow", "CIHigh")
+)
+PROVENANCE_MACROS = (
+    "PrimaryReference",
+    *HEADLINE_PROVENANCE_MACROS,
+    *REGIME_PROVENANCE_MACROS,
+    *MECHANISM_MACRO_FIELDS,
+    "VIMDParameters",
+    "VIMDLatencyPFifty",
+    "VIMDLatencyPNinetyFive",
+    "VIMDLatencyDevice",
+)
 MODEL_LABELS = {
     "a0_backbone": "direct spectral backbone",
     "mcldnn_reimplementation": "MCLDNN reimplementation",
@@ -601,6 +621,12 @@ def _seed_ids(value: str, label: str) -> list[str]:
     return [str(item) for item in parsed]
 
 
+def _analysis_seed(base_seed: int, *tokens: Any) -> int:
+    payload = "|".join([str(int(base_seed)), *(str(token) for token in tokens)])
+    digest = hashlib.sha256(payload.encode("utf-8")).digest()
+    return int.from_bytes(digest[:4], byteorder="big", signed=False)
+
+
 def _audit_headline_csv(
     run_json: Path,
     run_record: dict[str, Any],
@@ -769,6 +795,23 @@ def _audit_headline_csv(
             raise MacroGenerationError(
                 f"headline CSV row {key} has wrong bootstrap draw count"
             )
+        expected_bootstrap_seed = _analysis_seed(
+            _integer(
+                comparison.get("bootstrap_seed_base"),
+                "run comparison bootstrap_seed_base",
+            ),
+            "hierarchical",
+            reference_model,
+            candidate,
+            regime,
+        )
+        if _integer(
+            row["bootstrap_seed"],
+            f"headline CSV row {key} bootstrap_seed",
+        ) != expected_bootstrap_seed:
+            raise MacroGenerationError(
+                f"headline CSV row {key} has wrong deterministic bootstrap seed"
+            )
         if not _csv_boolean(
             row["bootstrap_stratified_by_class"],
             f"headline CSV row {key} bootstrap_stratified_by_class",
@@ -804,6 +847,7 @@ def _audit_headline_csv(
         "unseen_speed",
         "heldout_channel",
         "combined_ood",
+        "clean_retention",
     ):
         key = (METHOD_MODEL, regime)
         row = indexed[key]
@@ -908,42 +952,10 @@ def _audit_headline_csv(
     return indexed
 
 
-def _strongest_baseline(
-    run_record: dict[str, Any],
-    metrics: dict[tuple[str, int, str], dict[str, float]],
-) -> str:
-    models = set(run_record["models"])
-    missing = sorted(set(BASELINE_MODELS).difference(models))
-    if missing:
-        raise MacroGenerationError(
-            "formal baseline family is incomplete: " + ",".join(missing)
-        )
-    seeds = [int(seed) for seed in run_record["seeds"]]
-    means = {
-        model: float(
-            np.mean(
-                [
-                    metrics[(model, seed, HARD_REGIME)]["macro_f1"]
-                    for seed in seeds
-                ]
-            )
-        )
-        for model in BASELINE_MODELS
-    }
-    ranking = sorted(means.items(), key=lambda item: item[1], reverse=True)
-    if _same_number(ranking[0][1], ranking[1][1]):
-        raise MacroGenerationError(
-            "strongest baseline is ambiguous on mean hard-interference "
-            f"macro-F1: {ranking[0][0]}={ranking[0][1]:.17g}, "
-            f"{ranking[1][0]}={ranking[1][1]:.17g}"
-        )
-    return ranking[0][0]
-
-
 def _method_summary(
     run_record: dict[str, Any],
     results: dict[tuple[str, int], dict[str, Any]],
-) -> dict[str, float | int]:
+) -> dict[str, float | int | str]:
     seeds = [int(seed) for seed in run_record["seeds"]]
     mechanism_fields = (
         "mask_js",
@@ -959,7 +971,8 @@ def _method_summary(
         field: [] for field in mechanism_fields
     }
     parameters: list[int] = []
-    latencies: list[float] = []
+    latencies_p50: list[float] = []
+    latencies_p95: list[float] = []
     latency_devices: set[str] = set()
     for seed in seeds:
         result = results.get((METHOD_MODEL, seed))
@@ -993,6 +1006,7 @@ def _method_summary(
             "target_energy_transfer_ratio_mean",
             "target_energy_transfer_ratio_amplification_share",
             "jammer_leakage",
+            "overlap_permutation_p_value",
         ):
             if mechanism_values[field][-1] < 0:
                 raise MacroGenerationError(
@@ -1029,19 +1043,29 @@ def _method_summary(
                 f"{METHOD_MODEL}/seed{seed} parameter count is invalid"
             )
         parameters.append(int(parameter_value))
-        latency = _finite_number(
+        latency_p50 = _finite_number(
             complexity.get("latency_ms_p50"),
             f"{METHOD_MODEL}/seed{seed} latency_ms_p50",
         )
-        if latency <= 0:
+        latency_p95 = _finite_number(
+            complexity.get("latency_ms_p95"),
+            f"{METHOD_MODEL}/seed{seed} latency_ms_p95",
+        )
+        if latency_p50 <= 0 or latency_p95 < latency_p50:
             raise MacroGenerationError(
-                f"{METHOD_MODEL}/seed{seed} latency is not positive"
+                f"{METHOD_MODEL}/seed{seed} latency quantiles are invalid"
             )
-        latencies.append(latency)
+        latencies_p50.append(latency_p50)
+        latencies_p95.append(latency_p95)
         device = complexity.get("latency_device")
-        if not isinstance(device, str) or not device:
+        if (
+            not isinstance(device, str)
+            or not device.strip()
+            or device != device.strip()
+            or any(character in device for character in "\\{}%\r\n")
+        ):
             raise MacroGenerationError(
-                f"{METHOD_MODEL}/seed{seed} latency device is missing"
+                f"{METHOD_MODEL}/seed{seed} latency device is invalid"
             )
         latency_devices.add(device)
     if len(set(parameters)) != 1:
@@ -1052,13 +1076,269 @@ def _method_summary(
         raise MacroGenerationError(
             f"{METHOD_MODEL} latency device differs across seeds"
         )
+    for field in SCIENTIFIC_RELEASE_THRESHOLDS[
+        "mechanism_nonnegative_fields"
+    ]:
+        if any(value < 0.0 for value in mechanism_values[field]):
+            raise MacroGenerationError(
+                "scientific release gate failed: "
+                f"{field} must be nonnegative for every seed"
+            )
+    oracle_field = str(
+        SCIENTIFIC_RELEASE_THRESHOLDS["oracle_spectral_ratio_field"]
+    )
+    if any(value <= 0.0 for value in mechanism_values[oracle_field]):
+        raise MacroGenerationError(
+            "scientific release gate failed: OracleSpectralRatioGain must be "
+            "strictly positive for every seed"
+        )
     return {
         **{
             field: float(np.mean(values))
             for field, values in mechanism_values.items()
         },
         "parameters": parameters[0],
-        "latency_ms_p50": float(np.median(latencies)),
+        "latency_ms_p50": float(np.median(latencies_p50)),
+        "latency_ms_p95": float(np.median(latencies_p95)),
+        "latency_device": next(iter(latency_devices)),
+    }
+
+
+def _mean_metric(
+    metrics: dict[tuple[str, int, str], dict[str, float]],
+    *,
+    seeds: list[int],
+    model: str,
+    regime: str,
+    metric: str,
+) -> float:
+    return float(
+        np.mean([metrics[(model, seed, regime)][metric] for seed in seeds])
+    )
+
+
+def _clean_profile_macro_f1_means(
+    bundles: dict[tuple[str, int, str], dict[str, Any]],
+    *,
+    seeds: list[int],
+    profile_indices: tuple[int, ...],
+    reference_model: str,
+) -> tuple[float, float]:
+    reference_values: list[float] = []
+    method_values: list[float] = []
+    for seed in seeds:
+        reference_bundle = bundles[
+            (reference_model, seed, "clean_retention")
+        ]
+        method_bundle = bundles[(METHOD_MODEL, seed, "clean_retention")]
+        selected = np.isin(
+            reference_bundle["target_profile_index"],
+            np.asarray(profile_indices, dtype=np.int64),
+        )
+        if not selected.any():
+            raise MacroGenerationError(
+                "clean-retention public-table stratum is empty"
+            )
+        for bundle, destination in (
+            (reference_bundle, reference_values),
+            (method_bundle, method_values),
+        ):
+            macro_f1, _ = _macro_f1_and_accuracy(
+                bundle["probabilities"][selected],
+                bundle["labels"][selected],
+                bundle["probabilities"].shape[1],
+            )
+            destination.append(macro_f1)
+    return float(np.mean(reference_values)), float(np.mean(method_values))
+
+
+def _validate_comparison_protocol(run_record: dict[str, Any]) -> str:
+    comparison = run_record.get("comparison_protocol")
+    if not isinstance(comparison, dict):
+        raise MacroGenerationError("run comparison_protocol is malformed")
+    reference_model = comparison.get("reference_model")
+    if reference_model != PRIMARY_REFERENCE_MODEL:
+        raise MacroGenerationError(
+            "run paired reference drifted from the preregistered "
+            f"{PRIMARY_REFERENCE_MODEL}"
+        )
+    exact_fields = {
+        "reference_selection": "explicit_cli",
+        "reference_strength_claimed": False,
+        "primary_reference_predeclared": True,
+        "method_model": METHOD_MODEL,
+        "required_nonoracle_baselines": list(BASELINE_MODELS),
+        "clean_retention_profile_strata": {
+            name: list(indices)
+            for name, indices in CLEAN_PROFILE_REGIMES.items()
+        },
+        "scientific_release_thresholds": SCIENTIFIC_RELEASE_THRESHOLDS,
+        "holm_candidate_family": list(FORMAL_HOLM_CANDIDATES),
+    }
+    drift = {
+        field: {
+            "actual": comparison.get(field),
+            "expected": expected,
+        }
+        for field, expected in exact_fields.items()
+        if comparison.get(field) != expected
+    }
+    if drift:
+        raise MacroGenerationError(
+            "run comparison_protocol drifted from the scientific release "
+            f"preregistration: {drift}"
+        )
+    if PRIMARY_REFERENCE_MODEL in FORMAL_HOLM_CANDIDATES:
+        raise MacroGenerationError(
+            "internal release contract error: CSSL primary reference entered "
+            "the Holm candidate family"
+        )
+    return str(reference_model)
+
+
+def _scientific_release_gate(
+    *,
+    run_record: dict[str, Any],
+    metrics: dict[tuple[str, int, str], dict[str, float]],
+    bundles: dict[tuple[str, int, str], dict[str, Any]],
+    headline: dict[tuple[str, str], dict[str, float]],
+    method_summary: dict[str, float | int | str],
+) -> dict[str, Any]:
+    seeds = [int(seed) for seed in run_record["seeds"]]
+    hard_method = _mean_metric(
+        metrics,
+        seeds=seeds,
+        model=METHOD_MODEL,
+        regime=HARD_REGIME,
+        metric="macro_f1",
+    )
+    hard_gains_pp: dict[str, float] = {}
+    for baseline in BASELINE_MODELS:
+        metric_gain = hard_method - _mean_metric(
+            metrics,
+            seeds=seeds,
+            model=baseline,
+            regime=HARD_REGIME,
+            metric="macro_f1",
+        )
+        bundle_gain = float(
+            np.mean(
+                [
+                    bundles[(METHOD_MODEL, seed, HARD_REGIME)]["macro_f1"]
+                    - bundles[(baseline, seed, HARD_REGIME)]["macro_f1"]
+                    for seed in seeds
+                ]
+            )
+        )
+        if not _same_number(metric_gain, bundle_gain):
+            raise MacroGenerationError(
+                "hard-regime gate disagrees between metrics.csv and "
+                f"prediction NPZ for {baseline}"
+            )
+        hard_gains_pp[baseline] = metric_gain * 100.0
+    minimum_hard_gain = float(
+        SCIENTIFIC_RELEASE_THRESHOLDS[
+            "hard_macro_f1_min_gain_pp_each_baseline"
+        ]
+    )
+    failed_hard = {
+        model: gain
+        for model, gain in hard_gains_pp.items()
+        if gain + FLOAT_ABS_TOLERANCE < minimum_hard_gain
+    }
+    if failed_hard:
+        raise MacroGenerationError(
+            "scientific release gate failed: A5 hard macro-F1 gain must be "
+            f">= {minimum_hard_gain:.2f} pp versus every non-oracle baseline; "
+            f"failed={failed_hard}"
+        )
+
+    hard_ablation_gains_pp: dict[str, float] = {}
+    for control in ABLATION_CONTROL_MODELS:
+        gain = float(
+            np.mean(
+                [
+                    bundles[(METHOD_MODEL, seed, HARD_REGIME)]["macro_f1"]
+                    - bundles[(control, seed, HARD_REGIME)]["macro_f1"]
+                    for seed in seeds
+                ]
+            )
+        )
+        hard_ablation_gains_pp[control] = gain * 100.0
+    failed_ablation = {
+        model: gain
+        for model, gain in hard_ablation_gains_pp.items()
+        if gain <= 0.0
+    }
+    if failed_ablation:
+        raise MacroGenerationError(
+            "scientific release gate failed: A5 hard macro-F1 must be "
+            f"strictly greater than A1 and A6; failed={failed_ablation}"
+        )
+
+    ood_gains_pp = {
+        regime: headline[(METHOD_MODEL, regime)]["macro_f1_difference"] * 100.0
+        for regime in OOD_GATE_REGIMES
+    }
+    ood_threshold = float(
+        SCIENTIFIC_RELEASE_THRESHOLDS["ood_macro_f1_min_gain_pp"]
+    )
+    ood_pass_count = sum(
+        gain + FLOAT_ABS_TOLERANCE >= ood_threshold
+        for gain in ood_gains_pp.values()
+    )
+    required_ood_pass_count = int(
+        SCIENTIFIC_RELEASE_THRESHOLDS["ood_required_pass_count"]
+    )
+    if ood_pass_count < required_ood_pass_count:
+        raise MacroGenerationError(
+            "scientific release gate failed: at least "
+            f"{required_ood_pass_count}/{len(OOD_GATE_REGIMES)} OOD regimes "
+            f"must gain >= {ood_threshold:.2f} pp versus CSSL; "
+            f"actual={ood_gains_pp}"
+        )
+
+    clean_gates: dict[str, dict[str, float]] = {}
+    point_threshold = float(
+        SCIENTIFIC_RELEASE_THRESHOLDS[
+            "clean_macro_f1_min_point_gain_pp"
+        ]
+    )
+    ci_threshold = float(
+        SCIENTIFIC_RELEASE_THRESHOLDS[
+            "clean_macro_f1_min_ci95_low_pp"
+        ]
+    )
+    for regime in CLEAN_PROFILE_REGIMES:
+        row = headline[(METHOD_MODEL, regime)]
+        point = row["macro_f1_difference"] * 100.0
+        ci_low = row["macro_f1_ci95_low"] * 100.0
+        clean_gates[regime] = {"gain_pp": point, "ci95_low_pp": ci_low}
+        if (
+            point + FLOAT_ABS_TOLERANCE < point_threshold
+            or ci_low + FLOAT_ABS_TOLERANCE < ci_threshold
+        ):
+            raise MacroGenerationError(
+                "scientific release gate failed: clean-retention "
+                f"{regime} requires point >= {point_threshold:.2f} pp and "
+                f"CI lower >= {ci_threshold:.2f} pp; "
+                f"actual point={point:.6g}, CI lower={ci_low:.6g}"
+            )
+
+    mechanism_means = {
+        field: float(method_summary[field])
+        for field in SCIENTIFIC_RELEASE_THRESHOLDS[
+            "mechanism_required_finite_fields"
+        ]
+    }
+    return {
+        "passed": True,
+        "hard_gain_pp_each_nonoracle_baseline": hard_gains_pp,
+        "hard_ablation_gain_pp": hard_ablation_gains_pp,
+        "ood_gain_pp": ood_gains_pp,
+        "ood_pass_count": ood_pass_count,
+        "clean_noninferiority": clean_gates,
+        "mechanism_means": mechanism_means,
     }
 
 
@@ -1077,39 +1357,42 @@ def _derive_manifest(
             f"source run failed release validation: {error}"
         ) from error
     models = run_record.get("models")
-    seeds = run_record.get("seeds")
+    seed_values = run_record.get("seeds")
     splits = run_record.get("splits")
     if (
         not isinstance(models, list)
-        or not isinstance(seeds, list)
+        or not isinstance(seed_values, list)
         or not isinstance(splits, dict)
     ):
         raise MacroGenerationError("run model/seed/split contract is malformed")
-    required_models = set(BASELINE_MODELS) | {METHOD_MODEL}
+    seeds = [int(seed) for seed in seed_values]
+    required_models = (
+        set(BASELINE_MODELS)
+        | set(ABLATION_CONTROL_MODELS)
+        | {METHOD_MODEL}
+    )
     missing_models = sorted(required_models.difference(models))
     if missing_models:
         raise MacroGenerationError(
-            "run is missing macro models: " + ",".join(missing_models)
+            "run is missing release models: " + ",".join(missing_models)
         )
-    required_regimes = set(GAIN_REGIMES.values())
+    required_regimes = {
+        HARD_REGIME,
+        "unseen_jammer",
+        "unseen_speed",
+        "heldout_channel",
+        "combined_ood",
+        "clean_retention",
+    }
     missing_regimes = sorted(required_regimes.difference(splits))
     if missing_regimes:
         raise MacroGenerationError(
-            "run is missing macro regimes: " + ",".join(missing_regimes)
+            "run is missing release regimes: " + ",".join(missing_regimes)
         )
-    comparison = run_record.get("comparison_protocol")
-    if not isinstance(comparison, dict):
-        raise MacroGenerationError("run comparison_protocol is malformed")
-    reference_model = comparison.get("reference_model")
-    if reference_model != PRIMARY_REFERENCE_MODEL:
-        raise MacroGenerationError(
-            "run paired reference drifted from the preregistered "
-            f"{PRIMARY_REFERENCE_MODEL}"
-        )
+    reference_model = _validate_comparison_protocol(run_record)
 
     results = _result_index(run_record)
     metrics = _audit_metrics_csv(resolved, run_record, results)
-    strongest = _strongest_baseline(run_record, metrics)
     bundles, sample_counts = _audit_required_predictions(
         resolved,
         run_record,
@@ -1124,109 +1407,184 @@ def _derive_manifest(
         sample_counts,
         reference_model,
     )
-    feature_gain, parameter_count, latency_ms = _method_summary(
-        run_record,
-        results,
+    method_summary = _method_summary(run_record, results)
+    scientific_gate = _scientific_release_gate(
+        run_record=run_record,
+        metrics=metrics,
+        bundles=bundles,
+        headline=headline,
+        method_summary=method_summary,
     )
 
-    hard = headline[(METHOD_MODEL, HARD_REGIME)]
     macros: dict[str, dict[str, str]] = {
         "PrimaryReference": {
             "value": MODEL_LABELS[reference_model],
             "source_artifact": "run.json",
             "derivation": (
-                "comparison_protocol.reference_model, required to equal the "
-                "prospectively frozen iqformer_inspired comparison anchor"
+                "Exact comparison_protocol.reference_model label; CSSL-AMC "
+                "is the prospectively frozen paired reference and no "
+                "post-hoc baseline ranking is inferred"
             ),
-        },
-        "StrongestBaseline": {
-            "value": MODEL_LABELS[strongest],
-            "source_artifact": "metrics.csv",
-            "derivation": (
-                "Unique maximum mean hard_interference macro_f1 across "
-                f"{','.join(BASELINE_MODELS)} over run seeds; descriptive "
-                "ranking only and not the paired primary-reference claim"
-            ),
-        },
-        "HardMacroFOneGain": {
-            "value": _format_pp(hard["macro_f1_difference"]),
-            "source_artifact": "headline_paired_statistics.csv",
-            "derivation": (
-                "100 times macro_f1_difference for candidate "
-                f"{METHOD_MODEL}, primary reference {reference_model}, regime "
-                "hard_interference; point estimate cross-checked against "
-                "metrics.csv and source-aligned prediction NPZ bundles"
-            ),
-        },
-        "HardMacroFOneCI": {
-            "value": (
-                "95\\% CI ["
-                f"{_format_pp(hard['macro_f1_ci95_low'])}, "
-                f"{_format_pp(hard['macro_f1_ci95_high'])}] pp"
-            ),
-            "source_artifact": "headline_paired_statistics.csv",
-            "derivation": (
-                "Hierarchical paired-bootstrap macro_f1_ci95_low and "
-                "macro_f1_ci95_high for a5_vimd_full versus the prospectively "
-                "frozen primary reference on hard_interference, scaled to "
-                "percentage points"
-            ),
-        },
+        }
     }
-    for macro_name, regime in GAIN_REGIMES.items():
-        if macro_name == "HardMacroFOneGain":
-            continue
+    for model_token, model in HEADLINE_MODELS.items():
+        for metric, suffix in HEADLINE_METRIC_SUFFIXES.items():
+            mean_value = _mean_metric(
+                metrics,
+                seeds=seeds,
+                model=model,
+                regime=HARD_REGIME,
+                metric=metric,
+            )
+            value = (
+                f"{mean_value * 100.0:.2f}"
+                if metric in {"accuracy", "macro_f1", "worst_recall"}
+                else f"{mean_value:.4f}"
+            )
+            macros[f"HeadlineHard{model_token}{suffix}"] = {
+                "value": value,
+                "source_artifact": "metrics.csv",
+                "derivation": (
+                    f"Arithmetic mean across formal seeds of {model}/{metric} "
+                    "on hard_interference; accuracy, macro-F1, and worst-class "
+                    "recall are scaled to percent while NLL and ECE retain "
+                    "their recorded units"
+                ),
+            }
+
+    for regime_token, regime in OOD_REGIMES.items():
+        if regime in CLEAN_PROFILE_REGIMES:
+            reference_mean, method_mean = _clean_profile_macro_f1_means(
+                bundles,
+                seeds=seeds,
+                profile_indices=CLEAN_PROFILE_REGIMES[regime],
+                reference_model=reference_model,
+            )
+            point_source = "headline_paired_statistics.csv"
+            point_derivation = (
+                "Arithmetic mean across formal seeds of profile-stratified "
+                "clean_retention macro-F1 recomputed from source-aligned "
+                "prediction NPZ bundles"
+            )
+        else:
+            reference_mean = _mean_metric(
+                metrics,
+                seeds=seeds,
+                model=reference_model,
+                regime=regime,
+                metric="macro_f1",
+            )
+            method_mean = _mean_metric(
+                metrics,
+                seeds=seeds,
+                model=METHOD_MODEL,
+                regime=regime,
+                metric="macro_f1",
+            )
+            point_source = "metrics.csv"
+            point_derivation = (
+                "Arithmetic mean across formal seeds of macro-F1 from the "
+                "audited model/seed/regime metric matrix"
+            )
         row = headline[(METHOD_MODEL, regime)]
+        if not _same_number(
+            method_mean - reference_mean,
+            row["macro_f1_difference"],
+        ):
+            raise MacroGenerationError(
+                f"OOD table point estimates disagree with the hierarchical "
+                f"paired row for {regime}"
+            )
+        prefix = f"Regime{regime_token}"
+        for name, value, role in (
+            (f"{prefix}Reference", reference_mean, "primary CSSL reference"),
+            (f"{prefix}AFive", method_mean, "A5 VIMD method"),
+        ):
+            macros[name] = {
+                "value": f"{value * 100.0:.2f}",
+                "source_artifact": point_source,
+                "derivation": f"{point_derivation}; value is the {role} mean",
+            }
+        for suffix, field in (
+            ("Gain", "macro_f1_difference"),
+            ("CILow", "macro_f1_ci95_low"),
+            ("CIHigh", "macro_f1_ci95_high"),
+        ):
+            macros[f"{prefix}{suffix}"] = {
+                "value": _format_pp(row[field]),
+                "source_artifact": "headline_paired_statistics.csv",
+                "derivation": (
+                    f"100 times {field} for A5 versus the predeclared CSSL "
+                    f"reference on {regime}; the hierarchical resampling unit "
+                    "is algorithm seed and class-stratified source cluster"
+                ),
+            }
+
+    for macro_name, field in MECHANISM_MACRO_FIELDS.items():
+        exported_value = float(method_summary[field])
+        if macro_name == "MechanismTargetAmplificationShare":
+            exported_value *= 100.0
         macros[macro_name] = {
-            "value": _format_pp(row["macro_f1_difference"]),
-            "source_artifact": "headline_paired_statistics.csv",
+            "value": f"{exported_value:.6f}",
+            "source_artifact": "run.json",
             "derivation": (
-                "100 times hierarchical paired-bootstrap "
-                f"macro_f1_difference for {METHOD_MODEL} versus the primary "
-                f"reference {reference_model} "
-                f"on {regime}; point estimate cross-checked against "
-                "metrics.csv and source-aligned prediction NPZ bundles"
+                f"Arithmetic mean across formal A5 seeds of mechanism.{field} "
+                "from the heldout_channel diagnostic; the oracle spectral "
+                "ratio is not a waveform SIR or SDR claim; amplification "
+                "share is scaled to percent"
             ),
         }
     macros.update(
         {
-            "FeatureSIRGain": {
-                "value": f"{feature_gain:+.2f}",
-                "source_artifact": "run.json",
-                "derivation": (
-                    "Arithmetic mean across run seeds of "
-                    "a5_vimd_full.mechanism.counterfactual_tf_sir_gain_db "
-                    "from the heldout_channel mechanism probe"
-                ),
-            },
             "VIMDParameters": {
-                "value": f"{parameter_count:,}",
+                "value": str(int(method_summary["parameters"])),
                 "source_artifact": "run.json",
                 "derivation": (
-                    "Exact a5_vimd_full complexity.parameters value, required "
-                    "to be a positive integer identical across every run seed"
+                    "Exact positive A5 complexity.parameters count, required "
+                    "to be identical across all formal seeds"
                 ),
             },
-            "VIMDLatency": {
-                "value": f"{latency_ms:.2f} ms",
+            "VIMDLatencyPFifty": {
+                "value": f"{float(method_summary['latency_ms_p50']):.3f}",
                 "source_artifact": "run.json",
                 "derivation": (
-                    "Median across run seeds of a5_vimd_full "
-                    "complexity.latency_ms_p50, with one identical recorded "
-                    "latency_device required across seeds"
+                    "Median across formal seeds of A5 latency_ms_p50 on the "
+                    "single frozen latency_device"
+                ),
+            },
+            "VIMDLatencyPNinetyFive": {
+                "value": f"{float(method_summary['latency_ms_p95']):.3f}",
+                "source_artifact": "run.json",
+                "derivation": (
+                    "Median across formal seeds of A5 latency_ms_p95 on the "
+                    "single frozen latency_device"
+                ),
+            },
+            "VIMDLatencyDevice": {
+                "value": str(method_summary["latency_device"]),
+                "source_artifact": "run.json",
+                "derivation": (
+                    "Exact A5 complexity.latency_device token, required to be "
+                    "identical across every formal seed"
                 ),
             },
         }
     )
-    if set(macros) != set(validate_release.RESULT_MACROS):
+    if set(macros) != set(PROVENANCE_MACROS):
         raise MacroGenerationError(
-            "derived macro set disagrees with validate_release.RESULT_MACROS"
+            "derived macro set disagrees with the generator provenance contract"
+        )
+    release_contract = getattr(validate_release, "PROVENANCE_MACROS", None)
+    if release_contract is not None and set(macros) != set(release_contract):
+        raise MacroGenerationError(
+            "derived macro set disagrees with the release provenance contract"
         )
     manifest = {
         "schema_version": validate_release.MACRO_MANIFEST_SCHEMA,
         "run_id": run_record["run_id"],
         "cache_digest": run_record["cache_digest"],
         "run_json_sha256": validate_release.sha256_file(resolved),
+        "scientific_release_gate": scientific_gate,
         "macros": macros,
     }
     return manifest, run_record

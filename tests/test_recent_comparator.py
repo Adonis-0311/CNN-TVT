@@ -132,7 +132,8 @@ class RecentComparatorTests(unittest.TestCase):
             tuple(freeze["experiment"]["models"]),
             PREREGISTERED_MODEL_SUITES["headline"],
         )
-        self.assertIn(name, freeze["experiment"]["holm_candidates"])
+        self.assertEqual(freeze["experiment"]["reference_model"], name)
+        self.assertNotIn(name, freeze["experiment"]["holm_candidates"])
         self.assertIn(name, PREREGISTERED_MODEL_SUITES["headline"])
         self.assertIn(name, generate_macro_values.BASELINE_MODELS)
         self.assertEqual(

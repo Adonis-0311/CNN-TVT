@@ -13,6 +13,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -30,7 +31,6 @@ except ModuleNotFoundError:  # Direct ``python tvt_submission/...py`` execution.
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 REPORT_SCHEMA = "vimd_amc.tvt.paper_build_gate.v2"
 RELEASE_LOCK_SCHEMA = release_contract.RELEASE_LOCK_SCHEMA
-FORMAL_CACHE_DESIGNATION = "headline_formal_tvt_evidence"
 DEFAULT_MAX_RELEASE_PAGES = 14
 DEFAULT_MTIME_TOLERANCE_SECONDS = 2.0
 DEFAULT_BUILD_ARTIFACT_SKEW_SECONDS = 60.0
@@ -38,80 +38,35 @@ DEFAULT_PDF_TOOL_TIMEOUT_SECONDS = 30.0
 
 RELEASE_SENTINEL = release_contract.RELEASE_SENTINEL
 RELEASE_SENTINEL_VALUE = release_contract.RELEASE_SENTINEL_VALUE
-TEXT_RESULT_MACROS = (
-    "ResultSource",
-    "PrimaryReference",
-    "VIMDLatencyDevice",
-)
-HEADLINE_MODELS = ("AZero", "MCLDNN", "IQFormer", "CSSL", "AFive")
-HEADLINE_METRICS = (
-    "Accuracy",
-    "MacroFOne",
-    "WorstRecall",
-    "NLL",
-    "ECE",
-)
+FORMAL_CACHE_DESIGNATION = release_contract.FORMAL_DESIGNATION
+PROVENANCE_MACROS = tuple(release_contract.PROVENANCE_MACROS)
 HEADLINE_NUMERIC_MACROS = tuple(
-    f"HeadlineHard{model}{metric}"
-    for model in HEADLINE_MODELS
-    for metric in HEADLINE_METRICS
+    release_contract.HEADLINE_PROVENANCE_MACROS
 )
-REGIME_TOKENS = (
-    "Hard",
-    "UnseenJammer",
-    "UnseenSpeed",
-    "HeldoutChannel",
-    "CombinedOOD",
-    "CleanACD",
-    "CleanBE",
-)
-REGIME_FIELDS = ("Reference", "AFive", "Gain", "CILow", "CIHigh")
+REGIME_TOKENS = tuple(release_contract.REGIME_TOKENS)
 REGIME_NUMERIC_MACROS = tuple(
-    f"Regime{regime}{field}"
-    for regime in REGIME_TOKENS
-    for field in REGIME_FIELDS
+    release_contract.REGIME_PROVENANCE_MACROS
 )
-MECHANISM_NUMERIC_MACROS = (
-    "MechanismMaskJS",
-    "MechanismThirdRouteWeightedCorrelation",
-    "MechanismTargetTransferRatio",
-    "MechanismTargetAmplificationShare",
-    "MechanismJammerLeakage",
-    "MechanismThirdRouteSpearman",
-    "MechanismThirdRoutePermutationP",
-    "OracleSpectralRatioGain",
-    "VIMDParameters",
-    "VIMDLatencyP50",
-    "VIMDLatencyP95",
+MECHANISM_NUMERIC_MACROS = tuple(
+    release_contract.MECHANISM_PROVENANCE_MACROS
+)
+VIMD_NUMERIC_MACROS = tuple(
+    name
+    for name in PROVENANCE_MACROS
+    if name.startswith("VIMD") and not name.endswith("Device")
 )
 NUMERIC_RESULT_MACROS = (
     *HEADLINE_NUMERIC_MACROS,
     *REGIME_NUMERIC_MACROS,
     *MECHANISM_NUMERIC_MACROS,
+    *VIMD_NUMERIC_MACROS,
 )
-RESULT_MACROS = (
-    *TEXT_RESULT_MACROS,
-    *NUMERIC_RESULT_MACROS,
-)
-PROVENANCE_MACROS = (
-    "PrimaryReference",
-    "VIMDLatencyDevice",
-    *NUMERIC_RESULT_MACROS,
-)
-LEGACY_RESULT_MACROS = (
-    "StrongestBaseline",
-    "HardMacroFOneGain",
-    "HardMacroFOneCI",
-    "HeldoutJammerGain",
-    "HeldoutChannelGain",
-    "FeatureSIRGain",
-    "VIMDLatency",
+RESULT_MACROS = tuple(
+    name
+    for name in release_contract.ALL_MACROS
+    if name != RELEASE_SENTINEL
 )
 PLACEHOLDER_TERMS = release_contract.PLACEHOLDER_TERMS
-SHA256_TEXT = re.compile(r"^[0-9a-f]{64}$")
-PRIMARY_REFERENCE_VALUE = (
-    "CSSL-AMC official-architecture supervised adaptation"
-)
 CANONICAL_FINITE_NUMBER = re.compile(
     r"^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$"
 )
@@ -121,12 +76,12 @@ REVIEW_DIRECTIVE = re.compile(
     flags=re.IGNORECASE,
 )
 RESULT_MACRO_LINE = re.compile(
-    r"^\s*\\newcommand\{\\(?P<name>[A-Za-z][A-Za-z0-9]*)\}"
+    r"^\s*\\newcommand\{\\(?P<name>[A-Za-z]+)\}"
     r"\{(?P<value>.*)\}\s*$"
 )
 OUTPUT_RECORD = re.compile(
     r"Output\s+written\s+on\s+.+?"
-    r"\(\s*(?P<pages>\d+)\s+pag\s*es?\s*,\s*"
+    r"\(\s*(?P<pages>\d+)\s+p\s*a\s*g\s*e\s*s?\s*,\s*"
     r"(?P<bytes>[\d,]+)\s+bytes\s*\)\.",
     flags=re.IGNORECASE | re.DOTALL,
 )
@@ -403,6 +358,106 @@ def _parse_results_macros(
     return macros, placeholders, errors
 
 
+def _parse_release_numbers(
+    macros: dict[str, str],
+) -> tuple[dict[str, float], list[str]]:
+    """Parse the release contract's numeric leaves as finite atomic values."""
+
+    expected = tuple(dict.fromkeys(NUMERIC_RESULT_MACROS))
+    errors: list[str] = []
+    if len(expected) != len(NUMERIC_RESULT_MACROS):
+        errors.append(
+            "canonical release contract classifies a numeric macro more than "
+            "once"
+        )
+    if not set(expected).issubset(PROVENANCE_MACROS):
+        errors.append(
+            "canonical numeric macro classification is not a subset of the "
+            "release provenance contract"
+        )
+
+    values: dict[str, float] = {}
+    for name in expected:
+        raw = macros.get(name)
+        if not isinstance(raw, str):
+            errors.append(f"{name}: numeric macro is missing")
+            continue
+        if raw != raw.strip() or CANONICAL_FINITE_NUMBER.fullmatch(raw) is None:
+            errors.append(
+                f"{name}: value must be one finite atomic number without "
+                "units or TeX"
+            )
+            continue
+        try:
+            value = float(raw)
+        except ValueError:
+            errors.append(f"{name}: value is not numeric")
+            continue
+        if not math.isfinite(value):
+            errors.append(f"{name}: value is nonfinite")
+            continue
+        values[name] = value
+
+    parameter_name = next(
+        (name for name in VIMD_NUMERIC_MACROS if name.endswith("Parameters")),
+        None,
+    )
+    if parameter_name is not None and parameter_name in values:
+        parameters = values[parameter_name]
+        if parameters <= 0 or not parameters.is_integer():
+            errors.append(
+                f"{parameter_name}: value must be a positive integer"
+            )
+
+    latency_names = tuple(
+        name
+        for name in VIMD_NUMERIC_MACROS
+        if name.startswith("VIMDLatencyP")
+    )
+    for name in latency_names:
+        if name in values and values[name] < 0:
+            errors.append(f"{name}: latency must be nonnegative")
+    latency_p50 = next(
+        (name for name in latency_names if name.endswith("PFifty")),
+        None,
+    )
+    latency_p95 = next(
+        (name for name in latency_names if name.endswith("PNinetyFive")),
+        None,
+    )
+    if (
+        latency_p50 is not None
+        and latency_p95 is not None
+        and latency_p50 in values
+        and latency_p95 in values
+        and values[latency_p50] > values[latency_p95]
+    ):
+        errors.append(
+            f"{latency_p50}/{latency_p95}: median latency exceeds the "
+            "95th-percentile latency"
+        )
+
+    regime_macro_set = set(REGIME_NUMERIC_MACROS)
+    for regime in REGIME_TOKENS:
+        lower_name = f"Regime{regime}CILow"
+        upper_name = f"Regime{regime}CIHigh"
+        if lower_name not in regime_macro_set or upper_name not in regime_macro_set:
+            errors.append(
+                f"Regime{regime}: canonical CI macro classification is "
+                "incomplete"
+            )
+            continue
+        if (
+            lower_name in values
+            and upper_name in values
+            and values[lower_name] > values[upper_name]
+        ):
+            errors.append(
+                f"Regime{regime}: CI lower exceeds CI upper"
+            )
+    return values, errors
+
+
 def _main_result_contract_errors(text: str) -> list[str]:
     """Require every macro exported by the canonical release contract."""
 
@@ -411,131 +466,70 @@ def _main_result_contract_errors(text: str) -> list[str]:
     missing_references = [
         name
         for name in RESULT_MACROS
-        if re.search(rf"\\{re.escape(name)}(?![A-Za-z])", active) is None
+        if re.search(rf"\\{re.escape(name)}(?![A-Za-z0-9])", active) is None
     ]
     if missing_references:
         errors.append(
             "main.tex does not reference required public-table macros: "
             + ",".join(missing_references)
         )
+    public_text, _, expansion_errors = _expand_internalreview_source(
+        text,
+        internal_review=False,
+    )
+    if expansion_errors:
+        errors.append(
+            "main.tex public-table conditional expansion failed: "
+            + "; ".join(expansion_errors)
+        )
+    else:
+        literal_findings = _placeholder_findings(
+            public_text,
+            PUBLIC_BRANCH_PLACEHOLDER,
+        )
+        if literal_findings:
+            errors.append(
+                "main.tex public table contains literal pending/generated "
+                "content: "
+                + "; ".join(
+                    f"line {item['line_number']}: {item['text']}"
+                    for item in literal_findings[:5]
+                )
+            )
     return errors
 
 
-def _sha256_value(value: Any) -> bool:
-    return isinstance(value, str) and SHA256_TEXT.fullmatch(value) is not None
+def _canonical_release_lock_errors(lock: dict[str, Any]) -> list[str]:
+    """Expose the canonical release validator as a compatibility error list."""
+
+    try:
+        release_contract.validate_release_lock_structure(lock)
+    except release_contract.ReleaseValidationError as error:
+        return [str(error)]
+    return []
 
 
 def _release_lock_state_errors(lock: dict[str, Any]) -> list[str]:
-    errors: list[str] = []
-    expected_keys = set(
-        getattr(release_contract, "RELEASE_LOCK_KEYS", frozenset())
-    )
-    if expected_keys and set(lock) != expected_keys:
-        errors.append(
-            "release-lock key mismatch; missing="
-            + ",".join(sorted(expected_keys.difference(lock)))
-            + "; unexpected="
-            + ",".join(sorted(set(lock).difference(expected_keys)))
-        )
-    if lock.get("schema_version") != RELEASE_LOCK_SCHEMA:
-        errors.append("schema_version mismatch")
-    if lock.get("submission_unlocked") is not True:
-        errors.append("submission_unlocked is not true")
-    if lock.get("release_sentinel_name") != RELEASE_SENTINEL:
-        errors.append("release_sentinel_name mismatch")
-    if lock.get("release_sentinel_value") != RELEASE_SENTINEL_VALUE:
-        errors.append("release_sentinel_value mismatch")
-    generated_utc = lock.get("generated_utc")
-    try:
-        timestamp = datetime.fromisoformat(str(generated_utc).replace("Z", "+00:00"))
-    except ValueError:
-        errors.append("generated_utc is not an ISO-8601 timestamp")
-    else:
-        if timestamp.tzinfo is None:
-            errors.append("generated_utc has no timezone")
-    return errors
+    return _canonical_release_lock_errors(lock)
 
 
 def _release_lock_identity_errors(lock: dict[str, Any]) -> list[str]:
-    errors: list[str] = []
-    if lock.get("formal_cache_designation") != FORMAL_CACHE_DESIGNATION:
-        errors.append("formal_cache_designation mismatch")
-    run_id = lock.get("run_id")
-    if (
-        not isinstance(run_id, str)
-        or not run_id.strip()
-        or _is_placeholder(run_id)
-    ):
-        errors.append("run_id is absent or placeholder")
-    if not _sha256_value(lock.get("cache_digest")):
-        errors.append("cache_digest is not a lowercase SHA-256 digest")
-    for field in (
-        "run_json_sha256",
-        "results_auto_sha256",
-        "macro_value_manifest_sha256",
-        "source_gate_sha256",
-    ):
-        if not _sha256_value(lock.get(field)):
-            errors.append(f"{field} is not a lowercase SHA-256 digest")
-    artifact_audit = lock.get("artifact_audit")
-    if (
-        not isinstance(artifact_audit, dict)
-        or artifact_audit.get("passed") is not True
-    ):
-        errors.append("artifact_audit is absent, malformed, or not passed")
-    return errors
+    return _canonical_release_lock_errors(lock)
 
 
 def _release_lock_provenance_errors(lock: dict[str, Any]) -> list[str]:
     provenance = lock.get("macro_provenance")
-    if not isinstance(provenance, dict):
-        return ["macro_provenance is not an object"]
-    expected = set(PROVENANCE_MACROS)
-    actual = set(provenance)
-    if actual != expected:
-        missing = sorted(expected.difference(actual))
-        unexpected = sorted(actual.difference(expected))
-        return [
-            "macro_provenance key mismatch; missing="
-            + ",".join(missing)
-            + "; unexpected="
-            + ",".join(unexpected)
-        ]
-    errors: list[str] = []
-    for name in PROVENANCE_MACROS:
-        record = provenance[name]
-        if not isinstance(record, dict):
-            errors.append(f"{name}: provenance record is not an object")
-            continue
-        if set(record) != {
-            "source_artifact",
-            "source_sha256",
-            "derivation",
-        }:
-            errors.append(f"{name}: provenance fields are not exact")
-            continue
-        source = record.get("source_artifact")
-        if (
-            not isinstance(source, str)
-            or not source.strip()
-            or Path(source).is_absolute()
-            or ".." in Path(source).parts
-        ):
-            errors.append(
-                f"{name}: source_artifact is not a safe run-relative path"
-            )
-        if not _sha256_value(record.get("source_sha256")):
-            errors.append(f"{name}: source_sha256 is invalid")
-        derivation = record.get("derivation")
-        if (
-            not isinstance(derivation, str)
-            or len(derivation.strip()) < 12
-            or _is_placeholder(derivation)
-            or "\n" in derivation
-            or "\r" in derivation
-        ):
-            errors.append(f"{name}: derivation is absent or non-auditable")
-    return errors
+    if isinstance(provenance, dict):
+        expected = set(PROVENANCE_MACROS)
+        actual = set(provenance)
+        if actual != expected:
+            return [
+                "release lock macro provenance mismatch; missing="
+                + ",".join(sorted(expected.difference(actual)))
+                + "; unexpected="
+                + ",".join(sorted(actual.difference(expected)))
+            ]
+    return _canonical_release_lock_errors(lock)
 
 
 def _finding(line_number: int, line: str) -> dict[str, Any]:
@@ -772,13 +766,13 @@ def _declared_source_dependencies(
 
     def add_relative(raw_value: str, default_suffix: str | None = None) -> None:
         value = raw_value.strip()
-        if not value or "\\" in value:
+        candidate = Path(value)
+        if not value or ("\\" in value and not candidate.is_absolute()):
             errors.append(
                 "main.tex dependency path is empty or macro-derived: "
                 f"{raw_value!r}"
             )
             return
-        candidate = Path(value)
         if default_suffix is not None and not candidate.suffix:
             candidate = candidate.with_suffix(default_suffix)
         if not candidate.is_absolute():
@@ -787,7 +781,8 @@ def _declared_source_dependencies(
         dependencies[_path_key(resolved)] = resolved
 
     for match in re.finditer(
-        r"\\(?:input|include)\s*(?:\{(?P<braced>[^{}]+)\}|"
+        r"\\(?:input|include)(?![A-Za-z@])\s*"
+        r"(?:\{(?P<braced>[^{}]+)\}|"
         r"(?P<plain>[^\s%]+))",
         expanded_main,
     ):
@@ -1222,20 +1217,21 @@ def audit_paper_build(
             required=True,
             failure="main.tex does not include results_auto.tex",
         )
-        result_contract_errors = _main_result_contract_errors(main_text)
-        report["result_contract_errors"] = result_contract_errors
-        _record_check(
-            report,
-            "public_table_macro_wiring",
-            not result_contract_errors,
-            actual=result_contract_errors,
-            required=(
-                "every v2 result macro referenced; no retired macros or "
-                "literal pending/generated result text"
-            ),
-            failure="; ".join(result_contract_errors),
-        )
-        expanded_main, selected_branch_text, expansion_errors = (
+        if normalized_mode == "release":
+            result_contract_errors = _main_result_contract_errors(main_text)
+            report["result_contract_errors"] = result_contract_errors
+            _record_check(
+                report,
+                "public_table_macro_wiring",
+                not result_contract_errors,
+                actual=result_contract_errors,
+                required=(
+                    "every macro exported by validate_release.ALL_MACROS is "
+                    "referenced by main.tex"
+                ),
+                failure="; ".join(result_contract_errors),
+            )
+        expanded_main, _selected_branch_text, expansion_errors = (
             _expand_internalreview_source(
                 main_text,
                 internal_review=normalized_mode == "internal",
@@ -1251,7 +1247,7 @@ def audit_paper_build(
         )
         if normalized_mode == "release":
             public_placeholders = _placeholder_findings(
-                selected_branch_text,
+                expanded_main,
                 PUBLIC_BRANCH_PLACEHOLDER,
             )
             report["public_source_placeholders"] = public_placeholders
@@ -1421,6 +1417,61 @@ def audit_paper_build(
             failure="; ".join(macro_errors),
         )
         if normalized_mode == "release":
+            canonical_results_error: str | None = None
+            try:
+                canonical_macros = release_contract.parse_results_auto(
+                    paths["results_auto"]
+                )
+                after_contract_read = _stable_read(
+                    paths["results_auto"],
+                    "paper result macro file after canonical parser audit",
+                )
+            except (
+                release_contract.ReleaseValidationError,
+                PaperBuildValidationError,
+                OSError,
+                UnicodeError,
+            ) as error:
+                canonical_results_error = str(error)
+            else:
+                results_artifact = artifacts.get("results_auto")
+                if (
+                    results_artifact is None
+                    or after_contract_read.sha256 != results_artifact.sha256
+                    or after_contract_read.mtime_ns != results_artifact.mtime_ns
+                    or canonical_macros != macros
+                ):
+                    canonical_results_error = (
+                        "validate_release parser output or source bytes differ "
+                        "from the stable paper-gate snapshot"
+                    )
+            _record_check(
+                report,
+                "release_results_contract",
+                canonical_results_error is None,
+                actual=canonical_results_error,
+                required=(
+                    "exact validate_release.parse_results_auto grammar and "
+                    "macro contract"
+                ),
+                failure=(
+                    "results_auto.tex fails the canonical release parser: "
+                    f"{canonical_results_error}"
+                ),
+            )
+            numeric_values, numeric_errors = _parse_release_numbers(macros)
+            report["numeric_result_values"] = numeric_values
+            _record_check(
+                report,
+                "release_numeric_contract",
+                not numeric_errors,
+                actual=numeric_errors,
+                required=(
+                    "every canonical numeric result is a finite atomic number "
+                    "with valid CI and latency ordering"
+                ),
+                failure="; ".join(numeric_errors),
+            )
             _record_check(
                 report,
                 "release_results_nonplaceholder",

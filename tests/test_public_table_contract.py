@@ -38,8 +38,8 @@ def _valid_numeric_macros() -> dict[str, str]:
             "MechanismThirdRoutePermutationP": "0.02",
             "OracleSpectralRatioGain": "+1.50",
             "VIMDParameters": "12345",
-            "VIMDLatencyP50": "1.00",
-            "VIMDLatencyP95": "2.00",
+            "VIMDLatencyPFifty": "1.00",
+            "VIMDLatencyPNinetyFive": "2.00",
         }
     )
     return values
@@ -108,13 +108,13 @@ class PublicTableContractTest(unittest.TestCase):
         macros["RegimeUnseenSpeedCILow"] = "+9.00"
         macros["RegimeUnseenSpeedCIHigh"] = "+8.00"
         macros["VIMDParameters"] = "12,345"
-        macros["VIMDLatencyP50"] = "3.00 ms"
+        macros["VIMDLatencyPFifty"] = "3.00 ms"
         _, errors = gate._parse_release_numbers(macros)
         joined = "\n".join(errors)
         self.assertIn("HeadlineHardAZeroAccuracy", joined)
         self.assertIn("RegimeUnseenSpeed: CI lower", joined)
         self.assertIn("VIMDParameters", joined)
-        self.assertIn("VIMDLatencyP50", joined)
+        self.assertIn("VIMDLatencyPFifty", joined)
 
     def test_release_lock_v2_binds_every_reportable_value(self) -> None:
         lock = _valid_lock()

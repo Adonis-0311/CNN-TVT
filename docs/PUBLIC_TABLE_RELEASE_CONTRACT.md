@@ -96,8 +96,8 @@ MechanismThirdRouteSpearman
 MechanismThirdRoutePermutationP
 OracleSpectralRatioGain
 VIMDParameters
-VIMDLatencyP50
-VIMDLatencyP95
+VIMDLatencyPFifty
+VIMDLatencyPNinetyFive
 ```
 
 The mechanism sources are, respectively, five-seed audited values of

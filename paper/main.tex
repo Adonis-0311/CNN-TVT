@@ -99,7 +99,7 @@ vehicular Doppler, \method improves hard-interference macro-F1 by
 clean-condition performance. It also yields
 \OracleSpectralRatioGain~dB oracle-conditioned spectral component-ratio gain
 with \VIMDParameters\ parameters and batch-one P50/P95 latency of
-\VIMDLatencyP50/\VIMDLatencyP95~ms on \VIMDLatencyDevice.
+\VIMDLatencyPFifty/\VIMDLatencyPNinetyFive~ms on \VIMDLatencyDevice.
 Inference uses one received view; paired views are used only during training
 and source-aligned statistical comparison.  The evidence scope is simulation
 only and excludes unanchored in-taxonomy modulated cochannel collisions.
@@ -660,7 +660,7 @@ The formal comparator set is exactly the A0 direct shared backbone, MCLDNN
 \cite{xu2020mcldnn}, the transparent IQFormer-inspired baseline, and the
 CSSL-AMC supervised adaptation described below.  The predeclared primary
 reference is the CSSL-AMC adaptation; this is a fixed comparison anchor, not a
-post-hoc strongest-method claim.  The recent low-SNR/noise-robust AMC
+post-hoc winner claim.  The recent low-SNR/noise-robust AMC
 comparator is a 2025 CSSL-AMC
 official-architecture supervised adaptation
 \cite{du2025contrastive}: its encoder/classifier graph is audited against the
@@ -835,7 +835,7 @@ Oracle-conditioned spectral ratio gain (dB) &
 \OracleSpectralRatioGain\\
 Parameters & \VIMDParameters\\
 Batch-one P50/P95 on \VIMDLatencyDevice\ (ms) &
-\VIMDLatencyP50/\VIMDLatencyP95\\
+\VIMDLatencyPFifty/\VIMDLatencyPNinetyFive\\
 \bottomrule
 \end{tabular}
 \end{table}

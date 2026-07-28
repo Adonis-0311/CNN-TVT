@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
@@ -197,12 +198,12 @@ class ReleaseGateTest(unittest.TestCase):
         placeholder_macro: str | None = None,
     ) -> None:
         records = {}
-        for index, name in enumerate(self.validator.RESULT_MACROS):
+        for index, name in enumerate(self.validator.PROVENANCE_MACROS):
             value = (
                 "--"
                 if name == placeholder_macro
-                else "IQFormer-inspired"
-                if name == "StrongestBaseline"
+                else "CSSL-AMC supervised adaptation"
+                if name == "PrimaryReference"
                 else f"{index + 1}.0"
             )
             records[name] = {
@@ -217,6 +218,45 @@ class ReleaseGateTest(unittest.TestCase):
             "run_id": run_record["run_id"],
             "cache_digest": run_record["cache_digest"],
             "run_json_sha256": self.validator.sha256_file(run_json),
+            "scientific_release_gate": {
+                "passed": True,
+                "hard_gain_pp_each_nonoracle_baseline": {
+                    "a0_backbone": 6.0,
+                    "mcldnn_reimplementation": 6.0,
+                    "iqformer_inspired": 6.0,
+                    "cssl_amc_supervised_adaptation": 6.0,
+                },
+                "hard_ablation_gain_pp": {
+                    "a1_single_mask": 1.0,
+                    "a6_dual_full": 1.0,
+                },
+                "ood_gain_pp": {
+                    "unseen_jammer": 4.0,
+                    "unseen_speed": 4.0,
+                    "heldout_channel": 0.0,
+                },
+                "ood_pass_count": 2,
+                "clean_noninferiority": {
+                    "clean_retention_seen_acd": {
+                        "gain_pp": 0.0,
+                        "ci95_low_pp": -1.0,
+                    },
+                    "clean_retention_held_be": {
+                        "gain_pp": 0.0,
+                        "ci95_low_pp": -1.0,
+                    },
+                },
+                "mechanism_means": {
+                    "mask_js": 0.1,
+                    "overlap_uncertainty_route_weighted_correlation": 0.2,
+                    "target_energy_transfer_ratio_mean": 1.1,
+                    "target_energy_transfer_ratio_amplification_share": 0.3,
+                    "jammer_leakage": 0.1,
+                    "oracle_vs_predicted_overlap_spearman": 0.2,
+                    "overlap_permutation_p_value": 0.01,
+                    "counterfactual_tf_sir_gain_db": 1.0,
+                },
+            },
             "macros": records,
         }
         path.write_text(
@@ -226,6 +266,54 @@ class ReleaseGateTest(unittest.TestCase):
 
     def _expected_manifest(self, path: Path) -> dict:
         return self.validator.load_strict_json(path)
+
+    def test_macro_contract_matches_generator_exactly(self) -> None:
+        from tvt_submission import generate_macro_values as generator
+
+        self.assertEqual(
+            tuple(self.validator.PROVENANCE_MACROS),
+            tuple(generator.PROVENANCE_MACROS),
+        )
+        self.assertEqual(
+            self.validator.RESULT_MACROS,
+            self.validator.PROVENANCE_MACROS,
+        )
+        self.assertEqual(len(self.validator.PROVENANCE_MACROS), 73)
+        self.assertEqual(len(set(self.validator.PROVENANCE_MACROS)), 73)
+        self.assertEqual(len(self.validator.NON_SENTINEL_RESULT_MACROS), 74)
+        self.assertEqual(len(self.validator.ALL_MACROS), 75)
+        self.assertEqual(
+            self.validator.ALL_MACROS,
+            (
+                self.validator.RELEASE_SENTINEL,
+                "ResultSource",
+                *self.validator.PROVENANCE_MACROS,
+            ),
+        )
+        self.assertTrue(
+            all(
+                name.startswith("Regime")
+                for name in self.validator.REGIME_PROVENANCE_MACROS
+            )
+        )
+        self.assertFalse(
+            any(
+                name.startswith("OOD")
+                for name in self.validator.PROVENANCE_MACROS
+            )
+        )
+
+    def test_placeholder_detection_uses_token_boundaries(self) -> None:
+        self.assertFalse(
+            self.validator._is_placeholder(
+                "Arithmetic mean of mcldnn_reimplementation/accuracy"
+            )
+        )
+        for placeholder in ("n/a", "NaN", "pending", "generated"):
+            with self.subTest(placeholder=placeholder):
+                self.assertTrue(
+                    self.validator._is_placeholder(placeholder)
+                )
 
     def test_eligible_release_writes_and_revalidates_lock(self) -> None:
         with tempfile.TemporaryDirectory(
@@ -254,7 +342,7 @@ class ReleaseGateTest(unittest.TestCase):
                     macros[self.validator.RELEASE_SENTINEL],
                     self.validator.RELEASE_SENTINEL_VALUE,
                 )
-                self.assertNotEqual(macros["HardMacroFOneGain"], "--")
+                self.assertNotEqual(macros["RegimeHardGain"], "--")
                 lock = self.validator.load_strict_json(
                     paper_root / "release_lock.json"
                 )
@@ -289,7 +377,7 @@ class ReleaseGateTest(unittest.TestCase):
                 macro_manifest,
                 run_json,
                 run_record,
-                placeholder_macro="HardMacroFOneGain",
+                placeholder_macro="RegimeHardGain",
             )
             before = (paper_root / "results_auto.tex").read_bytes()
             with self.assertRaisesRegex(
@@ -419,7 +507,45 @@ class ReleaseGateTest(unittest.TestCase):
             )
             expected = self._expected_manifest(macro_manifest)
             tampered = json.loads(json.dumps(expected))
-            tampered["macros"]["HardMacroFOneGain"]["value"] = "+999.99"
+            tampered["macros"]["RegimeHardGain"]["value"] = "+999.99"
+            macro_manifest.write_text(
+                self.validator.canonical_macro_manifest_text(tampered),
+                encoding="utf-8",
+            )
+            before = (paper_root / "results_auto.tex").read_bytes()
+            with mock.patch.object(
+                self.validator,
+                "rebuild_expected_macro_manifest",
+                return_value=expected,
+            ), self.assertRaisesRegex(
+                self.validator.ReleaseValidationError,
+                "deterministic artifact re-derivation",
+            ):
+                self.validator.write_release(
+                    run_json=run_json,
+                    paper_root=paper_root,
+                    macro_values=macro_manifest,
+                )
+            self.assertEqual(
+                (paper_root / "results_auto.tex").read_bytes(),
+                before,
+            )
+            self.assertFalse((paper_root / "release_lock.json").exists())
+
+    def test_scientific_gate_tamper_is_rejected_before_release_write(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory(
+            prefix="vimd_release_gate_tamper_"
+        ) as temporary:
+            run_json, paper_root, macro_manifest = self._fixture(
+                Path(temporary)
+            )
+            expected = self._expected_manifest(macro_manifest)
+            tampered = json.loads(json.dumps(expected))
+            tampered["scientific_release_gate"]["mechanism_means"][
+                "mask_js"
+            ] = 999.0
             macro_manifest.write_text(
                 self.validator.canonical_macro_manifest_text(tampered),
                 encoding="utf-8",
@@ -466,9 +592,16 @@ class ReleaseGateTest(unittest.TestCase):
                 )
                 results_path = paper_root / "results_auto.tex"
                 original = results_path.read_text(encoding="utf-8")
+                original_value = expected["macros"]["RegimeHardGain"][
+                    "value"
+                ]
                 tampered = original.replace(
-                    r"\newcommand{\HardMacroFOneGain}{3.0}",
-                    r"\newcommand{\HardMacroFOneGain}{+1234.56}",
+                    (
+                        r"\newcommand{\RegimeHardGain}{"
+                        f"{original_value}"
+                        "}"
+                    ),
+                    r"\newcommand{\RegimeHardGain}{+1234.56}",
                     1,
                 )
                 self.assertNotEqual(tampered, original)
@@ -498,14 +631,62 @@ class ReleaseGateTest(unittest.TestCase):
                         paper_root=paper_root,
                     )
 
+    def test_existing_release_lock_binds_scientific_gate_exactly(self) -> None:
+        with tempfile.TemporaryDirectory(
+            prefix="vimd_release_existing_gate_tamper_"
+        ) as temporary:
+            run_json, paper_root, macro_manifest = self._fixture(
+                Path(temporary)
+            )
+            expected = self._expected_manifest(macro_manifest)
+            with mock.patch.object(
+                self.validator,
+                "rebuild_expected_macro_manifest",
+                return_value=expected,
+            ):
+                self.validator.write_release(
+                    run_json=run_json,
+                    paper_root=paper_root,
+                    macro_values=macro_manifest,
+                )
+                tampered = json.loads(json.dumps(expected))
+                tampered["scientific_release_gate"]["ood_pass_count"] = 0
+                tampered_digest = hashlib.sha256(
+                    self.validator.canonical_macro_manifest_text(
+                        tampered
+                    ).encode("utf-8")
+                ).hexdigest()
+                lock_path = paper_root / "release_lock.json"
+                lock = self.validator.load_strict_json(lock_path)
+                lock["macro_value_manifest_sha256"] = tampered_digest
+                lock_path.write_text(
+                    json.dumps(
+                        lock,
+                        ensure_ascii=False,
+                        allow_nan=False,
+                        indent=2,
+                        sort_keys=True,
+                    )
+                    + "\n",
+                    encoding="utf-8",
+                )
+                with self.assertRaisesRegex(
+                    self.validator.ReleaseValidationError,
+                    "manifest digest disagrees",
+                ):
+                    self.validator.validate_existing_release(
+                        run_json=run_json,
+                        paper_root=paper_root,
+                    )
+
     def test_results_parser_rejects_every_non_contract_line(self) -> None:
         values = {
             name: (
-                "IQFormer-inspired"
-                if name in {"PrimaryReference", "StrongestBaseline"}
+                "CSSL-AMC supervised adaptation"
+                if name == "PrimaryReference"
                 else "1.0"
             )
-            for name in self.validator.RESULT_MACROS
+            for name in self.validator.PROVENANCE_MACROS
         }
         rendered = self.validator.render_results_auto(
             {"run_id": "fixture", "cache_digest": "a" * 64},
@@ -527,6 +708,45 @@ class ReleaseGateTest(unittest.TestCase):
                 )
                 with self.assertRaises(self.validator.ReleaseValidationError):
                     self.validator.parse_results_auto(results)
+
+    def test_parser_accepts_spelled_latency_macros_and_rejects_digits(
+        self,
+    ) -> None:
+        values = {
+            name: (
+                "CSSL-AMC supervised adaptation"
+                if name == "PrimaryReference"
+                else "1.0"
+            )
+            for name in self.validator.PROVENANCE_MACROS
+        }
+        rendered = self.validator.render_results_auto(
+            {"run_id": "fixture", "cache_digest": "a" * 64},
+            values,
+        )
+        with tempfile.TemporaryDirectory(
+            prefix="vimd_release_parser_latency_"
+        ) as temporary:
+            results = Path(temporary) / "results_auto.tex"
+            results.write_text(rendered, encoding="utf-8")
+            parsed = self.validator.parse_results_auto(results)
+            self.assertEqual(parsed["VIMDLatencyPFifty"], "1.0")
+            self.assertEqual(parsed["VIMDLatencyPNinetyFive"], "1.0")
+
+            for valid_name, invalid_name in (
+                ("VIMDLatencyPFifty", "VIMDLatencyP50"),
+                ("VIMDLatencyPNinetyFive", "VIMDLatencyP95"),
+            ):
+                with self.subTest(invalid_name=invalid_name):
+                    results.write_text(
+                        rendered.replace(valid_name, invalid_name, 1),
+                        encoding="utf-8",
+                    )
+                    with self.assertRaisesRegex(
+                        self.validator.ReleaseValidationError,
+                        "executable or unknown",
+                    ):
+                        self.validator.parse_results_auto(results)
 
 
 if __name__ == "__main__":

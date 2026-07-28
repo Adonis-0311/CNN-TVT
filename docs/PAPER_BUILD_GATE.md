@@ -23,11 +23,10 @@ result macros, and release lock reached their audited state.
 
 Internal mode requires exactly one active line-level
 `\internalreviewtrue` directive. It permits the safe placeholder
-`results_auto.tex`, but that file must still contain the complete 74-command
-public-table interface (3 text and 71 atomic numeric commands) and no other
-executable TeX content. A valid internal build is not submission evidence.
-The exact command and unit contract is recorded in
-`docs/PUBLIC_TABLE_RELEASE_CONTRACT.md`.
+`results_auto.tex`, but that file must still contain every non-sentinel macro
+exported by `validate_release.ALL_MACROS` and no other executable TeX content.
+The build gate imports that list at runtime; it does not maintain a second
+macro schema. A valid internal build is not submission evidence.
 
 ### Initial release
 
@@ -40,16 +39,29 @@ The exact command and unit contract is recorded in
 Release mode additionally requires:
 
 - exactly one active `\internalreviewfalse`;
-- all result macros populated with non-placeholder values;
-- every numeric result represented by one canonical, unit-free, finite scalar
-  satisfying its table-specific bounds and confidence-interval ordering;
+- `results_auto.tex` accepted byte-for-byte by the strict
+  `validate_release.parse_results_auto` grammar, with all exported macros
+  populated by non-placeholder values;
+- every dynamically classified numeric result represented as one finite
+  unit-free number, with a positive integer parameter count, ordered
+  confidence bounds, and
+  `VIMDLatencyPFifty <= VIMDLatencyPNinetyFive`;
+- every exported public macro referenced by `main.tex`;
 - `\EligibleLockedResults` defined as `eligible_locked_formal_run`, matching
   the evidence sentinel emitted by the result-release validator and required
   by `paper/main.tex`;
 - a strict-JSON schema-v2 `paper/release_lock.json` with
   `submission_unlocked=true`, the eligible formal-run identity, a SHA-256
   binding to the exact `results_auto.tex`, and exact per-command provenance;
-- a final PDF of at most 14 pages.
+- no literal `pending`/`generated` residue in the selected public
+  `\ifinternalreview` branches or as standalone extracted PDF cells; and
+- a structurally parsed final PDF of at most 14 pages.
+
+The release writer owns the scientific macro and provenance contract. The
+paper gate consumes its exported macro groups, strict parser, and portable
+lock validator instead of copying a second list. Its paper-side numeric check
+only constrains the final TeX leaves to safe atomic numbers and verifies
+ordering relationships that must remain true after serialization.
 
 The 14-page default is the current regular initial-submission limit and
 includes references and biographies. Revised/final regular papers currently
@@ -64,7 +76,8 @@ The final `paper/build/main.log` is rejected for any of:
 - an undefined citation;
 - an undefined reference;
 - an overfull horizontal or vertical box;
-- a remaining rerun request for labels, cross-references, BibTeX, or Biber;
+- a remaining rerun request for labels, cross-references, outlines,
+  BibTeX, or Biber;
 - no parseable final `Output written on ...` record;
 - more than one ambiguous final-output record.
 
@@ -73,27 +86,40 @@ normalizes whitespace for the final-output record and therefore accepts that
 normal multi-line form. It reports the page count in JSON even in internal
 mode.
 
-The logged PDF byte count must exactly equal the audited PDF size, and the
-file must start with a PDF signature. This binds the selected PDF to the final
-record in the selected log without adding a PDF library dependency.
+The logged PDF byte count must exactly equal the audited PDF size. In
+addition, a real `pdfinfo` parser must successfully read the selected PDF,
+report the same file size, and report a positive page count exactly equal to
+the log. Release page limits use this independently parsed page count, never
+the log alone. Missing or failing `pdfinfo` is a fail-closed result.
+
+Release mode also uses `pdftotext` as a defense-in-depth check for standalone
+`pending` or `generated` table cells. A missing/failing extractor or an
+unextractable public manuscript is rejected. Tool locations can be pinned with
+`--pdfinfo` and `--pdftotext`; neither tool is allowed to write an output file.
 
 ## Freshness and multiple LaTeX passes
 
-The gate audits only the final log/PDF pair. Multiple `latexmk` passes are
-allowed; intermediate `.aux`, `.bbl`, and `.out` timestamps are intentionally
-ignored. The final log and PDF must:
+The gate audits the final log/PDF/recorder triplet. Multiple `latexmk` passes
+are allowed; intermediate `.aux`, `.bbl`, and `.out` files under the selected
+build directory are not treated as manuscript sources. The final log, PDF, and
+`main.fls` must:
 
 - be no more than 60 seconds apart by default;
 - agree on exact PDF byte count; and
-- be at least as new as `main.tex` and `results_auto.tex`, allowing a
-  two-second filesystem timestamp tolerance.
+- bind the exact selected main source, result file, log, and PDF through
+  recorder `INPUT`/`OUTPUT` entries.
 
-Release mode applies the same freshness rule to `release_lock.json`.
-Therefore, changing prose, citations, result macros, or the release lock after
-the final build makes the previous PDF stale and forces a rebuild. The
-tolerances can be changed explicitly for an unusual filesystem, but widening
-them weakens the provenance boundary and must not be used to excuse a known
-stale build.
+Every actual recorder `INPUT` under the project tree is read and freshness
+checked, including transitive TeX inputs, local classes, and figures.
+Dependencies declared directly by `main.tex` are also checked; this explicitly
+covers bibliography sources even when the final pdfLaTeX recorder lists only
+the generated `.bbl`. In release mode the same rule covers the selected public
+`authors_verified.tex` branch and `release_lock.json`. Therefore changing
+prose, authors, citations, bibliography data, figures, local classes,
+transitive inputs, result macros, or the release lock after the final build
+forces a rebuild. A two-second filesystem timestamp tolerance is allowed by
+default. Widening it weakens the provenance boundary and must not excuse a
+known stale build.
 
 ## Paths and output contract
 
@@ -105,10 +131,15 @@ Defaults relative to `--paper-root` are:
 | Result macros | `results_auto.tex` |
 | Final log | `build/main.log` |
 | Final PDF | `build/main.pdf` |
+| Recorder manifest | `build/main.fls` |
 | Release lock | `release_lock.json` |
 
-Each can be overridden with `--tex`, `--results`, `--log`, `--pdf`, or
-`--release-lock`. Relative overrides are resolved under `--paper-root`.
+Paths can be selected with `--tex`, `--results`, `--log`, `--pdf`, `--fls`,
+or `--release-lock`; relative paths resolve under `--paper-root`. The result
+path is deliberately stricter: it must resolve to
+`paper_root/results_auto.tex`, because `main.tex` is required to include that
+exact file. Recorder bindings prevent an alternate source, log, or PDF from
+being audited as a decoy.
 
 Exit codes are:
 
@@ -122,17 +153,19 @@ individual check, bounded log findings, page count, and failure reasons.
 
 ## Current internal-build observation
 
-On 2026-07-28 the checked-in log and PDF parsed cleanly as a seven-page build:
-there were no fatal errors, undefined citations/references, overfull boxes, or
-rerun requests, and the logged byte count matched the PDF. The static gate
-nevertheless rejected that build because `paper/main.tex` had been updated
-after the PDF/log pair. This is the intended fail-closed outcome; a fresh
-internal compile is required before the same command can return zero.
+On 2026-07-28 the fresh
+`paper/build_validation/main.{log,pdf,fls}` triplet passed all 36 applicable
+internal checks. The PDF parsed independently as eight pages; the log reported
+the same page and byte counts, no fatal error, unresolved citation/reference,
+overfull box, or rerun request remained, every recorder binding was exact, and
+all project inputs were fresh. The result is intentionally
+`internal_build_validated=true` and `release_eligible=false`: the manuscript
+still uses internal-review mode and safe placeholder result macros.
 
 ## Tests
 
 ```powershell
-python -m unittest tests.test_paper_build_gate -v
+python -m unittest tests.test_paper_build_gate tests.test_public_table_contract -v
 ```
 
 The synthetic fixtures cover:
@@ -141,11 +174,25 @@ The synthetic fixtures cover:
 - a locked, non-placeholder 14-page release;
 - fatal errors, undefined citations/references, overfull boxes, and rerun
   warnings;
+- arbitrary MiKTeX line wrapping inside the final `pages` token;
 - absent and unparseable logs;
 - PDF/log byte disagreement and invalid PDF signatures;
-- stale sources;
+- independently parsed PDF/log page disagreement, including a real 16-page
+  PDF whose log falsely claims 14 pages;
+- stale direct and transitive sources from `main.fls`, including authors,
+  bibliography, figures, and local class files;
+- a decoy `--results` override;
+- public-source and extracted-PDF `pending`/`generated` residue;
 - wrong review mode, placeholders, a missing lock, a missing evidence
   sentinel, an invalid lock digest, and page overflow;
+- a black-box `generate_macro_values` -> `validate_release.write_release` ->
+  paper-gate integration with the exported macro counts, alphabetic
+  `VIMDLatencyPFifty` / `VIMDLatencyPNinetyFive` names, scientific release
+  gate, and provenance count checked;
+- finite atomic numeric leaves plus invalid units, nonfinite values, and
+  reversed confidence bounds;
+- rejection of digit-bearing TeX control-sequence names such as
+  `VIMDLatencyP50`;
 - JSON stdout plus nonzero CLI failure behavior; and
 - a read-only audit of the checked-in internal build.
 

@@ -80,6 +80,31 @@ class MetricsTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             paired_bundle_statistics(reference, candidate, draws=20)
 
+    def test_prediction_bundle_profile_subset_preserves_alignment(self) -> None:
+        bundle = _bundle_from_predictions(
+            np.asarray([0, 1, 0, 1]),
+            np.asarray([0, 1, 0, 1]),
+            source_ids=np.asarray([10, 20, 30, 40]),
+        )
+        bundle.target_profile_index = np.asarray([0, 1, 2, 4])
+        subset = bundle.subset(np.asarray([True, False, True, False]))
+        subset.validate()
+        np.testing.assert_array_equal(subset.source_ids, [10, 30])
+        np.testing.assert_array_equal(subset.target_profile_index, [0, 2])
+
+    def test_paired_statistics_reject_profile_metadata_drift(self) -> None:
+        labels = np.asarray([0, 1, 0, 1])
+        reference = _bundle_from_predictions(labels, labels)
+        candidate = _bundle_from_predictions(labels, labels)
+        reference.target_profile_index = np.asarray([0, 1, 2, 4])
+        candidate.target_profile_index = np.asarray([0, 1, 3, 4])
+        with self.assertRaisesRegex(ValueError, "target-profile"):
+            paired_accuracy_macro_f1_bootstrap(
+                reference,
+                candidate,
+                draws=10,
+            )
+
     def test_mcnemar_reports_exact_p_value(self) -> None:
         reference = np.asarray([True, True, False, False, False])
         candidate = np.asarray([True, False, True, True, True])

@@ -80,11 +80,26 @@ class MacroGeneratorTest(unittest.TestCase):
             float(recall[supported].min()),
         )
 
+    def _cyclic_errors(
+        self,
+        labels: np.ndarray,
+        *,
+        errors_per_class: int,
+    ) -> np.ndarray:
+        predictions = labels.copy()
+        classes = int(labels.max()) + 1
+        for class_index in range(classes):
+            indices = np.flatnonzero(labels == class_index)
+            predictions[indices[:errors_per_class]] = (
+                class_index + 1
+            ) % classes
+        return predictions
+
     def _fixture(
         self,
         root: Path,
         *,
-        tied_strongest: bool = False,
+        hard_gate_fails: bool = False,
     ) -> tuple[Path, Path]:
         cache_digest = "a" * 64
         cache_root = root / "formal_cache"
@@ -102,33 +117,79 @@ class MacroGeneratorTest(unittest.TestCase):
         run_root = root / "formal_run"
         models = [
             "a0_backbone",
+            "a1_single_mask",
+            "a5_vimd_full",
+            "a6_dual_full",
             "mcldnn_reimplementation",
             "iqformer_inspired",
             "cssl_amc_supervised_adaptation",
-            "a5_vimd_full",
         ]
         seeds = [17, 29]
         regimes = [
             "hard_interference",
             "unseen_jammer",
+            "unseen_speed",
             "heldout_channel",
+            "combined_ood",
+            "clean_retention",
         ]
         classes = 3
-        labels = np.asarray([0, 0, 1, 1, 2, 2], dtype=np.int64)
-        source_ids = np.arange(100, 106, dtype=np.int64)
-        predictions = {
-            "a0_backbone": np.asarray([0, 1, 1, 0, 2, 0]),
-            "mcldnn_reimplementation": np.asarray([0, 0, 1, 0, 2, 0]),
-            "iqformer_inspired": np.asarray([0, 0, 1, 1, 2, 0]),
-            "cssl_amc_supervised_adaptation": np.asarray(
-                [0, 1, 1, 1, 2, 0]
-            ),
-            "a5_vimd_full": labels.copy(),
+        labels = np.tile(np.arange(classes, dtype=np.int64), 10)
+        source_ids = np.arange(100, 130, dtype=np.int64)
+        target_profile_index = np.repeat(
+            np.arange(5, dtype=np.int64),
+            6,
+        )
+
+        default_error_counts = {
+            "a0_backbone": 4,
+            "a1_single_mask": 1,
+            "a5_vimd_full": 0,
+            "a6_dual_full": 1,
+            "mcldnn_reimplementation": 3,
+            "iqformer_inspired": 2,
+            "cssl_amc_supervised_adaptation": 2,
         }
-        if tied_strongest:
-            predictions["mcldnn_reimplementation"] = predictions[
-                "iqformer_inspired"
-            ].copy()
+        regime_error_counts = {
+            "hard_interference": dict(default_error_counts),
+            "unseen_jammer": {
+                **default_error_counts,
+                "a5_vimd_full": 1,
+                "cssl_amc_supervised_adaptation": 2,
+            },
+            "unseen_speed": {
+                **default_error_counts,
+                "a5_vimd_full": 1,
+                "cssl_amc_supervised_adaptation": 2,
+            },
+            "heldout_channel": {
+                **default_error_counts,
+                "a5_vimd_full": 2,
+                "cssl_amc_supervised_adaptation": 2,
+            },
+            "combined_ood": {
+                **default_error_counts,
+                "a5_vimd_full": 1,
+                "cssl_amc_supervised_adaptation": 2,
+            },
+            "clean_retention": {
+                **default_error_counts,
+                "a5_vimd_full": 1,
+                "cssl_amc_supervised_adaptation": 1,
+            },
+        }
+        if hard_gate_fails:
+            regime_error_counts["hard_interference"][
+                "cssl_amc_supervised_adaptation"
+            ] = 0
+        predictions = {
+            (model, regime): self._cyclic_errors(
+                labels,
+                errors_per_class=regime_error_counts[regime][model],
+            )
+            for model in models
+            for regime in regimes
+        }
 
         criterion = {
             "view": "view1",
@@ -150,7 +211,7 @@ class MacroGeneratorTest(unittest.TestCase):
                 (model_root / "model.pt").write_bytes(b"checkpoint")
                 regime_records: dict[str, dict[str, float]] = {}
                 for regime in regimes:
-                    predicted = predictions[model]
+                    predicted = predictions[(model, regime)]
                     probabilities = np.full(
                         (len(labels), classes),
                         0.1,
@@ -165,8 +226,17 @@ class MacroGeneratorTest(unittest.TestCase):
                         probabilities=probabilities,
                         labels=labels,
                         source_ids=source_ids,
-                        snr_db=np.zeros(len(labels), dtype=np.float64),
-                        sir_db=np.zeros(len(labels), dtype=np.float64),
+                        snr_db=np.full(
+                            len(labels),
+                            5.0,
+                            dtype=np.float64,
+                        ),
+                        sir_db=np.full(
+                            len(labels),
+                            -5.0,
+                            dtype=np.float64,
+                        ),
+                        target_profile_index=target_profile_index,
                         cache_digest=np.asarray(cache_digest),
                         split=np.asarray(regime),
                     )
@@ -197,9 +267,7 @@ class MacroGeneratorTest(unittest.TestCase):
                 result = {
                     "model": model,
                     "seed": seed,
-                    "checkpoint": (
-                        f"models/{model}_seed{seed}/model.pt"
-                    ),
+                    "checkpoint": f"models/{model}_seed{seed}/model.pt",
                     "teacher_checkpoint": None,
                     "training": {
                         "history": [
@@ -222,11 +290,14 @@ class MacroGeneratorTest(unittest.TestCase):
                         },
                     },
                     "complexity": {
-                        "parameters": 123456.0,
+                        "parameters": 123456,
                         "latency_ms_p50": (
                             1.2 if seed == seeds[0] else 1.4
                         ),
-                        "latency_device": "cuda",
+                        "latency_ms_p95": (
+                            1.8 if seed == seeds[0] else 2.0
+                        ),
+                        "latency_device": "fixture_gpu",
                     },
                     "regimes": regime_records,
                 }
@@ -235,6 +306,32 @@ class MacroGeneratorTest(unittest.TestCase):
                         "schema_version": 2,
                         "split": "heldout_channel",
                         "seed": seed,
+                        "mask_js": (
+                            0.1 if seed == seeds[0] else 0.2
+                        ),
+                        (
+                            "overlap_uncertainty_route_weighted_correlation"
+                        ): (
+                            0.2 if seed == seeds[0] else 0.4
+                        ),
+                        "target_energy_transfer_ratio_mean": (
+                            0.8 if seed == seeds[0] else 1.0
+                        ),
+                        (
+                            "target_energy_transfer_ratio_"
+                            "amplification_share"
+                        ): (
+                            0.4 if seed == seeds[0] else 0.6
+                        ),
+                        "jammer_leakage": (
+                            0.05 if seed == seeds[0] else 0.07
+                        ),
+                        "oracle_vs_predicted_overlap_spearman": (
+                            0.3 if seed == seeds[0] else 0.5
+                        ),
+                        "overlap_permutation_p_value": (
+                            0.04 if seed == seeds[0] else 0.06
+                        ),
                         "counterfactual_tf_sir_gain_db": (
                             2.0 if seed == seeds[0] else 4.0
                         ),
@@ -274,6 +371,8 @@ class MacroGeneratorTest(unittest.TestCase):
             "reference_strength_claimed",
             "candidate",
             "regime",
+            "parent_regime",
+            "target_profile_indices",
             "cache_digest",
             "difference",
             "ci95_low",
@@ -302,8 +401,86 @@ class MacroGeneratorTest(unittest.TestCase):
             "mcnemar_exact_test_performed",
             "mcnemar_reason",
         ]
+        reference = generator.PRIMARY_REFERENCE_MODEL
+        bootstrap_seed_base = 7
+
+        def headline_row(
+            *,
+            candidate: str,
+            regime: str,
+            parent_regime: str,
+            profile_scope: str,
+            accuracy_difference: float,
+            macro_difference: float,
+            source_count: int,
+        ) -> dict:
+            return {
+                "reference": reference,
+                "reference_selection": "explicit_cli",
+                "reference_strength_claimed": False,
+                "candidate": candidate,
+                "regime": regime,
+                "parent_regime": parent_regime,
+                "target_profile_indices": profile_scope,
+                "cache_digest": cache_digest,
+                "difference": accuracy_difference,
+                "ci95_low": accuracy_difference - 0.01,
+                "ci95_high": accuracy_difference + 0.01,
+                "accuracy_difference": accuracy_difference,
+                "accuracy_ci95_low": accuracy_difference - 0.01,
+                "accuracy_ci95_high": accuracy_difference + 0.01,
+                "macro_f1_difference": macro_difference,
+                "macro_f1_ci95_low": macro_difference - 0.01,
+                "macro_f1_ci95_high": macro_difference + 0.01,
+                "accuracy_test_source_only_ci95_low": (
+                    accuracy_difference - 0.008
+                ),
+                "accuracy_test_source_only_ci95_high": (
+                    accuracy_difference + 0.008
+                ),
+                "macro_f1_test_source_only_ci95_low": (
+                    macro_difference - 0.008
+                ),
+                "macro_f1_test_source_only_ci95_high": (
+                    macro_difference + 0.008
+                ),
+                "accuracy_algorithm_seed_only_ci95_low": (
+                    accuracy_difference - 0.006
+                ),
+                "accuracy_algorithm_seed_only_ci95_high": (
+                    accuracy_difference + 0.006
+                ),
+                "macro_f1_algorithm_seed_only_ci95_low": (
+                    macro_difference - 0.006
+                ),
+                "macro_f1_algorithm_seed_only_ci95_high": (
+                    macro_difference + 0.006
+                ),
+                "bootstrap_draws": 100,
+                "bootstrap_seed": generator._analysis_seed(
+                    bootstrap_seed_base,
+                    "hierarchical",
+                    reference,
+                    candidate,
+                    regime,
+                ),
+                "algorithm_seed_count": len(seeds),
+                "algorithm_seed_ids": repr(
+                    [str(seed) for seed in seeds]
+                ),
+                "test_source_cluster_count": source_count,
+                "bootstrap_stratified_by_class": True,
+                "bootstrap_hierarchy": (
+                    "algorithm_seed_and_class_stratified_"
+                    "test_source_cluster"
+                ),
+                "mcnemar_exact_test_performed": False,
+                "mcnemar_reason": (
+                    "repeated sources across fitted-model seeds"
+                ),
+            }
+
         headline_rows: list[dict] = []
-        reference = "iqformer_inspired"
         for candidate in models:
             if candidate == reference:
                 continue
@@ -335,64 +512,49 @@ class MacroGeneratorTest(unittest.TestCase):
                     )
                 )
                 headline_rows.append(
-                    {
-                        "reference": reference,
-                        "reference_selection": "explicit_cli",
-                        "reference_strength_claimed": False,
-                        "candidate": candidate,
-                        "regime": regime,
-                        "cache_digest": cache_digest,
-                        "difference": accuracy_difference,
-                        "ci95_low": accuracy_difference - 0.05,
-                        "ci95_high": accuracy_difference + 0.05,
-                        "accuracy_difference": accuracy_difference,
-                        "accuracy_ci95_low": accuracy_difference - 0.05,
-                        "accuracy_ci95_high": accuracy_difference + 0.05,
-                        "macro_f1_difference": macro_difference,
-                        "macro_f1_ci95_low": macro_difference - 0.05,
-                        "macro_f1_ci95_high": macro_difference + 0.05,
-                        "accuracy_test_source_only_ci95_low": (
-                            accuracy_difference - 0.04
-                        ),
-                        "accuracy_test_source_only_ci95_high": (
-                            accuracy_difference + 0.04
-                        ),
-                        "macro_f1_test_source_only_ci95_low": (
-                            macro_difference - 0.04
-                        ),
-                        "macro_f1_test_source_only_ci95_high": (
-                            macro_difference + 0.04
-                        ),
-                        "accuracy_algorithm_seed_only_ci95_low": (
-                            accuracy_difference - 0.03
-                        ),
-                        "accuracy_algorithm_seed_only_ci95_high": (
-                            accuracy_difference + 0.03
-                        ),
-                        "macro_f1_algorithm_seed_only_ci95_low": (
-                            macro_difference - 0.03
-                        ),
-                        "macro_f1_algorithm_seed_only_ci95_high": (
-                            macro_difference + 0.03
-                        ),
-                        "bootstrap_draws": 100,
-                        "bootstrap_seed": 7,
-                        "algorithm_seed_count": len(seeds),
-                        "algorithm_seed_ids": repr(
-                            [str(seed) for seed in seeds]
-                        ),
-                        "test_source_cluster_count": len(source_ids),
-                        "bootstrap_stratified_by_class": True,
-                        "bootstrap_hierarchy": (
-                            "algorithm_seed_and_class_stratified_"
-                            "test_source_cluster"
-                        ),
-                        "mcnemar_exact_test_performed": False,
-                        "mcnemar_reason": (
-                            "repeated sources across fitted-model seeds"
-                        ),
-                    }
+                    headline_row(
+                        candidate=candidate,
+                        regime=regime,
+                        parent_regime=regime,
+                        profile_scope="all",
+                        accuracy_difference=accuracy_difference,
+                        macro_difference=macro_difference,
+                        source_count=len(labels),
+                    )
                 )
+
+        for clean_regime, profile_indices in (
+            generator.CLEAN_PROFILE_REGIMES.items()
+        ):
+            selected = np.isin(
+                target_profile_index,
+                np.asarray(profile_indices, dtype=np.int64),
+            )
+            reference_accuracy, reference_f1, _ = self._classification(
+                labels[selected],
+                predictions[(reference, "clean_retention")][selected],
+                classes,
+            )
+            method_accuracy, method_f1, _ = self._classification(
+                labels[selected],
+                predictions[
+                    (generator.METHOD_MODEL, "clean_retention")
+                ][selected],
+                classes,
+            )
+            headline_rows.append(
+                headline_row(
+                    candidate=generator.METHOD_MODEL,
+                    regime=clean_regime,
+                    parent_regime="clean_retention",
+                    profile_scope=repr(list(profile_indices)),
+                    accuracy_difference=(
+                        method_accuracy - reference_accuracy
+                    ),
+                    macro_difference=method_f1 - reference_f1,
+                    source_count=int(selected.sum()),
+                )
+            )
         self._write_csv(
             run_root / "headline_paired_statistics.csv",
             headline_fields,
@@ -415,8 +577,8 @@ class MacroGeneratorTest(unittest.TestCase):
             "models": models,
             "seeds": seeds,
             "splits": {
-                "train": 6,
-                **{regime: 6 for regime in regimes},
+                "train": len(labels),
+                **{regime: len(labels) for regime in regimes},
             },
             "num_classes": classes,
             "training_configuration": {
@@ -432,7 +594,25 @@ class MacroGeneratorTest(unittest.TestCase):
                 "reference_model": reference,
                 "reference_selection": "explicit_cli",
                 "reference_strength_claimed": False,
+                "primary_reference_predeclared": True,
+                "method_model": generator.METHOD_MODEL,
+                "required_nonoracle_baselines": list(
+                    generator.BASELINE_MODELS
+                ),
+                "clean_retention_profile_strata": {
+                    name: list(indices)
+                    for name, indices in (
+                        generator.CLEAN_PROFILE_REGIMES.items()
+                    )
+                },
+                "scientific_release_thresholds": (
+                    generator.SCIENTIFIC_RELEASE_THRESHOLDS
+                ),
+                "holm_candidate_family": list(
+                    generator.FORMAL_HOLM_CANDIDATES
+                ),
                 "bootstrap_draws": 100,
+                "bootstrap_seed_base": bootstrap_seed_base,
             },
             "results": results,
             "evidence_eligibility": {
@@ -445,9 +625,7 @@ class MacroGeneratorTest(unittest.TestCase):
                 "headline_eligible": True,
                 "gates": {
                     name: {"passed": True}
-                    for name in (
-                        self.runner.FORMAL_RELEASE_REQUIRED_GATES
-                    )
+                    for name in self.runner.FORMAL_RELEASE_REQUIRED_GATES
                 },
             },
             "source_tree_execution_audit": {"unchanged": True},
@@ -457,6 +635,12 @@ class MacroGeneratorTest(unittest.TestCase):
                     "headline_paired_statistics.csv"
                 ),
                 "holm_families": [],
+                "clean_retention_profile_strata": {
+                    name: list(indices)
+                    for name, indices in (
+                        generator.CLEAN_PROFILE_REGIMES.items()
+                    )
+                },
             },
         }
         run_record["submission_release"] = (
@@ -520,28 +704,66 @@ class MacroGeneratorTest(unittest.TestCase):
                 set(manifest["macros"]),
                 set(generator.validate_release.RESULT_MACROS),
             )
-            self.assertEqual(
-                manifest["macros"]["StrongestBaseline"]["value"],
-                "IQFormer-inspired local baseline",
-            )
-            self.assertIn(
-                "cssl_amc_supervised_adaptation",
-                manifest["macros"]["StrongestBaseline"]["derivation"],
+            self.assertTrue(
+                manifest["scientific_release_gate"]["passed"]
             )
             self.assertEqual(
-                manifest["macros"]["FeatureSIRGain"]["value"],
-                "+3.00",
+                manifest["macros"]["PrimaryReference"]["value"],
+                (
+                    "CSSL-AMC official-architecture supervised "
+                    "adaptation"
+                ),
+            )
+            self.assertNotIn("StrongestBaseline", manifest["macros"])
+            self.assertEqual(
+                manifest["macros"]["HeadlineHardAFiveMacroFOne"][
+                    "value"
+                ],
+                "100.00",
+            )
+            self.assertEqual(
+                manifest["macros"]["HeadlineHardCSSLMacroFOne"]["value"],
+                "80.00",
+            )
+            self.assertEqual(
+                manifest["macros"]["RegimeUnseenJammerGain"]["value"],
+                "+10.00",
+            )
+            self.assertEqual(
+                manifest["macros"]["RegimeHeldoutChannelGain"]["value"],
+                "+0.00",
+            )
+            self.assertEqual(
+                manifest["macros"]["OracleSpectralRatioGain"]["value"],
+                "3.000000",
             )
             self.assertEqual(
                 manifest["macros"]["VIMDParameters"]["value"],
-                "123,456",
+                "123456",
             )
             self.assertEqual(
-                manifest["macros"]["VIMDLatency"]["value"],
-                "1.30 ms",
+                manifest["macros"]["VIMDLatencyPFifty"]["value"],
+                "1.300",
+            )
+            self.assertEqual(
+                manifest["macros"]["VIMDLatencyPNinetyFive"]["value"],
+                "1.900",
+            )
+            self.assertEqual(
+                manifest["macros"]["VIMDLatencyDevice"]["value"],
+                "fixture_gpu",
             )
             run_record = generator.validate_release.load_strict_json(
                 run_json
+            )
+            comparison = run_record["comparison_protocol"]
+            self.assertEqual(
+                comparison["reference_model"],
+                generator.PRIMARY_REFERENCE_MODEL,
+            )
+            self.assertNotIn(
+                generator.PRIMARY_REFERENCE_MODEL,
+                comparison["holm_candidate_family"],
             )
             values, provenance = (
                 generator.validate_release.validate_macro_manifest(
@@ -597,17 +819,20 @@ class MacroGeneratorTest(unittest.TestCase):
                 )
             self.assertFalse(output.exists())
 
-    def test_ambiguous_strongest_baseline_fails_without_output(self) -> None:
+    def test_hard_gain_gate_fails_without_output(self) -> None:
         with tempfile.TemporaryDirectory(
-            prefix="vimd_macro_tie_"
+            prefix="vimd_macro_hard_gate_"
         ) as temporary:
             run_json, output = self._fixture(
                 Path(temporary),
-                tied_strongest=True,
+                hard_gate_fails=True,
             )
             with self.assertRaisesRegex(
                 generator.MacroGenerationError,
-                "strongest baseline is ambiguous",
+                (
+                    "A5 hard macro-F1 gain must be "
+                    ">= 5.00 pp versus every non-oracle baseline"
+                ),
             ):
                 generator.write_macro_manifest(
                     run_json=run_json,
@@ -635,7 +860,7 @@ class MacroGeneratorTest(unittest.TestCase):
                 )
             self.assertFalse(output.exists())
 
-    def test_missing_prediction_array_fails_without_output(self) -> None:
+    def test_missing_target_profile_array_fails_without_output(self) -> None:
         with tempfile.TemporaryDirectory(
             prefix="vimd_macro_npz_schema_"
         ) as temporary:
@@ -650,7 +875,7 @@ class MacroGeneratorTest(unittest.TestCase):
                 payload = {
                     name: archive[name]
                     for name in archive.files
-                    if name != "labels"
+                    if name != "target_profile_index"
                 }
             np.savez_compressed(path, **payload)
             with self.assertRaisesRegex(
