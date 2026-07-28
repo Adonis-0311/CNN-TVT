@@ -1,0 +1,899 @@
+\documentclass[letterpaper,journal]{IEEEtran}
+
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{cite}
+\usepackage{url}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,fit,positioning}
+\usepackage[hidelinks]{hyperref}
+
+\newif\ifinternalreview
+\internalreviewtrue
+
+\input{results_auto.tex}
+
+\ifinternalreview\else
+  \ifdefined\EligibleLockedResults\else
+    \PackageError{VIMD-Net evidence lock}
+      {Public build requires \string\EligibleLockedResults\space from an eligible locked run}
+      {Regenerate results_auto.tex from the frozen evidence pipeline before submission.}
+  \fi
+\fi
+
+\newcommand{\vect}[1]{\boldsymbol{#1}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\softmax}{\operatorname{softmax}}
+\newcommand{\relu}{\operatorname{ReLU}}
+\newcommand{\stats}{\operatorname{Stats}}
+\newcommand{\STFT}{\operatorname{STFT}}
+\newcommand{\JS}{D_{\mathrm{JS}}}
+\newcommand{\method}{VIMD-Net}
+\newcommand{\pp}{percentage points}
+
+\definecolor{targetblue}{RGB}{37,99,235}
+\definecolor{jamred}{RGB}{220,38,38}
+\definecolor{uncertainamber}{RGB}{217,119,6}
+\definecolor{conditiongreen}{RGB}{22,130,78}
+\definecolor{softgray}{RGB}{245,247,250}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+
+\title{\method: Physically Supervised Representation Allocation for Automatic
+Modulation Classification (AMC) under Vehicular-Doppler TDL Simulations}
+
+\ifinternalreview
+  \author{Anonymous Author(s)%
+  \thanks{Internal evidence-lock manuscript. Author names, affiliations,
+  funding, and any required disclosure must be supplied and verified by the
+  human authors before submission.}}
+\else
+  \input{authors_verified.tex}
+\fi
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\ifinternalreview
+Automatic modulation classification (AMC) under mobile multipath is impaired
+by structured interference that overlaps modulation cues in time and
+frequency.  This paper develops \method, a phase-preserving
+representation-allocation network whose environment-conditioned three-way mask
+allocates target-power-dominant, jammer-power-dominant, and
+unexplained-or-power-ambiguous evidence on the physical complex short-time
+Fourier transform lattice.  A fixed training-only teacher is constructed from
+independently tracked target, jammer, and unexplained simulation components;
+dual task branches, auxiliary jammer/link supervision, and exact-source
+cross-condition contrastive learning constrain the route semantics.  The
+evaluation is locked to source-disjoint 3GPP TR~38.901 TDL-profile simulations
+parameterized by vehicular Doppler and structured jammers, with independently
+held-out jammer, speed, and channel factors, single-view inference, and
+source-paired statistical comparisons.  Unanchored in-taxonomy modulated
+cochannel collisions are excluded because their single-label target is not
+identifiable from a mixture alone.  Quantitative claims are intentionally
+withheld in this internal-review build until the frozen multi-seed evidence
+gate is passed; no SDR, field, or deployment claim is made.
+\else
+Automatic modulation classification (AMC) under mobile multipath is impaired
+by structured interference that overlaps modulation cues in time and
+frequency.
+This paper proposes \method, a phase-preserving representation-allocation
+network whose environment-conditioned three-way mask allocates
+target-power-dominant, jammer-power-dominant, and
+unexplained-or-power-ambiguous evidence on the physical complex short-time
+Fourier transform lattice. A fixed training-only
+component-power teacher, dual task branches, and exact-source cross-condition
+contrastive learning impose physical and semantic constraints on the masks.
+Across source-disjoint 3GPP TDL-profile simulations parameterized by
+vehicular Doppler, \method improves hard-interference macro-F1 by
+\RegimeHardGain\ \pp\ over the predeclared \PrimaryReference\
+(\(\smash{[\RegimeHardCILow,\RegimeHardCIHigh]}\)~\pp), while preserving
+clean-condition performance. It also yields
+\OracleSpectralRatioGain~dB oracle-conditioned spectral component-ratio gain
+with \VIMDParameters\ parameters and batch-one P50/P95 latency of
+\VIMDLatencyP50/\VIMDLatencyP95~ms on \VIMDLatencyDevice.
+Inference uses one received view; paired views are used only during training
+and source-aligned statistical comparison.  The evidence scope is simulation
+only and excludes unanchored in-taxonomy modulated cochannel collisions.
+\fi
+\end{abstract}
+
+\begin{IEEEkeywords}
+Automatic modulation classification, vehicular communications, interference
+robustness, representation disentanglement, soft masks, contrastive learning.
+\end{IEEEkeywords}
+
+\ifinternalreview
+\begin{center}
+\fcolorbox{red!70!black}{red!5}{%
+\parbox{0.94\columnwidth}{\footnotesize\textbf{Evidence lock.}
+This build is for internal scientific review.  Em-dash cells are not zeroes
+and must not be interpreted as experimental outcomes.  Smoke runs and
+fixed-batch overfit diagnostics are excluded from paper claims.}}
+\end{center}
+\fi
+
+\section{Introduction}
+\IEEEPARstart{A}{utomatic} modulation classification enables a receiver to
+infer the modulation of an unknown waveform without transmitter-side control
+information.  It supports spectrum monitoring, blind receiver configuration,
+interference diagnosis, and adaptive signal processing.  Deep AMC models have
+advanced from convolutional classifiers \cite{oshea2016cnn,meng2018amc} to
+complex-valued \cite{tu2020complex}, dual-stream \cite{zhang2020dual},
+causal-convolutional \cite{tang2024repccnet}, and Transformer-based
+\cite{cai2022transformer,shao2025iqformer} representations.  Efficiency,
+hardware impairment, and channel robustness have also been studied
+\cite{wang2020lightamc,ren2024crosssknet,huang2024csqcc}.
+
+A mobile receiver poses a different failure mode from the usual
+additive-white-Gaussian-noise benchmark.  Mobility produces time-varying
+multipath and Doppler, while concurrent transmitters and unintended emitters
+create narrowband, impulsive, swept, partial-band, and broadband interference.
+The target and jammer can therefore share both time and frequency support.
+Direct classifiers must learn modulation and nuisance factors from a single
+polluted representation.  A hard suppression stage is also unsafe: a cell
+with high jammer power may still contain target power.
+
+Recent work narrows individual parts of this gap.  Domain adaptation improves
+cross-domain AMC \cite{wang2024sigda,li2026cgpcda}; masked and contrastive
+learning improves representation robustness \cite{xiao2024mclhn,
+du2025contrastive,wu2026caic}; interference-tolerant feature extraction
+directly addresses corrupted observations \cite{sun2025mfenet}; and
+overlapped-signal classification studies simultaneous emitters
+\cite{jajoo2024overlapped}.  Consequently, neither ``soft masking,''
+``contrastive AMC,'' nor ``multi-task AMC'' is a defensible novelty claim by
+itself.  What remains insufficiently tested is whether a mask can be assigned
+an auditable physical meaning, explicitly retain ambiguous target--jammer
+cells, and improve modulation invariance under independently held-out
+vehicular and jammer conditions.
+
+This work addresses that question with \method.  It is derived from a broader
+interference-adaptation concept, but replaces template matching, binary
+component deletion, and rule-based label correction with differentiable,
+task-constrained representation allocation.  The paper deliberately does not
+claim waveform recovery, strict source separation, protocol identification,
+modulation recommendation, or open-set recognition.
+
+The contributions are threefold.
+\begin{itemize}
+  \item We introduce an environment-conditioned three-way mask on the exact
+  complex-STFT lattice.  It allocates target-power-dominant,
+  jammer-power-dominant, and unexplained-or-power-ambiguous evidence with a
+  learned overlap gate and a bounded additive bypass.
+  \item We construct a fixed, component-traceable simulation-component power
+  teacher from target, jammer, and unexplained power on that same lattice.
+  Jensen--Shannon mask
+  supervision and separate modulation, jammer, and link-quality objectives
+  make the branch semantics experimentally falsifiable.
+  \item During training, we pair two independently impaired observations of
+  the same immutable source sequence and apply class-aware exact-source
+  contrastive learning; inference uses one view.  The accompanying protocol
+  isolates jammer-family, speed, and channel-profile shifts and predeclares
+  accuracy, calibration, source-paired significance, diagnostic mechanism
+  variables, and complexity.
+\end{itemize}
+
+\section{Related Work and Claim Boundary}
+\subsection{Deep AMC}
+CNN-based AMC established that learned I/Q features can outperform
+hand-designed pipelines under matched synthetic conditions
+\cite{oshea2016cnn,oshea2017physical,meng2018amc}.  Later work preserved
+complex structure \cite{tu2020complex}, fused spatial and temporal streams
+\cite{zhang2020dual}, reduced complexity \cite{wang2020lightamc}, and improved
+causal or Transformer modeling \cite{tang2024repccnet,cai2022transformer,
+shao2025iqformer}.  These models form necessary direct-classification
+comparators; architectural depth alone cannot establish interference
+disentanglement.
+
+\subsection{Robustness, Masking, and Contrastive Learning}
+Channel-robust hand-crafted statistics \cite{huang2024csqcc}, explicit hardware
+impairment compensation \cite{ren2024crosssknet}, domain adaptation
+\cite{wang2024sigda,li2026cgpcda}, masked contrastive learning
+\cite{xiao2024mclhn}, denoising masked autoencoding
+\cite{faysal2026denomae}, and cross-SNR contrastive learning
+\cite{wu2026caic} address different nuisance sources.  MFENet explicitly
+targets interference tolerance \cite{sun2025mfenet}; malicious-interference
+recognition has also been studied for MIMO observations
+\cite{zhang2026malicious}.  Our narrow distinction is a three-route
+component-power teacher on the student's physical lattice, with the other
+physical condition of the exact source as the contrastive positive.  Its
+target-power-dominant, jammer-power-dominant, and
+unexplained-or-power-ambiguous names are task assignments, not identified
+sources.  We claim neither the first mask nor the first contrastive AMC model.
+
+\subsection{From Patent Concept to Scientific Hypothesis}
+The source concept follows an environment adaptation $\rightarrow$
+interference suppression $\rightarrow$ modulation decision chain.  The
+scientific implementation makes four material changes.  First, a continuous
+environment embedding replaces a discrete jammer template database. Second,
+soft three-way allocation replaces hard threshold deletion. Third, a
+discriminative classifier replaces nearest-prototype and rule-forced label
+revision. Fourth, the jammer state is an auxiliary output and never overrides
+the observed modulation class.  This separation prevents a link-adaptation
+recommendation prior from being confused with signal identification.
+
+\section{System Model and Learning Problem}
+\subsection{Received Signal}
+For a length-$N$ complex baseband window, let
+\begin{equation}
+x[n]=\mathcal{G}_{\eta}\!\left(
+\begin{aligned}
+&\sum_{\ell=0}^{L_s-1}h_s[n,\ell]s_m[n-\ell]\\
+&+\sum_{q=1}^{Q}a_q\sum_{\ell=0}^{L_{j,q}-1}
+h_{j,q}[n,\ell]j_q[n-\ell-\tau_q]\\
+&+w[n]
+\end{aligned}
+\right),
+\label{eq:system}
+\end{equation}
+where $s_m$ is a source sequence with modulation label $m$, $h_s$ and
+$h_{j,q}$ are independently seeded time-varying channels, $j_q$ is a
+structured interferer, and $\mathcal{G}_{\eta}$ collects receiver effects
+shared by the complete observation.  Equation~\eqref{eq:system} permits a
+general $Q$, but the present evidence protocol admits exactly one structured
+jammer family per active view; multi-jammer compositional mixtures are outside
+scope.  The generator retains the
+post-channel components
+\begin{equation}
+x=s+j+u,\qquad u=w+a_{\mathrm{rx}},
+\label{eq:components}
+\end{equation}
+after a common gain convention, where $a_{\mathrm{rx}}$ is the tracked
+receiver artifact.  Realized powers, rather than requested scale factors,
+define
+\begin{equation}
+\mathrm{SNR}=10\log_{10}\frac{\|s\|_2^2}{\|w\|_2^2},\quad
+\mathrm{SIR}=10\log_{10}\frac{\|s\|_2^2}{\|j\|_2^2}.
+\label{eq:snrsir}
+\end{equation}
+No-jammer samples carry a validity mask instead of a finite fictitious SIR.
+
+The main task estimates $p_\theta(m\mid x)$.  Training-only auxiliary targets
+are a multi-hot jammer vector and normalized SNR, SIR, and maximum Doppler.
+At inference, only $x$ is required.
+
+\subsection{Exact-Source Paired Views}
+An immutable source identity contains the modulation, symbol sequence, and
+pulse-shaping realization.  For source $i$, two views are
+\begin{equation}
+x_i^{(v)}=\mathcal{A}\!\left(
+s_i;\,h_{s,i}^{(v)},h_{j,i}^{(v)},j_i^{(v)},\eta_i^{(v)}
+\right),\quad v\in\{1,2\},
+\label{eq:views}
+\end{equation}
+with independent channel, jammer, receiver, and noise seeds.  All descendants
+of one source identity remain in one split.  Thus the pair supplies a valid
+training positive without allowing bit-sequence leakage across train,
+validation, or test sets.  Only one received view is supplied for each
+inference decision; the second view is used during paired training and
+source-aligned statistical comparison, not as test-time side information.
+
+\section{\method}
+\subsection{Physically Aligned Spectral Front End}
+The input is represented as $X=[I;Q]\in\R^{2\times N}$.  A deterministic,
+non-centered, full-spectrum complex STFT produces
+\begin{equation}
+Z=\STFT(I+\mathrm{j}Q)\in\C^{F\times T}.
+\end{equation}
+The student context encoder receives
+\begin{equation}
+H=C_\phi\!\left(
+\operatorname{stack}\{\Re Z,\Im Z,\log(1+|Z|)\}
+\right),
+\label{eq:context}
+\end{equation}
+where $C_\phi$ is a shallow 2-D convolutional residual encoder that preserves
+the $F\times T$ mask lattice.  This is a phase-aware real implementation, not
+a claim of an end-to-end complex-valued neural network.
+
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[
+  node distance=4.5mm and 6mm,
+  box/.style={draw, rounded corners=1.5pt, align=center, minimum height=7mm,
+              font=\footnotesize, fill=softgray},
+  target/.style={box, draw=targetblue, fill=targetblue!7},
+  jammer/.style={box, draw=jamred, fill=jamred!7},
+  overlap/.style={box, draw=uncertainamber, fill=uncertainamber!9},
+  env/.style={box, draw=conditiongreen, fill=conditiongreen!8},
+  train/.style={box, dashed, draw=black!60, fill=white},
+  arrow/.style={-{Latex[length=2mm]}, thick},
+  lossarrow/.style={-{Latex[length=2mm]}, dashed, draw=black!65}
+]
+\node[box] (x) {mixture\\$x\in\R^{2\times N}$};
+\node[box, right=of x] (stft) {complex STFT\\$Z\in\C^{F\times T}$};
+\node[box, right=of stft] (context) {spectral context\\$H=C_\phi(Z)$};
+\node[overlap, right=13mm of context] (mask) {conditioned tri-mask\\$M_s,M_j,M_o$};
+\node[env, above=of mask] (env) {environment encoder\\$e_c$};
+\node[target, right=of mask, yshift=6mm] (zmix) {$Z_m=(M_s+\lambda M_o+\rho)Z$};
+\node[jammer, right=of mask, yshift=-6mm] (jmix) {$Z_j=(M_j+(1-\lambda)M_o)Z$};
+\node[target, right=of zmix] (mbranch) {modulation branch\\$z_m$, AMC head};
+\node[jammer, right=of jmix] (jbranch) {jammer branch\\$z_j$, jammer head};
+\node[env, below=of jbranch] (quality) {quality head\\SNR/SIR/Doppler};
+\node[train, below=13mm of context] (components) {training components\\$s,j,u$};
+\node[train, right=of components] (teacher) {fixed component-power teacher\\$M_s^\star,M_j^\star,M_o^\star$};
+\node[train, below=of teacher] (pair) {paired second pass\\$x_i^{(2)}\mapsto z_i^{(2)}$};
+
+\draw[arrow] (x)--(stft);
+\draw[arrow] (stft)--(context);
+\draw[arrow] (context)--(env);
+\draw[arrow] (context)--(mask);
+\draw[arrow] (env)--(mask);
+\draw[arrow] (mask)--(zmix);
+\draw[arrow] (mask)--(jmix);
+\draw[arrow] (zmix)--(mbranch);
+\draw[arrow] (jmix)--(jbranch);
+\draw[arrow, conditiongreen] (env.east) -| (quality.north);
+\draw[arrow] (jbranch)--(quality);
+\draw[lossarrow] (components)--(teacher);
+\draw[lossarrow] (teacher)--node[below,font=\scriptsize]{$L_{\rm mask}$}(mask);
+\draw[lossarrow] (pair.east) to[out=0,in=-90]
+node[right,font=\scriptsize]{$L_{\rm xcc}$}(mbranch.south);
+\end{tikzpicture}
+\caption{Implemented \method\ data flow.  Solid paths are used at inference;
+dashed paths exist only during training.  The masks act on the complex STFT
+itself, so the teacher and student share the same frequency--frame cells.  The
+bounded additive $\rho$ bypass intentionally makes the two branch weights
+non-conservative; whether it improves target-task robustness is tested by the
+predeclared A5--A7 comparison.}
+\label{fig:architecture}
+\end{figure*}
+
+\subsection{Environment-Conditioned Tri-Mask}
+Mean, standard deviation, and maximum pooling form
+\begin{align}
+\stats(H)&=[\mu(H),\sigma(H),\max(H)],\\
+e_c&=E_\psi\!\left(\stats(H)\right).
+\end{align}
+Feature-wise conditioning is
+\begin{equation}
+\widetilde H =
+\left(1+\tfrac{1}{2}\tanh\gamma(e_c)\right)\odot H+\beta(e_c).
+\label{eq:film}
+\end{equation}
+The model predicts
+\begin{align}
+\tau_c &= \tau_{\min}+(\tau_{\max}-\tau_{\min})\sigma(g_\tau(e_c)),\\
+[M_s,M_j,M_o]&=\softmax_{\mathrm{route}}\!
+\left(G_\omega(\widetilde H)/\tau_c\right),
+\label{eq:studentmask}
+\end{align}
+so the three nonnegative masks sum to one at every time-frequency cell.
+Here $M_s$, $M_j$, and $M_o$ denote target-power-dominant,
+jammer-power-dominant, and unexplained-or-power-ambiguous allocations,
+respectively.  These are component-power task routes, not identified sources.
+
+Two bounded gates allocate the ambiguous route:
+\begin{align}
+\lambda &=\sigma(g_\lambda(e_c)),\\
+\rho&=\rho_{\min}+(\rho_{\max}-\rho_{\min})\sigma(g_\rho(e_c)),\\
+Z_m&=(M_s+\lambda M_o+\rho)\odot Z,\label{eq:zmod}\\
+Z_j&=(M_j+(1-\lambda)M_o)\odot Z.\label{eq:zjam}
+\end{align}
+Importantly, $\lambda$, $\rho$, and $\tau_c$ are condition-dependent but are
+not constrained to be monotonic in SIR.  Any such relationship must be
+measured rather than asserted.
+
+\subsection{Fixed Simulation-Component Three-Route Teacher}
+Let $P_s=|\STFT(s)|^2$, $P_j=|\STFT(j)|^2$, and
+$P_u=|\STFT(u)|^2$ on the same lattice as $Z$.  Define
+\begin{equation}
+q_k=\frac{P_k}{P_\Sigma},\quad
+P_\Sigma=P_s+P_j+P_u>0,\quad
+k\in\{s,j,u\},
+\end{equation}
+For $v=q_s+q_j>0$, let $r_s=q_s/v$, $r_j=q_j/v$, and $d=r_s-r_j$;
+when $v=0$, set $r_s=r_j=d=0$.  The teacher is
+\begin{align}
+M_s^\star &= v[d]_+,\label{eq:tms}\\
+M_j^\star &= v[-d]_+,\label{eq:tmj}\\
+M_o^\star &= q_u+v(1-|d|).\label{eq:tmo}
+\end{align}
+Thus equal target--jammer power is assigned to uncertainty, while receiver
+artifacts and noise are always unexplained.  The teacher is deterministic,
+has no trainable or exponentially averaged parameters, and is removed at
+inference.  A zero-power cell is assigned $(0,0,1)$.  The implementation uses
+the per-example guard
+\(\epsilon_p=\max(10^{-8}\operatorname{mean}_{f,t}P_\Sigma,
+\operatorname{tiny})\): cells with \(P_\Sigma\leq\epsilon_p\) are assigned
+\((0,0,1)\), all other denominators are lower-bounded for numerical safety,
+and every cell is finally renormalized to the simplex.  Thus the proposition
+below describes the ideal nonempty definition; the finite-precision
+implementation deliberately maps negligible-energy cells to uncertainty.
+
+\begin{proposition}[Simplex and common-scale invariance]
+For nonnegative component powers, \eqref{eq:tms}--\eqref{eq:tmo} are
+nonnegative and sum to one wherever $P_\Sigma>0$; the stipulated zero-power
+assignment is also on the simplex.  In exact arithmetic, multiplying all
+three complex components by a common nonzero scalar leaves the masks
+unchanged.
+\end{proposition}
+\begin{proof}
+Since $r_s+r_j=1$, $|d|\leq1$.  Hence all three terms are nonnegative.
+Furthermore,
+\begin{align*}
+M_s^\star+M_j^\star+M_o^\star
+&=v|d|+q_u+v(1-|d|)\\
+&=v+q_u=q_s+q_j+q_u=1.
+\end{align*}
+A common complex scale multiplies every $P_k$ by the same positive constant,
+which cancels in $q_k$ and all downstream quantities.
+\end{proof}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/physical_teacher_example.pdf}
+\caption{Auditable fixed-teacher example from one immutable hard-interference
+cache record containing one admitted structured sweep jammer.  The upper row
+shows the received mixture and independently tracked post-channel simulation
+components; the lower row shows the three component-power allocations on the
+identical STFT lattice.  This deterministic illustration is neither a learned
+prediction nor performance evidence.}
+\label{fig:teacher-example}
+\end{figure*}
+
+\begin{lemma}[Phase preservation]
+For a real nonnegative mask $W[f,t]$, the masked coefficient
+$\widetilde Z[f,t]=W[f,t]Z[f,t]$ has
+$\angle\widetilde Z[f,t]=\angle Z[f,t]$ whenever $W[f,t]>0$.
+\end{lemma}
+\begin{proof}
+A positive real scalar changes only the magnitude of a complex number.  At
+$W=0$ the coefficient is suppressed and phase is undefined.
+\end{proof}
+The lemma motivates the phrase ``phase-preserving allocation.'' It does not
+imply perfect reconstruction or source identifiability.
+
+\subsection{Dual Branches and Exact-Source Contrast}
+Independent spectral encoders yield $z_m=P_m(Z_m)$ and $z_j=P_j(Z_j)$.
+A linear head predicts modulation from $z_m$; a multi-label head predicts
+jammer presence from $z_j$; and a quality head predicts normalized SNR, valid
+SIR, and Doppler from $[e_c;z_j]$.
+
+For a batch of paired views, let $\bar z_i^{(1)}$ and $\bar z_i^{(2)}$ be
+unit-normalized modulation embeddings.  The valid comparison set for anchor
+$i$ is
+\begin{equation}
+\mathcal{A}_i=\{i\}\cup\{k:y_k\neq y_i\}.
+\end{equation}
+The diagonal is the other view of the exact same source; other sources of the
+same modulation are ignored.  One direction of the loss is
+\begin{equation}
+\ell_i^{1\rightarrow2}=
+-\log
+\frac{\exp(\bar z_i^{(1)\top}\bar z_i^{(2)}/\tau_x)}
+{\sum_{k\in\mathcal{A}_i}
+\exp(\bar z_i^{(1)\top}\bar z_k^{(2)}/\tau_x)}.
+\label{eq:xcc}
+\end{equation}
+The cross-condition loss averages both directions.  Unlike generic supervised
+contrastive learning \cite{khosla2020supcon}, it neither treats all same-class
+signals as positives nor turns a different source of the same class into a
+false negative.  The current method does not claim jammer- or SIR-aware hard
+negative mining.
+
+\subsection{Objective and Curriculum}
+The full objective is
+\begin{equation}
+\mathcal{L}=L_{\rm mod}
++\lambda_jL_{\rm jam}
++\lambda_qL_q
++\lambda_mL_{\rm mask}
++\lambda_xL_{\rm xcc}
++\lambda_\perp L_\perp,
+\label{eq:loss}
+\end{equation}
+where $L_{\rm mask}=\JS(M^\star\|M)$, $L_q$ is validity-masked smooth
+$L_1$, and $L_\perp$ is the squared centered cosine similarity between active
+jammer-task and modulation-task embeddings.  This orthogonality term is
+evaluated only for jammer-active views and does not establish source
+identifiability.  The locked initial weights are
+$(\lambda_j,\lambda_q,\lambda_m,\lambda_x,\lambda_\perp)=
+(0.25,0.05,0.50,0.10,0.01)$ with label smoothing $0.05$ and
+$\tau_x=0.12$.  Mask and contrastive terms ramp in after the classification
+warm-up. Learning-rate decay and checkpoint selection begin only after the
+complete objective has been active for a minimum number of epochs, preventing
+early validation checkpoints from bypassing the proposed losses.
+
+\section{Simulation Evidence Protocol}
+\subsection{Data Layers}
+The evidence is intentionally layered.
+\begin{enumerate}
+  \item A deterministic Python proxy generator is used for unit tests,
+  diagnostics, and inexpensive screening.  Its channel heuristics cannot
+  support a standards-compliance claim.
+  \item The main simulation cache uses MATLAB \texttt{nrTDLChannel} primitives
+  corresponding to TDL-A through TDL-E in 3GPP TR~38.901
+  \cite{3gpp38901}. Target and jammer waveforms traverse independent channel
+  objects before shared receiver effects and exact realized SNR/SIR scaling.
+  TDL-A/C/D are allocated to training and validation; TDL-B/E are reserved for
+  a profile-held-out test.
+\end{enumerate}
+TDL profiles alone do not instantiate every geometry, blockage, or nonstationary
+trajectory in a V2X evaluation methodology \cite{3gpp37885}.  We therefore use
+the narrower term ``TR~38.901 TDL-profile simulations.''  This paper makes no
+claim about SDR captures, field deployment, complete V2X scenario compliance,
+or engineering transfer.
+
+\subsection{Signal, Jammer, and Impairment Space}
+The locked target set contains BPSK, $\pi/2$-BPSK, QPSK, 8PSK, 16QAM, 64QAM,
+256QAM, GMSK, CPFSK, and 4FSK.  The seen jammer dictionary contains tone,
+multitone, chirp, sweep, partial-band, and comb waveforms; pulse and OFDM-like
+interference are held out by family.  Modulated cochannel collisions and
+multi-jammer compositional mixtures are excluded from the single-label
+headline protocol.  Here, \emph{cochannel} means an in-taxonomy modulated
+cochannel collision, whereas \emph{mixed} means a composition of multiple
+jammer families.  Without a target anchor, swapping two in-taxonomy cochannel
+emitters can leave
+the observation distribution unchanged while changing the requested label.
+On a balanced source-exchange class with identical \(x\) and two required
+labels, the mixture-only Bayes error is therefore at least \(1/2\).
+Such collisions require a dominant-emitter label, an explicit physical anchor,
+or a separately scored ambiguity task.  The exact discrete SNR grid for every
+split is
+\(\{-10,-6,-2,2,6,10,14,18\}\) dB.  Jammer-active ordinary splits use
+SIR \(\in\{-10,-5,0,5,10\}\) dB, while the hard-interference split uses
+SIR \(\in\{-15,-10,-5,0\}\) dB.  Clean samples have invalid SIR by
+construction.  Training samples are drawn only from these declared discrete
+grids; there is no continuous training interpolation.
+
+Receiver factors in the present implementation include carrier-frequency and
+phase offset, I/Q gain/phase imbalance, additive DC offset, and window-level
+AGC normalization.  The multiplicative linear effects are shared across
+target, jammer, and noise so that the component identity in
+\eqref{eq:components} remains auditable; DC is tracked in the unexplained
+component.  Timing/sampling offset, receiver filtering, clipping, and
+quantization are outside the current evidence scope.
+
+\subsection{Factor-Isolated Splits}
+Table~\ref{tab:splits} prevents a combined shift from hiding its cause.
+Every split has independent source identities and generator/channel seeds.
+Training, validation, and ID testing use a deterministic 20\% no-jammer
+quota; every stress split is jammer-active, whereas clean retention is
+entirely jammer-free.
+The combined set is a stress test, not a substitute for the three isolated
+tests.
+
+\begin{table}[t]
+\centering
+\caption{Locked Protocol Splits.  ``Held'' Means Absent From Training.}
+\label{tab:splits}
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\begin{tabular}{llll}
+\toprule
+Split & Jammer/composition & Speed & TDL profile\\
+\midrule
+Train & seen $+$ 20\% clean & seen & A/C/D\\
+Validation & seen $+$ 20\% clean & seen & A/C/D\\
+ID test & seen $+$ 20\% clean & seen & A/C/D\\
+Hard interference & seen, SIR$\leq0$ & seen & A/C/D\\
+Unseen jammer & held & seen & A/C/D\\
+Unseen speed & seen & 180/250 km/h & A/C/D\\
+Held-out channel & seen & seen & B/E\\
+Combined OOD & held & 180/250 km/h & B/E\\
+Clean retention & none & seen & A/C/D/B/E\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Cache Audit}
+The offline builder pre-appends a fixed guard, batches MATLAB channel calls,
+audits returned filter and path delays, then crops the central window.  It
+records target and jammer profile, delay spread, maximum Doppler, channel
+seed, guard margin, source ID, requested and realized SNR/SIR, component
+residual, file SHA-256, and a deterministic manifest digest.
+The eligible headline manifest is the sole source of reportable audit values;
+the current integration sentinels validate pipeline structure only and are not
+performance evidence.
+
+\begin{table}[t]
+\centering
+\caption{Fail-Closed Cache-Audit Gates Bound to the Eligible Headline
+Manifest; No Sentinel Value Is Promoted Into the Manuscript.}
+\label{tab:cacheaudit}
+\footnotesize
+\begin{tabular}{ll}
+\toprule
+Gate & Required manifest evidence\\
+\midrule
+Component identity & reload residual and tolerance\\
+Power realization & SNR/SIR errors and validity masks\\
+Guard adequacy & requested and post-delay margins\\
+Immutability & file checksums and manifest digest\\
+Source disjointness & pair/split source-ID intersections\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Experimental Design}
+\subsection{Comparators and Ablations}
+All trainable models receive identical source pairs, split manifests, epoch
+budget, optimizer family, label smoothing, and checkpoint policy.  Literature
+models are labelled ``reimplementation,'' ``inspired,'' or ``supervised
+adaptation'' according to their provenance unless official code and the
+complete published protocol are executed unchanged.  Quoted paper numbers are
+never mixed with unified retraining.
+
+\begin{table*}[t]
+\centering
+\caption{Pre-Registered Ablation Chain.  ``Teacher'' Is the Fixed
+Simulation-Component Power Mask Teacher, and XCC Is Exact-Source
+Cross-Condition Contrast.}
+\label{tab:ablations}
+\footnotesize
+\setlength{\tabcolsep}{5.0pt}
+\begin{tabular}{clccccccl}
+\toprule
+ID & Representation & Routes & Teacher & Jam/quality MTL & XCC &
+Bypass & Purpose\\
+\midrule
+A0 & Direct spectral backbone & -- & -- & -- & -- & -- &
+shared-feature lower baseline; not parameter-matched\\
+A1 & Single sigmoid mask & 1 & -- & -- & -- & -- &
+ordinary soft selection\\
+A2 & Conditioned tri-mask & 3 & -- & -- & -- & yes &
+third-route allocation and bypass without teacher\\
+A3 & Conditioned tri-mask & 3 & yes & -- & -- & yes &
+incremental physical supervision\\
+A4 & Conditioned tri-mask & 3 & yes & yes & -- & yes &
+incremental branch semantics\\
+A5 & \method\ & 3 & yes & yes & yes & yes &
+complete method\\
+A6 & Conditioned dual-mask & 2 & yes & yes & yes & yes &
+composite control; no route-count causal attribution\\
+A7 & Conditioned tri-mask & 3 & yes & yes & yes & -- &
+bounded-bypass test\\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+The formal comparator set is exactly the A0 direct shared backbone, MCLDNN
+\cite{xu2020mcldnn}, the transparent IQFormer-inspired baseline, and the
+CSSL-AMC supervised adaptation described below.  The predeclared primary
+reference is the CSSL-AMC adaptation; this is a fixed comparison anchor, not a
+post-hoc strongest-method claim.  The recent low-SNR/noise-robust AMC
+comparator is a 2025 CSSL-AMC
+official-architecture supervised adaptation
+\cite{du2025contrastive}: its encoder/classifier graph is audited against the
+authors' Apache-2.0 source at commit \texttt{2fbc5b3e12f7}, but it is randomly
+initialized and trained with the common paired-view classification objective,
+not the published two-stage protocol.  It imports neither official weights nor
+reported results and is not a structured-interference-specific method.  MFENet
+\cite{sun2025mfenet} and RepCCNet \cite{tang2024repccnet} remain related work,
+not executed rows, because their reproducibility gate was not satisfied.
+A classical higher-order/cyclostationary feature classifier and clean-input or
+oracle-teacher routes are separate non-headline diagnostics, not formal
+comparators or deployable baselines.  Oracle-control outcomes are prohibited
+from the formal release tables.
+
+\subsection{Metrics and Statistical Inference}
+Primary outcomes are macro-F1 and accuracy; secondary outcomes are worst
+supported-class recall, negative log-likelihood, and 15-bin expected
+calibration error.  Source-aligned prediction bundles retain per-source
+SNR/SIR metadata for a separately preregistered stratified analysis.  The
+current release reports only frozen regime aggregates and makes no released
+full-SNR--SIR-plane claim.
+
+The primary reference comparator is predeclared before any model training or
+test evaluation and is not selected on validation.  For each frozen source
+set, models produce source-aligned probability bundles.  Candidate--reference
+accuracy and macro-F1 differences use a 10,000-draw, class-stratified
+source-cluster paired bootstrap.  For the five-seed headline comparison, the
+primary hierarchical paired bootstrap resamples both algorithm seeds and the
+same paired source clusters; source-only and seed-only intervals are also
+reported.  An exact two-sided McNemar test is supplemental, restricted to one
+fitted-model seed, reported for every predeclared candidate, and never computed
+by pooling predictions across seeds.  Holm adjustment is applied within each
+predeclared held-out-regime \(\times\) seed family across the candidate model
+family; it does not correct across regimes or seeds and is not the basis for
+the headline inference.  Validation is excluded from testing.  Screening uses
+three model seeds, while the locked headline comparison uses five.
+
+\subsection{Mechanism Tests}
+Accuracy alone cannot verify the proposed interpretation.  Let
+$W_m=M_s+\lambda M_o+\rho$.  For independently tracked target and jammer
+spectra, define
+\begin{align}
+\alpha&=\frac{\|W_m\odot Z_s\|_2^2}{\|Z_s\|_2^2},&
+\beta&=\frac{\|W_m\odot Z_j\|_2^2}{\|Z_j\|_2^2},\\
+\Delta_{\rm spec}&=10\log_{10}\frac{\alpha}{\beta}.
+\label{eq:mechanism}
+\end{align}
+We report energy-weighted route correlation and MAE against the teacher,
+route occupancy, $\alpha$, $\beta$, and $\Delta_{\rm spec}$.  Because the
+additive bypass can make $W_m>1$, $\alpha$ is a target-energy transfer ratio,
+not a bounded retention rate; its mean, maximum, and fraction of samples with
+$\alpha>1$ are reported.  The teacher's third route combines unexplained
+power and target--jammer power ambiguity, which are not identifiable as
+separate constituents from the student mask.  Their teacher-side occupancies
+may be tabulated only to describe the simulated target; correlation and MAE
+are computed for the combined route.  A 1,000-draw permutation test evaluates
+the diagnostic association between predicted and teacher third-route
+occupancy.  These mechanism probes are exploratory diagnostic associations
+outside the headline multiplicity family.  In particular,
+\(\Delta_{\rm spec}\) is an oracle-conditioned spectral component ratio, not
+waveform SIR gain, source separation, or a real-world SIR estimator.
+
+The auxiliary heads are evaluated directly: jammer micro/macro F1 and AUROC,
+and validity-masked SNR, SIR, and Doppler MAE after conversion back to physical
+units.  Undefined AUROC or unavailable scaling metadata is reported as
+unavailable rather than imputed.
+
+\subsection{Complexity}
+Parameter count and serialized state size are exact.  Convolution/linear MACs
+exclude the STFT, whose real-operation count is reported separately from the
+standard FFT order estimate.  Batch-one P50/P95 latency is reported only for
+the frozen device used by the eligible run after warm-up and required device
+synchronization.  The operator must isolate that device before measurement;
+the release records the device, runtime, window length, and synchronization
+policy.  No CPU--GPU comparison or cross-device latency claim is made.
+
+\section{Results and Falsification Gates}
+\ifinternalreview
+This section is intentionally unpopulated.  The executable pipeline has passed
+unit, data-identity, cache, gradient-routing, and fixed-batch optimization
+checks, but the available smoke profiles are too small to estimate
+generalization.  No ineligible diagnostic or screening run is promoted into
+Tables~\ref{tab:headline}--\ref{tab:mechanism}.
+\else
+The locked evidence source is \ResultSource.  Unless stated otherwise, values
+are five-seed means from single-view inference with source-paired statistical
+comparison on the frozen test set.
+\fi
+
+\begin{table}[t]
+\centering
+\caption{Hard-Interference Headline AMC Results.  Acc./F1/WCR Are
+Percentages; Lower NLL/ECE Is Better.}
+\label{tab:headline}
+\footnotesize
+\setlength{\tabcolsep}{2.8pt}
+\begin{tabular}{lrrrrr}
+\toprule
+Model & Acc. & F1 & WCR & NLL & ECE\\
+\midrule
+Direct backbone & \HeadlineHardAZeroAccuracy & \HeadlineHardAZeroMacroFOne &
+\HeadlineHardAZeroWorstRecall & \HeadlineHardAZeroNLL &
+\HeadlineHardAZeroECE\\
+MCLDNN reimpl. & \HeadlineHardMCLDNNAccuracy &
+\HeadlineHardMCLDNNMacroFOne & \HeadlineHardMCLDNNWorstRecall &
+\HeadlineHardMCLDNNNLL & \HeadlineHardMCLDNNECE\\
+IQFormer-inspired & \HeadlineHardIQFormerAccuracy &
+\HeadlineHardIQFormerMacroFOne & \HeadlineHardIQFormerWorstRecall &
+\HeadlineHardIQFormerNLL & \HeadlineHardIQFormerECE\\
+CSSL-AMC sup. adapt. & \HeadlineHardCSSLAccuracy &
+\HeadlineHardCSSLMacroFOne & \HeadlineHardCSSLWorstRecall &
+\HeadlineHardCSSLNLL & \HeadlineHardCSSLECE\\
+\method & \HeadlineHardAFiveAccuracy & \HeadlineHardAFiveMacroFOne &
+\HeadlineHardAFiveWorstRecall & \HeadlineHardAFiveNLL &
+\HeadlineHardAFiveECE\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Factor-Isolated Macro-F1 Percentages and Paired Gain in Percentage
+Points over the Predeclared Primary Reference.}
+\label{tab:ood}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrr}
+\toprule
+Regime & Reference & \method & Gain [95\% CI]\\
+\midrule
+Hard SIR $\leq0$ dB & \RegimeHardReference & \RegimeHardAFive &
+\RegimeHardGain\ [\RegimeHardCILow,\RegimeHardCIHigh]\\
+Unseen jammer & \RegimeUnseenJammerReference & \RegimeUnseenJammerAFive &
+\RegimeUnseenJammerGain\
+[\RegimeUnseenJammerCILow,\RegimeUnseenJammerCIHigh]\\
+Unseen speed & \RegimeUnseenSpeedReference & \RegimeUnseenSpeedAFive &
+\RegimeUnseenSpeedGain\
+[\RegimeUnseenSpeedCILow,\RegimeUnseenSpeedCIHigh]\\
+TDL-B/E held out & \RegimeHeldoutChannelReference &
+\RegimeHeldoutChannelAFive & \RegimeHeldoutChannelGain\
+[\RegimeHeldoutChannelCILow,\RegimeHeldoutChannelCIHigh]\\
+Combined OOD & \RegimeCombinedOODReference & \RegimeCombinedOODAFive &
+\RegimeCombinedOODGain\
+[\RegimeCombinedOODCILow,\RegimeCombinedOODCIHigh]\\
+Clean retention A/C/D & \RegimeCleanACDReference & \RegimeCleanACDAFive &
+\RegimeCleanACDGain\ [\RegimeCleanACDCILow,\RegimeCleanACDCIHigh]\\
+Clean retention B/E & \RegimeCleanBEReference & \RegimeCleanBEAFive &
+\RegimeCleanBEGain\ [\RegimeCleanBECILow,\RegimeCleanBECIHigh]\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Mechanism and Complexity Outcomes.}
+\label{tab:mechanism}
+\footnotesize
+\begin{tabular}{lr}
+\toprule
+Quantity & \method\\
+\midrule
+Teacher--student mask JS $\downarrow$ & \MechanismMaskJS\\
+Third-route weighted correlation $\uparrow$ &
+\MechanismThirdRouteWeightedCorrelation\\
+Target-energy transfer ratio $\alpha$ & \MechanismTargetTransferRatio\\
+Target amplification share $\Pr(\alpha>1)$ (\%) &
+\MechanismTargetAmplificationShare\\
+Jammer leakage $\beta\downarrow$ & \MechanismJammerLeakage\\
+Third-route Spearman; permutation \(p\) &
+\MechanismThirdRouteSpearman; \MechanismThirdRoutePermutationP\\
+Oracle-conditioned spectral ratio gain (dB) &
+\OracleSpectralRatioGain\\
+Parameters & \VIMDParameters\\
+Batch-one P50/P95 on \VIMDLatencyDevice\ (ms) &
+\VIMDLatencyP50/\VIMDLatencyP95\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The method is rejected or narrowed if any of the following occurs: (i) the
+tri-mask does not outperform single- and dual-mask controls in the hard region;
+(ii) teacher supervision does not improve both mask agreement and downstream
+robustness; (iii) held-out gains disappear after paired multiplicity
+correction; (iv) clean-condition macro-F1 degradation exceeds 1.0~\pp\ in
+point estimate or its paired 95\% lower confidence bound falls below
+$-2.0$~\pp.  Clean retention is reported separately for seen-profile A/C/D
+and held-profile B/E strata; a predeclared aggregate may be descriptive but
+cannot replace either stratum.  In these cases, failure is
+reported rather than repaired by deleting difficult classes or conditions.
+
+\section{Reproducibility, Limitations, and Scope}
+Every run stores the complete configuration, environment record, dataset
+manifest, digest, model seed, checkpoint, source-aligned probabilities,
+per-regime metrics, and paired statistics.  Student initialization occurs
+after seeding.  Validation selection is delayed until the full objective is
+active.  Tables are populated from eligible machine-readable artifacts; the
+paper has no manually typed performance cells.
+
+Three limitations are structural.  First, the teacher requires clean component
+bookkeeping during simulation training. It cannot be applied to unreferenced
+field captures, where mask supervision must be disabled. Second, TDL channels
+are standards-aligned primitives rather than a complete nonstationary V2X
+geometry; the manuscript therefore makes a simulation-only claim. Third,
+separately computed component STFT powers omit
+coherent cross terms and therefore define a simulation-component allocation
+target, not a conserved decomposition of mixture energy.  The masks allocate
+task representations and do not reconstruct isolated time-domain sources; the
+additive bypass makes this distinction explicit.
+
+\section{Conclusion}
+This paper formulates interference-robust AMC under vehicular-Doppler
+TDL-profile simulations as physically supervised representation allocation.
+\method\ combines a target-power-dominant/jammer-power-dominant/
+unexplained-or-power-ambiguous teacher, dual task branches, and exact-source
+cross-condition learning on a shared complex-STFT lattice.  Its simulation
+claims are deliberately falsifiable through source-disjoint factor holds,
+single-view inference with source-paired statistics, and oracle-conditioned
+diagnostic component probes.  The internal build establishes the method and
+locked protocol; quantitative conclusions will be stated only after the
+predeclared multi-seed evidence gate is satisfied.  No SDR, field, deployment,
+or complete V2X-scenario conclusion is drawn.
+
+\ifinternalreview
+\section*{Internal Submission Note}
+Before submission, the human authors must (i) replace authorship placeholders,
+(ii) verify every scientific claim and citation against the primary source,
+(iii) supply eligible locked simulation results without expanding the scope,
+(iv) set \texttt{\string\internalreviewfalse}, and (v) provide any disclosure
+required by the current IEEE/TVT policy for generative-AI-assisted language
+editing.  An AI system cannot assume authorship or author responsibility.
+\fi
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

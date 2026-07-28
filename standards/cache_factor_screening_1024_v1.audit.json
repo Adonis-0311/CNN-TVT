@@ -1,0 +1,980 @@
+{
+  "audit_schema_version": 1,
+  "audited_utc": "2026-07-27T23:20:44.106654+00:00",
+  "cache_digest": "241b3aec6e74c79bac2d3ac22295098f0efe5cc79ff07acabf3593cbc32c49e3",
+  "cache_root": "D:\\CNN信号调制识别\\vimd_amc\\standards\\cache_factor_screening_1024_v1",
+  "checks": {
+    "build_provenance": {
+      "audit_code_sha256": {
+        "src/vimd_amc/standards/cache.py": "ff39953e60a2a6bcc8e5c1f27be0e8390fa0f89c5f2949b41cbc9008b9058c88",
+        "src/vimd_amc/standards/nrtdl_matlab.py": "9a10a492b85be1768f2e6b333d8890f64d6dac349e712184bd56df68aa45e510",
+        "standards/build_factor_cache.py": "f490cde171aa60f8d00f315a985d6d2c2ba128b63d38b06ec50db4ca188bb42e"
+      },
+      "audit_source_tree_sha256": "2f6e817b93b3c46c00bc38e423186632e33faa693a956fc2dd8888939b7a2c27",
+      "build_critical_code_unchanged": true,
+      "passed": true,
+      "prebuild_code_sha256": {
+        "src/vimd_amc/standards/cache.py": "ff39953e60a2a6bcc8e5c1f27be0e8390fa0f89c5f2949b41cbc9008b9058c88",
+        "src/vimd_amc/standards/nrtdl_matlab.py": "9a10a492b85be1768f2e6b333d8890f64d6dac349e712184bd56df68aa45e510",
+        "standards/build_factor_cache.py": "f490cde171aa60f8d00f315a985d6d2c2ba128b63d38b06ec50db4ca188bb42e"
+      },
+      "prebuild_source_tree_sha256": "91438a6b3b99ec52ba4ec5606ff03cdc377965fa806adf7db6c39fd8e1f86fe3",
+      "source_tree_unchanged": false
+    },
+    "complete_balanced_modulation_support": {
+      "expected_modulations": [
+        "BPSK",
+        "PI2BPSK",
+        "QPSK",
+        "8PSK",
+        "16QAM",
+        "64QAM",
+        "256QAM",
+        "GMSK",
+        "CPFSK",
+        "4FSK"
+      ],
+      "minimum_per_class_by_split": {
+        "clean_retention": 50,
+        "combined_ood": 50,
+        "hard_interference": 50,
+        "heldout_channel": 50,
+        "id_test": 50,
+        "train": 100,
+        "unseen_jammer": 50,
+        "unseen_speed": 50,
+        "validation": 20
+      },
+      "passed": true
+    },
+    "component_snr_sir_quality_recomputation": {
+      "failures": {},
+      "passed": true,
+      "per_split": {
+        "clean_retention": {
+          "active_jammer_view_count": 0,
+          "clean_view_count": 1000,
+          "max_clean_jammer_power": 0.0,
+          "max_component_error": 3.43050492799918e-07,
+          "max_quality_normalization_error": 5.960464477539063e-08,
+          "max_sir_error_db": 0.0,
+          "max_snr_error_db": 4.433454936503267e-08,
+          "min_active_jammer_power": 0.0
+        },
+        "combined_ood": {
+          "active_jammer_view_count": 1000,
+          "clean_view_count": 0,
+          "max_clean_jammer_power": 0.0,
+          "max_component_error": 4.4094362069819367e-07,
+          "max_quality_normalization_error": 0.0,
+          "max_sir_error_db": 6.878342073690646e-08,
+          "max_snr_error_db": 4.026583155791741e-08,
+          "min_active_jammer_power": 0.008652843630801163
+        },
+        "hard_interference": {
+          "active_jammer_view_count": 1000,
+          "clean_view_count": 0,
+          "max_clean_jammer_power": 0.0,
+          "max_component_error": 3.211537310816691e-07,
+          "max_quality_normalization_error": 5.960464477539063e-08,
+          "max_sir_error_db": 4.6879637949359676e-08,
+          "max_snr_error_db": 4.1722529431353905e-08,
+          "min_active_jammer_power": 0.08094548073867688
+        },
+        "heldout_channel": {
+          "active_jammer_view_count": 1000,
+          "clean_view_count": 0,
+          "max_clean_jammer_power": 0.0,
+          "max_component_error": 3.403088880064869e-07,
+          "max_quality_normalization_error": 5.960464477539063e-08,
+          "max_sir_error_db": 4.758963889628376e-08,
+          "max_snr_error_db": 4.2734559446699905e-08,
+          "min_active_jammer_power": 0.00875347999142533
+        },
+        "id_test": {
+          "active_jammer_view_count": 800,
+          "clean_view_count": 200,
+          "max_clean_jammer_power": 0.0,
+          "max_component_error": 3.170795211099204e-07,
+          "max_quality_normalization_error": 5.960464477539063e-08,
+          "max_sir_error_db": 3.7287783527517604e-08,
+          "max_snr_error_db": 4.343639936621457e-08,
+          "min_active_jammer_power": 0.008803870656826461
+        },
+        "train": {
+          "active_jammer_view_count": 1600,
+          "clean_view_count": 400,
+          "max_clean_jammer_power": 0.0,
+          "max_component_error": 3.288033657222217e-07,
+          "max_quality_normalization_error": 5.960464477539063e-08,
+          "max_sir_error_db": 4.472521197840251e-08,
+          "max_snr_error_db": 4.07994651396848e-08,
+          "min_active_jammer_power": 0.008646089735678248
+        },
+        "unseen_jammer": {
+          "active_jammer_view_count": 1000,
+          "clean_view_count": 0,
+          "max_clean_jammer_power": 0.0,
+          "max_component_error": 4.471745123805678e-07,
+          "max_quality_normalization_error": 5.960464477539063e-08,
+          "max_sir_error_db": 5.601630050477979e-06,
+          "max_snr_error_db": 4.027636602010887e-08,
+          "min_active_jammer_power": 0.008837033076222254
+        },
+        "unseen_speed": {
+          "active_jammer_view_count": 1000,
+          "clean_view_count": 0,
+          "max_clean_jammer_power": 0.0,
+          "max_component_error": 2.953482181925155e-07,
+          "max_quality_normalization_error": 0.0,
+          "max_sir_error_db": 4.238600137540516e-08,
+          "max_snr_error_db": 3.691032968156094e-08,
+          "min_active_jammer_power": 0.008806887045328093
+        },
+        "validation": {
+          "active_jammer_view_count": 320,
+          "clean_view_count": 80,
+          "max_clean_jammer_power": 0.0,
+          "max_component_error": 3.1143516016791555e-07,
+          "max_quality_normalization_error": 5.960464477539063e-08,
+          "max_sir_error_db": 3.8130036017491875e-08,
+          "max_snr_error_db": 3.8618105824284044e-08,
+          "min_active_jammer_power": 0.00884505556005732
+        }
+      },
+      "tolerances": {
+        "clean_jammer_power": 1e-12,
+        "component": 2e-06,
+        "power_db": 0.002,
+        "quality": 1e-06
+      },
+      "worst": {
+        "max_clean_jammer_power": 0.0,
+        "max_component_error": 4.471745123805678e-07,
+        "max_quality_normalization_error": 5.960464477539063e-08,
+        "max_sir_error_db": 5.601630050477979e-06,
+        "max_snr_error_db": 4.433454936503267e-08
+      }
+    },
+    "factor_isolation_and_coverage": {
+      "excluded_jammers_absent": true,
+      "factor_failures": [],
+      "pairing_failures": [],
+      "passed": true,
+      "seen_held_jammers_disjoint": true,
+      "seen_held_profiles_disjoint": true,
+      "seen_held_speeds_disjoint": true
+    },
+    "files_checksums_shapes_finiteness": {
+      "checksum_mismatches": [],
+      "declared_array_bytes": 463180992,
+      "declared_array_file_count": 189,
+      "declared_missing_npy_files": [],
+      "nonfinite_files": [],
+      "passed": true,
+      "shape_or_dtype_mismatches": [],
+      "total_cache_bytes_including_manifest": 517687920,
+      "total_cache_file_count_including_manifest": 190,
+      "undeclared_npy_files": [],
+      "verified_array_file_count": 189
+    },
+    "guard_and_crop": {
+      "configured_guard_samples": 96,
+      "failure_examples": [],
+      "maximum_required_guard_samples": 21,
+      "minimum_guard_margin_samples": 75,
+      "passed": true
+    },
+    "locked_configuration_and_policy": {
+      "configuration_sha256": "e12e80215cdce2a579ae26c0b94c6ef0180ed8d9181b97846e052349db843721",
+      "evidence_designation": "screening_not_formal_tvt_evidence",
+      "guard_samples": 96,
+      "jammer_taxonomy": [
+        "tone",
+        "multitone",
+        "chirp",
+        "sweep",
+        "pulse",
+        "partial_band",
+        "comb",
+        "cochannel",
+        "ofdm_like"
+      ],
+      "master_seed": 20260727,
+      "passed": true,
+      "policy_exact": true,
+      "prebuild_configuration_sha256": "e12e80215cdce2a579ae26c0b94c6ef0180ed8d9181b97846e052349db843721",
+      "protocol_exclusions": {
+        "cochannel": {
+          "reason": "A single-antenna mixture of two in-taxonomy modulated emitters does not identify which waveform owns a preassigned target label under source exchange, especially near equal power.",
+          "required_resolution": "physical emitter anchor, out-of-taxonomy collision label, dominant-emitter label, or separate ambiguity-stress protocol",
+          "status": "excluded_from_primary_modulation_classification"
+        },
+        "mixed": {
+          "reason": "The generator can compose two jammer primitives, but no frozen combination policy or independently identified mixture label is pre-registered for the nine-split headline experiment.",
+          "required_resolution": "separate pre-registered compositional generalization experiment",
+          "status": "excluded_from_locked_factor_protocol"
+        }
+      },
+      "sample_length": 1024
+    },
+    "manifest_factor_coverage_crosscheck": {
+      "all_manifest_factor_policy_flags_true": true,
+      "independent_coverage_matches_manifest": true,
+      "passed": true
+    },
+    "manifest_schema_and_digest": {
+      "declared_cache_digest": "241b3aec6e74c79bac2d3ac22295098f0efe5cc79ff07acabf3593cbc32c49e3",
+      "exact_nine_splits": true,
+      "passed": true,
+      "recomputed_cache_digest": "241b3aec6e74c79bac2d3ac22295098f0efe5cc79ff07acabf3593cbc32c49e3",
+      "schema_version": 2
+    },
+    "quality_normalization_contract": {
+      "expected_doppler_scale_hz": 1366.6862233813174,
+      "normalization": {
+        "doppler_hz": {
+          "formula": "clip(maximum_doppler_hz / scale, 0.0, 1.5)",
+          "quality_index": 2,
+          "scale": 1366.6862233813174,
+          "speed_to_doppler_formula": "speed_kmh / 3.6 * carrier_frequency_hz / 299792458",
+          "unit": "Hz",
+          "validity": "always"
+        },
+        "sir_db": {
+          "formula": "clip(sir_db / scale, -1.0, 1.5)",
+          "quality_index": 1,
+          "scale": 20.0,
+          "unit": "dB",
+          "validity": "quality_mask[1] == 1"
+        },
+        "snr_db": {
+          "formula": "clip(snr_db / scale, -1.0, 1.5)",
+          "quality_index": 0,
+          "scale": 20.0,
+          "unit": "dB",
+          "validity": "always"
+        }
+      },
+      "passed": true
+    },
+    "source_integrity": {
+      "cross_split_collisions": [],
+      "duplicate_count_within_split": {
+        "clean_retention": 0,
+        "combined_ood": 0,
+        "hard_interference": 0,
+        "heldout_channel": 0,
+        "id_test": 0,
+        "train": 0,
+        "unseen_jammer": 0,
+        "unseen_speed": 0,
+        "validation": 0
+      },
+      "expected_source_count": 4700,
+      "globally_unique_source_count": 4700,
+      "passed": true,
+      "record_manifest_mismatch_count": {
+        "clean_retention": 0,
+        "combined_ood": 0,
+        "hard_interference": 0,
+        "heldout_channel": 0,
+        "id_test": 0,
+        "train": 0,
+        "unseen_jammer": 0,
+        "unseen_speed": 0,
+        "validation": 0
+      },
+      "source_array_manifest_mismatch_count": {
+        "clean_retention": 0,
+        "combined_ood": 0,
+        "hard_interference": 0,
+        "heldout_channel": 0,
+        "id_test": 0,
+        "train": 0,
+        "unseen_jammer": 0,
+        "unseen_speed": 0,
+        "validation": 0
+      },
+      "split_counts": {
+        "clean_retention": 500,
+        "combined_ood": 500,
+        "hard_interference": 500,
+        "heldout_channel": 500,
+        "id_test": 500,
+        "train": 1000,
+        "unseen_jammer": 500,
+        "unseen_speed": 500,
+        "validation": 200
+      }
+    }
+  },
+  "claim_boundary": "This administrative screening cache may be used for stable model triage. It must not be relabeled or cited as formal/headline TVT evidence; no model training or result claim is part of this audit.",
+  "intended_grain": "one source sequence per row, two independently impaired views per source, globally source-disjoint across nine splits",
+  "intended_use": "stable model screening and pipeline triage",
+  "per_split_profile": {
+    "clean_retention": {
+      "active_view_count": 0,
+      "actual_jammer_profiles": [
+        "TDL-A",
+        "TDL-B",
+        "TDL-C",
+        "TDL-D",
+        "TDL-E"
+      ],
+      "actual_jammers": [
+        "none"
+      ],
+      "actual_sir_db": [],
+      "actual_snr_db": [
+        -10.0,
+        -6.0,
+        -2.0,
+        2.0,
+        6.0,
+        10.0,
+        14.0,
+        18.0
+      ],
+      "actual_speeds_kmh": [
+        0.0,
+        60.0,
+        120.0,
+        150.0
+      ],
+      "actual_target_profiles": [
+        "TDL-A",
+        "TDL-B",
+        "TDL-C",
+        "TDL-D",
+        "TDL-E"
+      ],
+      "class_counts": {
+        "16QAM": 50,
+        "256QAM": 50,
+        "4FSK": 50,
+        "64QAM": 50,
+        "8PSK": 50,
+        "BPSK": 50,
+        "CPFSK": 50,
+        "GMSK": 50,
+        "PI2BPSK": 50,
+        "QPSK": 50
+      },
+      "clean_view_count": 1000,
+      "factor_checks": {
+        "active_view_count_exact": true,
+        "classes_exactly_balanced": true,
+        "clean_view_count_exact": true,
+        "jammer_profiles_complete": true,
+        "jammers_complete": true,
+        "modulations_complete": true,
+        "paired_condition_seeds_distinct": true,
+        "sir_grid_complete": true,
+        "snr_grid_complete": true,
+        "speeds_complete": true,
+        "target_profiles_complete": true
+      },
+      "minimum_per_class_count": 50,
+      "sir_invalid_view_count": 1000,
+      "source_count": 500,
+      "view_count": 1000
+    },
+    "combined_ood": {
+      "active_view_count": 1000,
+      "actual_jammer_profiles": [
+        "TDL-B",
+        "TDL-E"
+      ],
+      "actual_jammers": [
+        "ofdm_like",
+        "pulse"
+      ],
+      "actual_sir_db": [
+        -10.0,
+        -5.0,
+        0.0,
+        5.0,
+        10.0
+      ],
+      "actual_snr_db": [
+        -10.0,
+        -6.0,
+        -2.0,
+        2.0,
+        6.0,
+        10.0,
+        14.0,
+        18.0
+      ],
+      "actual_speeds_kmh": [
+        180.0,
+        250.0
+      ],
+      "actual_target_profiles": [
+        "TDL-B",
+        "TDL-E"
+      ],
+      "class_counts": {
+        "16QAM": 50,
+        "256QAM": 50,
+        "4FSK": 50,
+        "64QAM": 50,
+        "8PSK": 50,
+        "BPSK": 50,
+        "CPFSK": 50,
+        "GMSK": 50,
+        "PI2BPSK": 50,
+        "QPSK": 50
+      },
+      "clean_view_count": 0,
+      "factor_checks": {
+        "active_view_count_exact": true,
+        "classes_exactly_balanced": true,
+        "clean_view_count_exact": true,
+        "jammer_profiles_complete": true,
+        "jammers_complete": true,
+        "modulations_complete": true,
+        "paired_condition_seeds_distinct": true,
+        "sir_grid_complete": true,
+        "snr_grid_complete": true,
+        "speeds_complete": true,
+        "target_profiles_complete": true
+      },
+      "minimum_per_class_count": 50,
+      "sir_invalid_view_count": 0,
+      "source_count": 500,
+      "view_count": 1000
+    },
+    "hard_interference": {
+      "active_view_count": 1000,
+      "actual_jammer_profiles": [
+        "TDL-A",
+        "TDL-C",
+        "TDL-D"
+      ],
+      "actual_jammers": [
+        "chirp",
+        "comb",
+        "multitone",
+        "partial_band",
+        "sweep",
+        "tone"
+      ],
+      "actual_sir_db": [
+        -15.0,
+        -10.0,
+        -5.0,
+        0.0
+      ],
+      "actual_snr_db": [
+        -10.0,
+        -6.0,
+        -2.0,
+        2.0,
+        6.0,
+        10.0,
+        14.0,
+        18.0
+      ],
+      "actual_speeds_kmh": [
+        0.0,
+        60.0,
+        120.0,
+        150.0
+      ],
+      "actual_target_profiles": [
+        "TDL-A",
+        "TDL-C",
+        "TDL-D"
+      ],
+      "class_counts": {
+        "16QAM": 50,
+        "256QAM": 50,
+        "4FSK": 50,
+        "64QAM": 50,
+        "8PSK": 50,
+        "BPSK": 50,
+        "CPFSK": 50,
+        "GMSK": 50,
+        "PI2BPSK": 50,
+        "QPSK": 50
+      },
+      "clean_view_count": 0,
+      "factor_checks": {
+        "active_view_count_exact": true,
+        "classes_exactly_balanced": true,
+        "clean_view_count_exact": true,
+        "hard_sir_no_greater_than_zero": true,
+        "jammer_profiles_complete": true,
+        "jammers_complete": true,
+        "modulations_complete": true,
+        "paired_condition_seeds_distinct": true,
+        "sir_grid_complete": true,
+        "snr_grid_complete": true,
+        "speeds_complete": true,
+        "target_profiles_complete": true
+      },
+      "minimum_per_class_count": 50,
+      "sir_invalid_view_count": 0,
+      "source_count": 500,
+      "view_count": 1000
+    },
+    "heldout_channel": {
+      "active_view_count": 1000,
+      "actual_jammer_profiles": [
+        "TDL-B",
+        "TDL-E"
+      ],
+      "actual_jammers": [
+        "chirp",
+        "comb",
+        "multitone",
+        "partial_band",
+        "sweep",
+        "tone"
+      ],
+      "actual_sir_db": [
+        -10.0,
+        -5.0,
+        0.0,
+        5.0,
+        10.0
+      ],
+      "actual_snr_db": [
+        -10.0,
+        -6.0,
+        -2.0,
+        2.0,
+        6.0,
+        10.0,
+        14.0,
+        18.0
+      ],
+      "actual_speeds_kmh": [
+        0.0,
+        60.0,
+        120.0,
+        150.0
+      ],
+      "actual_target_profiles": [
+        "TDL-B",
+        "TDL-E"
+      ],
+      "class_counts": {
+        "16QAM": 50,
+        "256QAM": 50,
+        "4FSK": 50,
+        "64QAM": 50,
+        "8PSK": 50,
+        "BPSK": 50,
+        "CPFSK": 50,
+        "GMSK": 50,
+        "PI2BPSK": 50,
+        "QPSK": 50
+      },
+      "clean_view_count": 0,
+      "factor_checks": {
+        "active_view_count_exact": true,
+        "classes_exactly_balanced": true,
+        "clean_view_count_exact": true,
+        "jammer_profiles_complete": true,
+        "jammers_complete": true,
+        "modulations_complete": true,
+        "paired_condition_seeds_distinct": true,
+        "sir_grid_complete": true,
+        "snr_grid_complete": true,
+        "speeds_complete": true,
+        "target_profiles_complete": true
+      },
+      "minimum_per_class_count": 50,
+      "sir_invalid_view_count": 0,
+      "source_count": 500,
+      "view_count": 1000
+    },
+    "id_test": {
+      "active_view_count": 800,
+      "actual_jammer_profiles": [
+        "TDL-A",
+        "TDL-C",
+        "TDL-D"
+      ],
+      "actual_jammers": [
+        "chirp",
+        "comb",
+        "multitone",
+        "none",
+        "partial_band",
+        "sweep",
+        "tone"
+      ],
+      "actual_sir_db": [
+        -10.0,
+        -5.0,
+        0.0,
+        5.0,
+        10.0
+      ],
+      "actual_snr_db": [
+        -10.0,
+        -6.0,
+        -2.0,
+        2.0,
+        6.0,
+        10.0,
+        14.0,
+        18.0
+      ],
+      "actual_speeds_kmh": [
+        0.0,
+        60.0,
+        120.0,
+        150.0
+      ],
+      "actual_target_profiles": [
+        "TDL-A",
+        "TDL-C",
+        "TDL-D"
+      ],
+      "class_counts": {
+        "16QAM": 50,
+        "256QAM": 50,
+        "4FSK": 50,
+        "64QAM": 50,
+        "8PSK": 50,
+        "BPSK": 50,
+        "CPFSK": 50,
+        "GMSK": 50,
+        "PI2BPSK": 50,
+        "QPSK": 50
+      },
+      "clean_view_count": 200,
+      "factor_checks": {
+        "active_view_count_exact": true,
+        "classes_exactly_balanced": true,
+        "clean_view_count_exact": true,
+        "jammer_profiles_complete": true,
+        "jammers_complete": true,
+        "modulations_complete": true,
+        "paired_condition_seeds_distinct": true,
+        "sir_grid_complete": true,
+        "snr_grid_complete": true,
+        "speeds_complete": true,
+        "target_profiles_complete": true
+      },
+      "minimum_per_class_count": 50,
+      "sir_invalid_view_count": 200,
+      "source_count": 500,
+      "view_count": 1000
+    },
+    "train": {
+      "active_view_count": 1600,
+      "actual_jammer_profiles": [
+        "TDL-A",
+        "TDL-C",
+        "TDL-D"
+      ],
+      "actual_jammers": [
+        "chirp",
+        "comb",
+        "multitone",
+        "none",
+        "partial_band",
+        "sweep",
+        "tone"
+      ],
+      "actual_sir_db": [
+        -10.0,
+        -5.0,
+        0.0,
+        5.0,
+        10.0
+      ],
+      "actual_snr_db": [
+        -10.0,
+        -6.0,
+        -2.0,
+        2.0,
+        6.0,
+        10.0,
+        14.0,
+        18.0
+      ],
+      "actual_speeds_kmh": [
+        0.0,
+        60.0,
+        120.0,
+        150.0
+      ],
+      "actual_target_profiles": [
+        "TDL-A",
+        "TDL-C",
+        "TDL-D"
+      ],
+      "class_counts": {
+        "16QAM": 100,
+        "256QAM": 100,
+        "4FSK": 100,
+        "64QAM": 100,
+        "8PSK": 100,
+        "BPSK": 100,
+        "CPFSK": 100,
+        "GMSK": 100,
+        "PI2BPSK": 100,
+        "QPSK": 100
+      },
+      "clean_view_count": 400,
+      "factor_checks": {
+        "active_view_count_exact": true,
+        "classes_exactly_balanced": true,
+        "clean_view_count_exact": true,
+        "jammer_profiles_complete": true,
+        "jammers_complete": true,
+        "modulations_complete": true,
+        "paired_condition_seeds_distinct": true,
+        "sir_grid_complete": true,
+        "snr_grid_complete": true,
+        "speeds_complete": true,
+        "target_profiles_complete": true
+      },
+      "minimum_per_class_count": 100,
+      "sir_invalid_view_count": 400,
+      "source_count": 1000,
+      "view_count": 2000
+    },
+    "unseen_jammer": {
+      "active_view_count": 1000,
+      "actual_jammer_profiles": [
+        "TDL-A",
+        "TDL-C",
+        "TDL-D"
+      ],
+      "actual_jammers": [
+        "ofdm_like",
+        "pulse"
+      ],
+      "actual_sir_db": [
+        -10.0,
+        -5.0,
+        0.0,
+        5.0,
+        10.0
+      ],
+      "actual_snr_db": [
+        -10.0,
+        -6.0,
+        -2.0,
+        2.0,
+        6.0,
+        10.0,
+        14.0,
+        18.0
+      ],
+      "actual_speeds_kmh": [
+        0.0,
+        60.0,
+        120.0,
+        150.0
+      ],
+      "actual_target_profiles": [
+        "TDL-A",
+        "TDL-C",
+        "TDL-D"
+      ],
+      "class_counts": {
+        "16QAM": 50,
+        "256QAM": 50,
+        "4FSK": 50,
+        "64QAM": 50,
+        "8PSK": 50,
+        "BPSK": 50,
+        "CPFSK": 50,
+        "GMSK": 50,
+        "PI2BPSK": 50,
+        "QPSK": 50
+      },
+      "clean_view_count": 0,
+      "factor_checks": {
+        "active_view_count_exact": true,
+        "classes_exactly_balanced": true,
+        "clean_view_count_exact": true,
+        "jammer_profiles_complete": true,
+        "jammers_complete": true,
+        "modulations_complete": true,
+        "paired_condition_seeds_distinct": true,
+        "sir_grid_complete": true,
+        "snr_grid_complete": true,
+        "speeds_complete": true,
+        "target_profiles_complete": true
+      },
+      "minimum_per_class_count": 50,
+      "sir_invalid_view_count": 0,
+      "source_count": 500,
+      "view_count": 1000
+    },
+    "unseen_speed": {
+      "active_view_count": 1000,
+      "actual_jammer_profiles": [
+        "TDL-A",
+        "TDL-C",
+        "TDL-D"
+      ],
+      "actual_jammers": [
+        "chirp",
+        "comb",
+        "multitone",
+        "partial_band",
+        "sweep",
+        "tone"
+      ],
+      "actual_sir_db": [
+        -10.0,
+        -5.0,
+        0.0,
+        5.0,
+        10.0
+      ],
+      "actual_snr_db": [
+        -10.0,
+        -6.0,
+        -2.0,
+        2.0,
+        6.0,
+        10.0,
+        14.0,
+        18.0
+      ],
+      "actual_speeds_kmh": [
+        180.0,
+        250.0
+      ],
+      "actual_target_profiles": [
+        "TDL-A",
+        "TDL-C",
+        "TDL-D"
+      ],
+      "class_counts": {
+        "16QAM": 50,
+        "256QAM": 50,
+        "4FSK": 50,
+        "64QAM": 50,
+        "8PSK": 50,
+        "BPSK": 50,
+        "CPFSK": 50,
+        "GMSK": 50,
+        "PI2BPSK": 50,
+        "QPSK": 50
+      },
+      "clean_view_count": 0,
+      "factor_checks": {
+        "active_view_count_exact": true,
+        "classes_exactly_balanced": true,
+        "clean_view_count_exact": true,
+        "jammer_profiles_complete": true,
+        "jammers_complete": true,
+        "modulations_complete": true,
+        "paired_condition_seeds_distinct": true,
+        "sir_grid_complete": true,
+        "snr_grid_complete": true,
+        "speeds_complete": true,
+        "target_profiles_complete": true
+      },
+      "minimum_per_class_count": 50,
+      "sir_invalid_view_count": 0,
+      "source_count": 500,
+      "view_count": 1000
+    },
+    "validation": {
+      "active_view_count": 320,
+      "actual_jammer_profiles": [
+        "TDL-A",
+        "TDL-C",
+        "TDL-D"
+      ],
+      "actual_jammers": [
+        "chirp",
+        "comb",
+        "multitone",
+        "none",
+        "partial_band",
+        "sweep",
+        "tone"
+      ],
+      "actual_sir_db": [
+        -10.0,
+        -5.0,
+        0.0,
+        5.0,
+        10.0
+      ],
+      "actual_snr_db": [
+        -10.0,
+        -6.0,
+        -2.0,
+        2.0,
+        6.0,
+        10.0,
+        14.0,
+        18.0
+      ],
+      "actual_speeds_kmh": [
+        0.0,
+        60.0,
+        120.0,
+        150.0
+      ],
+      "actual_target_profiles": [
+        "TDL-A",
+        "TDL-C",
+        "TDL-D"
+      ],
+      "class_counts": {
+        "16QAM": 20,
+        "256QAM": 20,
+        "4FSK": 20,
+        "64QAM": 20,
+        "8PSK": 20,
+        "BPSK": 20,
+        "CPFSK": 20,
+        "GMSK": 20,
+        "PI2BPSK": 20,
+        "QPSK": 20
+      },
+      "clean_view_count": 80,
+      "factor_checks": {
+        "active_view_count_exact": true,
+        "classes_exactly_balanced": true,
+        "clean_view_count_exact": true,
+        "jammer_profiles_complete": true,
+        "jammers_complete": true,
+        "modulations_complete": true,
+        "paired_condition_seeds_distinct": true,
+        "sir_grid_complete": true,
+        "snr_grid_complete": true,
+        "speeds_complete": true,
+        "target_profiles_complete": true
+      },
+      "minimum_per_class_count": 20,
+      "sir_invalid_view_count": 80,
+      "source_count": 200,
+      "view_count": 400
+    }
+  },
+  "summary": {
+    "evidence_designation": "screening_not_formal_tvt_evidence",
+    "failed_checks": [],
+    "formal_tvt_or_headline_eligible": false,
+    "modulation_class_count": 10,
+    "paired_view_count": 9400,
+    "source_count": 4700,
+    "stable_screening_usable": true,
+    "status": "pass"
+  },
+  "warnings": [
+    {
+      "finding": "aggregate_source_tree_changed_after_prebuild_record",
+      "impact": "The broader experiment source tree changed concurrently. All three cache-construction-critical files retained their prebuild hashes, so this does not invalidate serialized cache generation, but the drift must remain disclosed.",
+      "severity": "medium"
+    }
+  ]
+}

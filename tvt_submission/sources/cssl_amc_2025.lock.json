@@ -1,0 +1,99 @@
+{
+  "schema_version": "vimd_amc.external_source_lock.v1",
+  "status": "audited_architecture_adaptation_preregistered_not_executed",
+  "audit_date": "2026-07-28",
+  "paper": {
+    "title": "A Contrastive Learner for Automatic Modulation Classification",
+    "authors": ["Mingyang Du", "Jifei Pan", "Daping Bi"],
+    "venue": "IEEE Transactions on Wireless Communications",
+    "volume": 24,
+    "number": 4,
+    "pages": "3575-3589",
+    "year": 2025,
+    "doi": "10.1109/TWC.2025.3532438",
+    "publisher_url": "https://ieeexplore.ieee.org/document/10857965/"
+  },
+  "official_source": {
+    "repository": "https://github.com/dumingyang20/CSSL-AMC-Pytorch",
+    "commit": "2fbc5b3e12f780b0b26eb0ee2c33d592739aa24f",
+    "commit_url": "https://github.com/dumingyang20/CSSL-AMC-Pytorch/commit/2fbc5b3e12f780b0b26eb0ee2c33d592739aa24f",
+    "license_spdx": "Apache-2.0",
+    "license_url": "https://raw.githubusercontent.com/dumingyang20/CSSL-AMC-Pytorch/2fbc5b3e12f780b0b26eb0ee2c33d592739aa24f/LICENSE",
+    "license_sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+    "local_license_copy": "tvt_submission/sources/licenses/Apache-2.0.txt",
+    "audited_files": [
+      {
+        "path": "models/cssl.py",
+        "immutable_url": "https://raw.githubusercontent.com/dumingyang20/CSSL-AMC-Pytorch/2fbc5b3e12f780b0b26eb0ee2c33d592739aa24f/models/cssl.py",
+        "sha256": "4be9d9bd864e03fc33db2a4bc29df53f078d0d4b0a1718acddc0916c7a7fc9ac",
+        "audit_role": "encoder and classifier topology"
+      },
+      {
+        "path": "run.py",
+        "immutable_url": "https://raw.githubusercontent.com/dumingyang20/CSSL-AMC-Pytorch/2fbc5b3e12f780b0b26eb0ee2c33d592739aa24f/run.py",
+        "sha256": "9b9b877ac528c319b326b15cb8f472db354b84861886c6b129c3026bae9638fe",
+        "audit_role": "momentum-encoder contrastive pretraining protocol"
+      },
+      {
+        "path": "contrastive_learning.py",
+        "immutable_url": "https://raw.githubusercontent.com/dumingyang20/CSSL-AMC-Pytorch/2fbc5b3e12f780b0b26eb0ee2c33d592739aa24f/contrastive_learning.py",
+        "sha256": "4f5817d713111746e22606ed6333a48fdf239527618d695fd36fa355a66808ed",
+        "audit_role": "InfoNCE and momentum update semantics"
+      },
+      {
+        "path": "finetune.py",
+        "immutable_url": "https://raw.githubusercontent.com/dumingyang20/CSSL-AMC-Pytorch/2fbc5b3e12f780b0b26eb0ee2c33d592739aa24f/finetune.py",
+        "sha256": "3396f0cef0d0c235c0b3b28436cb8e563cf19bb5ad22779e0af69465b52d0809",
+        "audit_role": "downstream classifier and native fine-tuning protocol"
+      },
+      {
+        "path": "dataset.py",
+        "immutable_url": "https://raw.githubusercontent.com/dumingyang20/CSSL-AMC-Pytorch/2fbc5b3e12f780b0b26eb0ee2c33d592739aa24f/dataset.py",
+        "sha256": "032283a1bd44ba249c31386bab30f7021f44ee2f1b175496f55b1191faf62456",
+        "audit_role": "raw IQ shape, frame length, and native data loading"
+      }
+    ]
+  },
+  "local_adaptation": {
+    "registry_name": "cssl_amc_supervised_adaptation",
+    "class_name": "CSSLAMCSupervisedAdaptation",
+    "implementation": "src/vimd_amc/models/baselines.py",
+    "input_contract": {
+      "representation": "received complex IQ as float tensor [batch, 2, 1024]",
+      "sample_length": 1024,
+      "side_information": "none",
+      "external_weights": "prohibited"
+    },
+    "retained_topology": [
+      "three-convolution FCN noise-level estimator",
+      "raw-IQ plus estimated-noise four-channel concatenation",
+      "1-D residual stages with block counts [2, 2]",
+      "stride-2 second stage",
+      "fixed 128x512 flattening readout to 128 dimensions",
+      "128-to-64-to-class linear classifier",
+      "forward-unused input BatchNorm parameters retained for state-dict parity"
+    ],
+    "material_changes": [
+      "24-class RadioML head changed to the frozen ten-class TVT taxonomy",
+      "no official or external checkpoint is loaded",
+      "complete CSSL momentum-encoder pretraining is not executed",
+      "common paired-view supervised cross-entropy and common formal budget are used",
+      "local dictionary output is used by the common evaluator"
+    ],
+    "claim_label": "official-architecture supervised adaptation; not a reproduction of the complete two-stage CSSL method",
+    "formal_training_objective": "paired_view_modulation_ce",
+    "formal_optimizer_budget_source": "tvt_submission/configs/formal_tvt_freeze_v1.json",
+    "formal_result_status": "not_executed",
+    "recent_auditable_amc_comparator": true,
+    "complete_published_method_reproduction": false,
+    "structured_interference_specific": false
+  },
+  "prohibited_claims": [
+    "official CSSL reproduction",
+    "official CSSL result",
+    "two-stage CSSL result",
+    "strongest recent method",
+    "structured-interference-specific method",
+    "performance evidence before the formal release gate passes"
+  ]
+}

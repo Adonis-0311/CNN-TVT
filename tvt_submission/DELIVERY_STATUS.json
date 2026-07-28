@@ -1,0 +1,47 @@
+{
+  "schema_version": "vimd_amc.tvt.delivery_status.v1",
+  "updated_date": "2026-07-28",
+  "package_state": "pre_submission_convergence_not_upload_ready",
+  "long_running_jobs_started_by_this_package": false,
+  "completed": {
+    "method_implementation": true,
+    "a0_a7_registry": true,
+    "nine_split_protocol": true,
+    "screening_cache_built": true,
+    "screening_cache_audit_passed": true,
+    "cochannel_identifiability_boundary": true,
+    "statistical_pipeline": true,
+    "internal_evidence_lock_manuscript": true,
+    "tccn_governance_reuse": true,
+    "local_dry_run_handoff": true,
+    "recent_auditable_amc_comparator": true
+  },
+  "not_completed": {
+    "formal_headline_cache": true,
+    "eligible_five_seed_run": true,
+    "verified_recent_structured_interference_comparator": true,
+    "architecture_specific_baseline_tuning_sensitivity": true,
+    "eligible_result_figures_and_tables": true,
+    "sdr_or_field_transfer": true,
+    "human_authorship_metadata": true,
+    "human_primary_source_audit": true,
+    "upload_ready_release": true
+  },
+  "failed_candidates_not_promoted": [
+    "temporal VIMD-v2",
+    "annealed teacher route",
+    "fixed-descriptor late fusion",
+    "VIMD-v3 shared IQFormer route"
+  ],
+  "authoritative_screening_cache": {
+    "path": "standards/cache_factor_screening_1024_v1",
+    "digest": "241b3aec6e74c79bac2d3ac22295098f0efe5cc79ff07acabf3593cbc32c49e3",
+    "designation": "screening_not_formal_tvt_evidence",
+    "audit": "standards/cache_factor_screening_1024_v1.audit.json"
+  },
+  "next_machine_action": {
+    "default_behavior": "dry_run_only",
+    "entrypoint": "tvt_submission/run_local.ps1",
+    "explicit_execution_switch": "-Execute"
+  }
+}

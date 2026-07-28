@@ -1,0 +1,33 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+.venv/
+
+# Large, generated, diagnostic, or machine-local evidence.
+artifacts/
+diagnostics/
+logs/
+tmp/
+deliverables/
+standards/cache_factor_screening_1024_v1/
+standards/cache_factor_headline_1024_v1/
+standards/cache_*/
+standards/*.build.stdout.log
+standards/*.build.stderr.log
+
+# LaTeX build products; source and frozen IEEEtran.cls remain tracked.
+paper/build/
+paper/build_*/
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.fls
+paper/*.fdb_latexmk
+paper/authors_verified.tex
+paper/release_lock.json
+
+# Formal values are generated only from an eligible locked run.
+tvt_submission/formal_macro_values.json

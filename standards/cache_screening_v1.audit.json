@@ -1,0 +1,98 @@
+{
+  "audit_status": "passed",
+  "cache_root": "D:\\CNN信号调制识别\\vimd_amc\\standards\\cache_screening_v1",
+  "cache_digest": "e219930800a24844146087b6dfa7b2fa2daf1c61aaaf2ab5b0158c4c79a80b9a",
+  "evidence_designation": "screening_not_formal_tvt_evidence",
+  "usable_for_formal_tvt_results": false,
+  "build": {
+    "master_seed": 20260727,
+    "sample_length": 256,
+    "guard_samples": 64,
+    "elapsed_seconds": 115,
+    "directory_bytes": 32848967,
+    "fallback_size_reason": "The requested 1024/256/512 source build was reduced, as explicitly permitted, after the MATLAB integration benchmark indicated abnormal expected runtime.",
+    "split_source_counts": {
+      "train": 512,
+      "validation": 128,
+      "heldout_channel": 256
+    },
+    "split_view_counts": {
+      "train": 1024,
+      "validation": 256,
+      "heldout_channel": 512
+    }
+  },
+  "integrity": {
+    "manifest_digest_verified_by_loader": true,
+    "array_file_checksums_verified": 60,
+    "source_sets_pairwise_disjoint": true,
+    "named_jammer_seed_audit_passed": true
+  },
+  "configured_and_observed_coverage_in_every_split": {
+    "modulations": [
+      "BPSK",
+      "PI2BPSK",
+      "QPSK",
+      "8PSK",
+      "16QAM",
+      "64QAM",
+      "256QAM",
+      "GMSK",
+      "CPFSK",
+      "4FSK"
+    ],
+    "jammers": [
+      "tone",
+      "chirp",
+      "pulse",
+      "partial_band",
+      "cochannel",
+      "multitone"
+    ],
+    "speeds_kmh": [0.0, 60.0, 120.0, 150.0],
+    "delay_spreads_ns": [30.0, 100.0, 300.0],
+    "snr_db_values": [-10.0, -6.0, -2.0, 2.0, 6.0, 10.0, 14.0, 18.0],
+    "sir_db_values": [-15.0, -10.0, -5.0, 0.0, 5.0, 10.0]
+  },
+  "profile_audit": {
+    "train_target_and_jammer_profiles": ["TDL-A", "TDL-C", "TDL-D"],
+    "validation_target_and_jammer_profiles": ["TDL-A", "TDL-C", "TDL-D"],
+    "heldout_target_and_jammer_profiles": ["TDL-B", "TDL-E"],
+    "train_heldout_profile_overlap": []
+  },
+  "active_jammer_policy": {
+    "selection_stage": "prechannel_retained_window_power_only",
+    "prechannel_power_threshold": 1e-12,
+    "uses_postchannel_or_model_outcome": false,
+    "retried_view_count": 6,
+    "maximum_attempt_observed": 1,
+    "all_cached_active_jammer_powers_positive": true,
+    "all_cached_sir_values_finite": true,
+    "rejected_attempts_and_named_seeds_are_recorded_in_manifest": true
+  },
+  "component_validation": {
+    "train": {
+      "max_component_error": 5.499467688979988e-07,
+      "max_snr_error_db": 7.050896000393436e-08,
+      "max_sir_error_db": 2.505523006846033e-07,
+      "min_active_jammer_power": 0.008566804919577228
+    },
+    "validation": {
+      "max_component_error": 2.8502274951612525e-07,
+      "max_snr_error_db": 5.8797869684212856e-08,
+      "max_sir_error_db": 7.077261576782234e-07,
+      "min_active_jammer_power": 0.008864723382922896
+    },
+    "heldout_channel": {
+      "max_component_error": 5.774199962615967e-07,
+      "max_snr_error_db": 6.472404479040961e-08,
+      "max_sir_error_db": 4.962241186845517e-07,
+      "min_active_jammer_power": 0.008631664686022299
+    }
+  },
+  "regression_tests": {
+    "command": "python -m unittest standards.tests.test_cache_builder_cli standards.tests.test_tdl_cache -v",
+    "tests_run": 5,
+    "passed": 5
+  }
+}

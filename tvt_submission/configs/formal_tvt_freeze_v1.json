@@ -1,0 +1,161 @@
+{
+  "schema_version": "vimd_amc.tvt.formal_freeze.v1",
+  "status": "preregistered_not_executed",
+  "created_date": "2026-07-28",
+  "journal_target": "IEEE Transactions on Vehicular Technology",
+  "claim_scope": "simulation-only AMC under 3GPP TR 38.901 TDL-profile channels parameterized by vehicular Doppler",
+  "cache": {
+    "output": "standards/cache_factor_headline_1024_v1",
+    "preset": "headline",
+    "sample_length": 1024,
+    "guard_samples": 96,
+    "master_seed": 20260727,
+    "matlab_timeout_s": 3600,
+    "expected_designation": "headline_formal_tvt_evidence",
+    "expected_split_source_counts": {
+      "train": 10000,
+      "validation": 2000,
+      "id_test": 5000,
+      "hard_interference": 5000,
+      "unseen_jammer": 5000,
+      "unseen_speed": 5000,
+      "heldout_channel": 5000,
+      "combined_ood": 5000,
+      "clean_retention": 5000
+    }
+  },
+  "experiment": {
+    "run_id": "tvt_headline_1024_5seed_v1",
+    "output": "artifacts",
+    "expected_run_directory": "artifacts/tvt_headline_1024_5seed_v1",
+    "models": [
+      "a0_backbone",
+      "a1_single_mask",
+      "a2_tri_no_teacher",
+      "a3_tri_teacher",
+      "a4_tri_teacher_mtl",
+      "a5_vimd_full",
+      "a6_dual_full",
+      "a7_vimd_no_residual",
+      "mcldnn_reimplementation",
+      "iqformer_inspired",
+      "cssl_amc_supervised_adaptation"
+    ],
+    "seeds": [17, 29, 43, 71, 101],
+    "reference_model": "cssl_amc_supervised_adaptation",
+    "reference_selection": "predeclared before training; not described as strongest",
+    "holm_candidates": [
+      "a0_backbone",
+      "a1_single_mask",
+      "a5_vimd_full",
+      "mcldnn_reimplementation",
+      "iqformer_inspired"
+    ],
+    "recent_comparator_contract": {
+      "model": "cssl_amc_supervised_adaptation",
+      "source_lock": "tvt_submission/sources/cssl_amc_2025.lock.json",
+      "required_label": "CSSL-AMC official-architecture supervised adaptation",
+      "complete_published_method_reproduction": false,
+      "structured_interference_specific": false
+    },
+    "scientific_release_gates": {
+      "method_model": "a5_vimd_full",
+      "primary_reference_model": "cssl_amc_supervised_adaptation",
+      "required_nonoracle_baselines": [
+        "a0_backbone",
+        "mcldnn_reimplementation",
+        "iqformer_inspired",
+        "cssl_amc_supervised_adaptation"
+      ],
+      "hard_macro_f1_min_gain_pp_each_baseline": 5.0,
+      "hard_ablation_controls": [
+        "a1_single_mask",
+        "a6_dual_full"
+      ],
+      "hard_ablation_strictly_positive": true,
+      "ood_regimes": [
+        "unseen_jammer",
+        "unseen_speed",
+        "heldout_channel"
+      ],
+      "ood_macro_f1_min_gain_pp": 3.0,
+      "ood_required_pass_count": 2,
+      "clean_profile_strata": {
+        "clean_retention_seen_acd": [0, 2, 3],
+        "clean_retention_held_be": [1, 4]
+      },
+      "clean_macro_f1_min_point_gain_pp": -1.0,
+      "clean_macro_f1_min_ci95_low_pp": -2.0,
+      "mechanism_required_finite_fields": [
+        "mask_js",
+        "overlap_uncertainty_route_weighted_correlation",
+        "target_energy_transfer_ratio_mean",
+        "target_energy_transfer_ratio_amplification_share",
+        "jammer_leakage",
+        "oracle_vs_predicted_overlap_spearman",
+        "overlap_permutation_p_value",
+        "counterfactual_tf_sir_gain_db"
+      ],
+      "mechanism_nonnegative_fields": [
+        "overlap_uncertainty_route_weighted_correlation",
+        "oracle_vs_predicted_overlap_spearman"
+      ],
+      "oracle_spectral_ratio_field": "counterfactual_tf_sir_gain_db",
+      "oracle_spectral_ratio_strictly_positive": true
+    },
+    "device": "cuda",
+    "verify_checksums": true,
+    "validate_components": true,
+    "training": {
+      "epochs": 30,
+      "batch_size": 64,
+      "learning_rate": 0.0003,
+      "weight_decay": 0.01,
+      "mask_start_epoch": 2,
+      "contrastive_start_epoch": 5,
+      "mask_ramp_epochs": 3,
+      "contrastive_ramp_epochs": 3,
+      "minimum_full_stage_epochs": 3,
+      "patience": 8,
+      "use_amp": true
+    },
+    "model": {
+      "n_fft": 64,
+      "hop_length": 16,
+      "spectral_channels": 24,
+      "embedding_dim": 48,
+      "environment_dim": 32,
+      "dropout": 0.05
+    },
+    "statistics": {
+      "bootstrap_draws": 10000,
+      "bootstrap_seed": 20260727,
+      "headline_inference": "hierarchical paired bootstrap over algorithm seed and source cluster",
+      "mcnemar_role": "per-seed supplemental diagnostic",
+      "validation_excluded": true
+    }
+  },
+  "promotion_requirements": {
+    "run_eligible_true": true,
+    "source_tree_unchanged": true,
+    "all_required_models_and_seeds": true,
+    "at_least_one_checkpoint_selection_eligible_epoch_per_fit": true,
+    "no_fallback_checkpoint": true,
+    "no_placeholder_result_macro": true,
+    "human_primary_source_audit": true,
+    "hard_all_baseline_gain_gate_artifact_derived": true,
+    "hard_ablation_direction_gate_artifact_derived": true,
+    "ood_two_of_three_gate_artifact_derived": true,
+    "clean_dual_stratum_noninferiority_gate_artifact_derived": true,
+    "mechanism_consistency_gate_artifact_derived": true,
+    "complete_numeric_tables_artifact_derived": true
+  },
+  "prohibited_imports": [
+    "screening metrics",
+    "diagnostic metrics",
+    "oracle-control metrics",
+    "source-mutated metrics",
+    "TCCN satellite scenario results",
+    "manually typed performance values"
+  ]
+}

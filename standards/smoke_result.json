@@ -1,0 +1,63 @@
+{
+  "status": "passed",
+  "batch_shape": [
+    8,
+    4096
+  ],
+  "profiles": [
+    "TDL-A",
+    "TDL-A",
+    "TDL-A",
+    "TDL-A",
+    "TDL-B",
+    "TDL-C",
+    "TDL-D",
+    "TDL-E"
+  ],
+  "seeds": [
+    101,
+    101,
+    102,
+    101,
+    151,
+    201,
+    301,
+    401
+  ],
+  "doppler_hz": [
+    0.0,
+    0.0,
+    0.0,
+    984.014081,
+    492.00704,
+    393.605632,
+    590.408449,
+    787.211265
+  ],
+  "num_paths": [
+    23,
+    23,
+    23,
+    23,
+    23,
+    24,
+    13,
+    14
+  ],
+  "output_rms": [
+    1.818543,
+    1.818543,
+    1.180287,
+    1.103238,
+    0.770372,
+    1.155647,
+    0.968675,
+    1.048189
+  ],
+  "matlab_release": "2025a",
+  "five_g_toolbox_version": "25.1",
+  "standard_reference": "3GPP TR 38.901 tapped-delay-line channel model",
+  "deterministic_duplicate_bitwise_equal": true,
+  "different_seed_distinct": true,
+  "positive_doppler_distinct": true
+}

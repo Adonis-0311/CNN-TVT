@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "D:\CNN信号调制识别\vimd_amc\standards\cache_builder.py", line 179, in <module>
+    main()
+  File "D:\CNN信号调制识别\vimd_amc\standards\cache_builder.py", line 153, in main
+    result = build_tdl_paired_cache(
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CNN信号调制识别\vimd_amc\src\vimd_amc\standards\cache.py", line 627, in build_tdl_paired_cache
+    sample = synthesizer.finalize_received_components(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\CNN信号调制识别\vimd_amc\src\vimd_amc\data\synthesis.py", line 556, in finalize_received_components
+    raise ValueError("active channelized jammer component has zero power")
+ValueError: active channelized jammer component has zero power

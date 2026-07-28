@@ -1,0 +1,86 @@
+{
+  "record_type": "immutable_factor_cache_prebuild_record",
+  "recorded_utc": "2026-07-27T16:18:17.127450+00:00",
+  "output": "standards/cache_factor_screening_1024_v1",
+  "output_existed_before_build": false,
+  "command": "python standards/build_factor_cache.py --output standards/cache_factor_screening_1024_v1 --preset screening --sample-length 1024 --guard-samples 96 --matlab-timeout-s 3600",
+  "preset": "screening",
+  "evidence_designation": "screening_not_formal_tvt_evidence",
+  "master_seed": 20260727,
+  "sample_length": 1024,
+  "guard_samples": 96,
+  "split_sizes": {
+    "train": 1000,
+    "validation": 200,
+    "id_test": 500,
+    "hard_interference": 500,
+    "unseen_jammer": 500,
+    "unseen_speed": 500,
+    "heldout_channel": 500,
+    "combined_ood": 500,
+    "clean_retention": 500
+  },
+  "modulations": [
+    "BPSK",
+    "PI2BPSK",
+    "QPSK",
+    "8PSK",
+    "16QAM",
+    "64QAM",
+    "256QAM",
+    "GMSK",
+    "CPFSK",
+    "4FSK"
+  ],
+  "seen_jammers": [
+    "tone",
+    "multitone",
+    "chirp",
+    "sweep",
+    "partial_band",
+    "comb"
+  ],
+  "held_jammers": [
+    "pulse",
+    "ofdm_like"
+  ],
+  "protocol_exclusions": [
+    "cochannel",
+    "mixed"
+  ],
+  "configuration_sha256": "e12e80215cdce2a579ae26c0b94c6ef0180ed8d9181b97846e052349db843721",
+  "source_tree_sha256": "91438a6b3b99ec52ba4ec5606ff03cdc377965fa806adf7db6c39fd8e1f86fe3",
+  "code_sha256": {
+    "standards/build_factor_cache.py": "f490cde171aa60f8d00f315a985d6d2c2ba128b63d38b06ec50db4ca188bb42e",
+    "src/vimd_amc/standards/cache.py": "ff39953e60a2a6bcc8e5c1f27be0e8390fa0f89c5f2949b41cbc9008b9058c88",
+    "src/vimd_amc/standards/nrtdl_matlab.py": "9a10a492b85be1768f2e6b333d8890f64d6dac349e712184bd56df68aa45e510"
+  },
+  "preflight": {
+    "policy_print_and_validation_passed": true,
+    "free_disk_gib": 570.96,
+    "expected_source_count": 4700,
+    "expected_paired_view_count": 9400,
+    "matlab_release": "2025a",
+    "five_g_toolbox_version": "25.1",
+    "guard_probe": {
+      "profiles": [
+        "TDL-A",
+        "TDL-B",
+        "TDL-C",
+        "TDL-D",
+        "TDL-E"
+      ],
+      "delay_spreads_s": [
+        3e-08,
+        1e-07,
+        3e-07
+      ],
+      "probe_speed_kmh": 250,
+      "probe_seed_base": 41000,
+      "maximum_required_guard_samples": 21,
+      "minimum_margin_with_96_samples": 75,
+      "passed": true
+    }
+  },
+  "claim_boundary": "Administrative screening cache only; it must never be relabeled as headline or formal TVT evidence."
+}
