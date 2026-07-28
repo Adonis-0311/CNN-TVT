@@ -5,7 +5,7 @@ Vehicular Technology manuscript. It is deliberately fail-closed: the current
 paper remains an internal evidence-lock manuscript, and no screening,
 diagnostic, oracle, or source-mutated number is promoted as a paper result.
 
-## What is ready
+## Implemented, pending final regression
 
 - The method, A0--A7 ablation registry, source-disjoint nine-split protocol,
   statistical plan, and simulation-only claim boundary are implemented.
@@ -15,17 +15,20 @@ diagnostic, oracle, or source-mutated number is promoted as a paper result.
   commit, source hashes, and Apache-2.0 license and registered as the bounded
   `cssl_amc_supervised_adaptation` formal comparator. It is not a complete CSSL
   reproduction or a structured-interference-specific method.
-- The manuscript compiles in IEEE two-column format.
+- The latest internal compile-check produces an 8-page IEEE two-column PDF with
+  placeholder results. It is not a release build; the older 7-page
+  `paper/build/main.pdf` is stale relative to the current sources.
 - Formal cache generation and the five-seed experiment are specified below
   but intentionally not launched by Codex.
 
 ## What remains machine-executed
 
-Run `run_candidate_local.ps1` for the one-shot VIMD-v4 DSBN diagnostic and
-`run_local.ps1` for the formal cache/experiment hand-off. Without `-Execute`,
-both scripts perform only preflight checks and print the exact long-running
-commands. Do not change model, seed, split, checkpoint, or multiplicity
-settings after inspecting an outcome.
+The paper-evidence path uses `run_local.ps1` for the formal cache/experiment
+hand-off. The one-shot VIMD-v4 DSBN path in `run_candidate_local.ps1` is
+optional diagnostic work and is not required for the current paper. Without
+`-Execute`, both scripts perform only preflight checks and print the exact
+long-running commands. Do not change model, seed, split, checkpoint, or
+multiplicity settings after inspecting an outcome.
 
 The formal result is admissible only if the final run records
 `evidence_eligibility.eligible=true`, its source-tree start/end fingerprints
@@ -36,7 +39,12 @@ values. Its exact derivations and JSON/CSV/NPZ consistency checks are recorded
 in `MACRO_DERIVATION_AUDIT.md`. A successful write also generates the
 `EligibleLockedResults` sentinel required by the public LaTeX branch and binds
 that sentinel to `paper/release_lock.json`; the internal placeholder
-deliberately cannot unlock the paper.
+deliberately cannot unlock the paper. The current contract is macro-manifest
+v3 with 73 provenance records, 74 non-sentinel TeX commands, and 75 commands
+only after the release sentinel is added. CSSL supervised adaptation is the
+predeclared primary reference.
+
+IQFormer-inspired is a required comparator, not the primary reference.
 
 ## Submission boundary
 

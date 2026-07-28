@@ -1,7 +1,12 @@
 # VIMD-Net / IEEE TVT Workspace Handoff
 
-Snapshot time: 2026-07-28, before 13:55 China Standard Time  
-Repository: `https://github.com/Adonis-0311/CNN-TVT`  
+Snapshot date: 2026-07-28
+
+First GitHub push: 14:06 China Standard Time; the requested 13:55 deadline was
+not met.
+
+Repository: `https://github.com/Adonis-0311/CNN-TVT`
+
 Status: **pre-submission engineering snapshot; not upload-ready**
 
 ## 1. Objective and non-negotiable boundaries
@@ -98,13 +103,17 @@ Known integration state:
 
 - `metrics.py`, `evaluation.py`, and runner changes are carrying
   `target_profile_index` toward clean-retention A/C/D versus B/E statistics.
-- The formal reference is being changed to the predeclared CSSL supervised
-  adaptation; it must be described as the **primary reference**, never as
-  post-hoc “strongest.”
+- The formal reference is locked to the predeclared CSSL supervised adaptation;
+  it must be described as the **primary reference**, never as post-hoc
+  “strongest.” IQFormer-inspired remains a required non-oracle comparator.
 - `generate_macro_values.py`, `validate_release.py`, `paper/main.tex`, and
-  `paper/results_auto.tex` are converging on one 74-macro artifact-derived
-  contract. At snapshot time, these are syntax-valid WIP and must be
-  reconciled before release tests are considered authoritative.
+  `paper/results_auto.tex` share a manifest-v3 artifact-derived contract:
+  73 provenance records, 74 non-sentinel TeX commands after adding
+  `ResultSource`, and 75 commands in a released file after adding
+  `EligibleLockedResults`. The latency commands spell out the percentiles as
+  `VIMDLatencyPFifty` and `VIMDLatencyPNinetyFive`; TeX command names containing
+  digit tokens such as `P50` or `P95` are not part of the contract. At snapshot
+  time, final integration and full regression remain pending.
 - The public paper must never render literal `generated`, `pending`, `TBD`,
   or manually typed performance cells.
 - `validate_release.py` owns the single writer contract. Preserve/finish these
@@ -182,9 +191,11 @@ V4 is a separate candidate diagnostic and is not current paper evidence:
 # Add -Execute only under a separate approved, idle-GPU window.
 ```
 
-The next agent must finish and validate the queued all-local wrapper before
-running it. No command in this handoff grants permission to disrupt an active
-local task.
+The all-local wrapper is implemented and dry-run by default; its final
+integration audit remains part of the pending regression. Execution requires
+the exact acknowledgment documented in `LOCAL_EXECUTION_QUEUE.md` and must
+refuse to start while foreign work or insufficient free GPU memory is detected.
+No command in this handoff grants permission to disrupt an active local task.
 
 ## 7. Immediate next-agent sequence
 

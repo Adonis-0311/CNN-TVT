@@ -43,11 +43,11 @@ Official pages:
 | G0 Scope | Vehicular system model, mobility/channel factors, receiver use case | Drafted |
 | G1 Data integrity | Source-disjoint splits, exact realized SNR/SIR, immutable manifests/checksums | Passed for the immutable 1024-sample screening cache: nine splits, 4,700 globally unique sources, 9,400 paired views, 189 declared arrays, and cache digest `241b3aec6e74c79bac2d3ac22295098f0efe5cc79ff07acabf3593cbc32c49e3`. Its designation is screening-only; the formal headline cache remains pending |
 | G2 Algorithm effectiveness | Full model exceeds every frozen non-oracle baseline by at least 5 percentage points in hard-region macro-F1 | Not established; all existing learned-model outcomes are diagnostic or invalidated and are excluded from the manuscript |
-| G3 Mechanism | Positive stable teacher agreement and TF-SIR gain; tri-mask beats single/dual routes | Not established; oracle probes show that the target route retains some class information, but student routing has not produced robust AMC gains |
-| G4 Generalization | Significant gains on at least two independently held-out factors | Not measured |
+| G3 Mechanism | Required fields finite, required third-route correlations nonnegative, oracle-conditioned spectral component ratio positive, and A5 strictly exceeds A1/A6 on the hard endpoint | Not established; oracle probes show that the target route retains some class information, but student routing has not produced robust AMC gains |
+| G4 Generalization | At least two of unseen jammer, unseen speed, and held-out channel gain at least +3 pp macro-F1 versus the predeclared CSSL reference; clean A/C/D and held B/E satisfy the frozen noninferiority floors | Not measured |
 | G5 Engineering | Reproducible parameter/operator-count and frozen-device latency evidence, with its exclusions stated exactly | Not measured; no SDR or deployment gate is claimed in this simulation-only manuscript |
-| G6 Reproducibility | Five locked seeds, paired accuracy/macro-F1 CI, seed/source uncertainty, preregistered McNemar/Holm family, frozen configuration | Formal configuration, checkpoint-eligibility serialization, no-fallback rule, jammer-support masking, source fingerprints, and fail-closed macro release are implemented and tested; the formal run remains pending |
-| G7 Manuscript | No unsupported novelty, generated figures/tables only, primary-source citation audit, 14 pages or fewer | Internal evidence-lock PDF compiles at 7 pages with simulation-only scope and placeholder results. Upload is prohibited until formal release and human citation/authorship review |
+| G6 Reproducibility | Five locked seeds, paired accuracy/macro-F1 CI, seed/source uncertainty, preregistered McNemar/Holm family, frozen configuration | Formal configuration, checkpoint-eligibility serialization, no-fallback rule, jammer-support masking, source fingerprints, and fail-closed macro release are implemented; final full regression after the latest release-chain integration and the formal run both remain pending |
+| G7 Manuscript | No unsupported novelty, artifact-generated figures/tables only, primary-source citation audit, 14 pages or fewer | The latest internal compile-check PDF is 8 pages with simulation-only scope and placeholder results; the 7-page `paper/build/main.pdf` predates the latest sources and is stale. No release PDF exists. Upload is prohibited until formal release, a fresh validated build, and human citation/authorship review |
 
 ## Automatic rejection of evidence
 
@@ -94,9 +94,11 @@ A run is ineligible for the manuscript if any of these is true:
   recent auditable AMC comparator only: no complete CSSL reproduction,
   official result, or structured-interference-specific claim is permitted.
 - A verified recent structured-interference-specific comparator and
-  architecture-specific baseline tuning sensitivity remain open. The local
-  `StrongestBaseline` macro must include CSSL-AMC but cannot be described as
-  the strongest published or strongest interference-specific method.
+  architecture-specific baseline tuning sensitivity remain open.
+  `PrimaryReference` is prospectively fixed to the CSSL-AMC supervised
+  adaptation; IQFormer-inspired remains a required non-oracle comparator.
+  No post-hoc baseline-winner macro is part of the v3 contract, and no
+  strongest-published or strongest interference-specific claim is allowed.
 
 ## Human-author actions before submission
 

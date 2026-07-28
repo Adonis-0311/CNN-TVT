@@ -2,9 +2,11 @@
 
 状态日期：2026-07-28
 
-本文件是本地长任务的唯一顺序化操作说明。它不授权修改冻结配置，也不把
-诊断结果提升为论文证据。当前正式缓存、五种子正式运行和 release lock
-均未启动或生成；`paper/results_auto.tex` 仍是内部评审占位文件。
+本文件给出各阶段的精确合同；日常操作应优先使用
+`run_all_local_after_gpu_free.ps1` 和 `LOCAL_EXECUTION_QUEUE.md` 中的统一
+队列。它不授权修改冻结配置，也不把诊断结果提升为论文证据。当前正式缓存、
+五种子正式运行和 release lock 均未启动或生成；`paper/results_auto.tex`
+仍是内部评审占位文件。
 
 ## 1. 冻结范围与当前状态
 
@@ -13,6 +15,9 @@
 ```powershell
 Set-Location -LiteralPath "D:\CNN信号调制识别\vimd_amc"
 $Python = "D:\Python\python.exe"
+$Ack = "START_TVT_ONLY_WHEN_MACHINE_IS_IDLE"
+$MinimumFreeGpuMiB = 7000
+$MinimumFreeDiskGiB = 20
 ```
 
 权威冻结文件是
@@ -24,8 +29,8 @@ $Python = "D:\Python\python.exe"
 - 11 个模型、种子 `17,29,43,71,101`，共 55 次拟合；
 - 每次拟合最多 30 epoch，batch size 64，CUDA，AMP；
 - 10,000 次分层配对 bootstrap；
-- 固定主参考是 `iqformer_inspired`，其选择在训练前完成，不能事后描述为
-  “最强”；
+- 固定主参考是 `cssl_amc_supervised_adaptation`，其选择在训练前完成，
+  不能事后描述为“最强”；
 - 比较器家族包含
   `cssl_amc_supervised_adaptation`。它只能称为
   “CSSL-AMC official-architecture supervised adaptation”，不是完整 CSSL
@@ -52,11 +57,16 @@ MiKTeX `latexmk.exe` 和项目内固定的 `paper/IEEEtran.cls`。
 517,687,920 bytes；按样本数线性估算，正式缓存约
 5,176,879,200 bytes（约 4.82 GiB）。这不是硬性上界，因为 MATLAB 临时
 交换文件、55 组 checkpoint、预测 NPZ、CSV、日志和 TeX 构建还会占用空间。
-开始前建议项目所在卷至少保留 20 GiB 可用空间。
+所有 `-Execute` 入口会强制要求项目所在卷至少保留 20 GiB 可用空间。
 
 运行器按模型和种子顺序执行 55 次拟合，不是 55 个并行 GPU 任务。耗时由
 MATLAB 缓存生成、GPU 型号、早停点和 10,000 次 bootstrap 决定；不要用本
 交接文件承诺完成时长。
+
+三个执行入口使用同一个全局命名 mutex，并在执行前检查所有 Python、MATLAB
+和 LibreOffice（含 `soffice.bin`）进程、GPU 剩余显存及项目卷空间；项目内
+已有训练不会被白名单放行。长队列在阶段间重复检查，但不会终止任何已有
+进程，也不会抢占或接管被占用/遗弃的 mutex。
 
 从正式实验启动到 `run.json` 完成写入之间：
 
@@ -96,6 +106,9 @@ baseline 关键符号的重复顶层绑定；正式 CUDA freeze 还要求 AMP �
 & .\tvt_submission\run_local.ps1 `
   -Stage cache `
   -Execute `
+  -Acknowledgement $Ack `
+  -MinimumFreeGpuMiB $MinimumFreeGpuMiB `
+  -MinimumFreeDiskGiB $MinimumFreeDiskGiB `
   -Python $Python
 ```
 
@@ -133,9 +146,19 @@ component 误差越界、checksum/shape/finiteness 错误或源身份碰撞，�
 仅在阶段 1 完整通过后执行：
 
 ```powershell
+$CacheSha = (
+  Get-FileHash -Algorithm SHA256 `
+    .\standards\cache_factor_headline_1024_v1\manifest.json
+).Hash.ToLowerInvariant()
+
 & .\tvt_submission\run_local.ps1 `
   -Stage experiment `
   -Execute `
+  -AllowValidatedReuse `
+  -ExpectedCacheManifestSha256 $CacheSha `
+  -Acknowledgement $Ack `
+  -MinimumFreeGpuMiB $MinimumFreeGpuMiB `
+  -MinimumFreeDiskGiB $MinimumFreeDiskGiB `
   -Python $Python
 ```
 
@@ -161,8 +184,8 @@ models/<model>_seed<seed>/predictions_<split>.npz
 成功进程退出不等于论文可用。`run.json` 还必须同时证明：
 
 - `status` 与 `execution_status` 均为 `complete`；
-- `evidence_eligibility.eligible`、`formal_paper_evidence_eligible` 和
-  `headline_eligible` 均为 `true`；
+- `evidence_eligibility` 内的 `eligible`、
+  `formal_paper_evidence_eligible` 和 `headline_eligible` 均为 `true`；
 - 缓存 designation 与 policy version 精确匹配正式合同；
 - 11 模型 × 5 种子矩阵完整、无重复、无缺失；
 - 每次拟合选择了完整目标生效窗口内的验证 checkpoint；
@@ -193,15 +216,32 @@ source-aligned prediction NPZ 交叉推导宏，并把 CSSL 适配器纳入本�
 确认旧文件应被替换后，才可显式使用 `--replace-existing`，并保留旧版本及
 原因记录。
 
+当前唯一宏合同为：artifact-derived manifest 含 73 个 provenance 宏；
+内部评审 `results_auto.tex` 含 `ResultSource` 加这 73 个宏，共 74 个
+non-sentinel 命令；正式锁定后再增加 `EligibleLockedResults`，共 75 个。
+宏名只允许 ASCII 字母，百分位名称必须使用 `PFifty` 和
+`PNinetyFive`；`P50`/`P95` 必须被 parser 拒绝。
+
 ## 7. 阶段 4：release 预检、写锁与复核
 
 先执行不写文件的 release 预检：
 
 ```powershell
+$RunSha = (
+  Get-FileHash -Algorithm SHA256 `
+    .\artifacts\tvt_headline_1024_5seed_v1\run.json
+).Hash.ToLowerInvariant()
+
 & .\tvt_submission\run_local.ps1 `
   -Stage release `
   -MacroValues "tvt_submission\formal_macro_values.json" `
   -Execute `
+  -AllowValidatedReuse `
+  -ExpectedCacheManifestSha256 $CacheSha `
+  -ExpectedRunJsonSha256 $RunSha `
+  -Acknowledgement $Ack `
+  -MinimumFreeGpuMiB $MinimumFreeGpuMiB `
+  -MinimumFreeDiskGiB $MinimumFreeDiskGiB `
   -Python $Python
 ```
 
@@ -213,6 +253,12 @@ source-aligned prediction NPZ 交叉推导宏，并把 CSSL 适配器纳入本�
   -MacroValues "tvt_submission\formal_macro_values.json" `
   -WriteRelease `
   -Execute `
+  -AllowValidatedReuse `
+  -ExpectedCacheManifestSha256 $CacheSha `
+  -ExpectedRunJsonSha256 $RunSha `
+  -Acknowledgement $Ack `
+  -MinimumFreeGpuMiB $MinimumFreeGpuMiB `
+  -MinimumFreeDiskGiB $MinimumFreeDiskGiB `
   -Python $Python
 ```
 
@@ -236,6 +282,12 @@ SHA-256、`results_auto.tex` SHA-256 和 sentinel 绑定在一起。随后只读
 & .\tvt_submission\run_local.ps1 `
   -Stage release `
   -Execute `
+  -AllowValidatedReuse `
+  -ExpectedCacheManifestSha256 $CacheSha `
+  -ExpectedRunJsonSha256 $RunSha `
+  -Acknowledgement $Ack `
+  -MinimumFreeGpuMiB $MinimumFreeGpuMiB `
+  -MinimumFreeDiskGiB $MinimumFreeDiskGiB `
   -Python $Python
 ```
 
@@ -246,9 +298,9 @@ SHA-256、`results_auto.tex` SHA-256 和 sentinel 绑定在一起。随后只读
 
 自动完整性门通过后仍必须检查科学效果。当前预注册的最低晋级线是：
 
-- A5 在 hard-interference 主终点的 macro-F1 至少高于最佳非 oracle 本地
-  基线 5 个百分点；基线家族必须包含 A0、MCLDNN、IQFormer-inspired 和
-  CSSL 监督适配器；
+- A5 在 hard-interference 主终点的 macro-F1 必须分别高于 A0、MCLDNN、
+  IQFormer-inspired 和 CSSL 监督适配器中的每一个至少 5 个百分点，不是
+  只高于其中“最佳”或某个事后选定的比较器；
 - `unseen_jammer`、`unseen_speed`、`heldout_channel` 三个独立外推域中，
   至少两个达到不低于 3 个百分点的 macro-F1 增益；
 - clean retention 需分别报告 seen A/C/D 与 held B/E；非劣性要求点估计
@@ -256,10 +308,11 @@ SHA-256、`results_auto.tex` SHA-256 和 sentinel 绑定在一起。随后只读
 - 机制指标、消融方向、置信区间与 multiplicity 结果不得与论文因果叙述
   冲突。
 
-若实现版本尚未把某个数值门序列化为自动 release gate，则由人类作者按本节
-做 fail-closed 审计；不能因完整性验证通过就忽略科学门。任何主门失败都应
-保持 `\internalreviewtrue`，如实报告负结果或重新设计新的前瞻性实验，不能
-在当前正式测试结果上事后调门槛。
+manifest v3 已序列化 `scientific_release_gate`；generator 必须从正式产物
+推导它，release validator 必须独立重推导并锁绑定，paper gate 再动态消费。
+人类作者仍须复核门的科学含义，不能因结构完整性验证通过就忽略失败。任何
+主门失败都应保持 `\internalreviewtrue`，如实报告负结果或重新设计新的
+前瞻性实验，不能在当前正式测试结果上事后调门槛。
 
 ## 9. 阶段 6：public build
 

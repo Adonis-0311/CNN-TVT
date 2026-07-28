@@ -1,8 +1,24 @@
 {
-  "schema_version": "vimd_amc.tvt.delivery_status.v1",
+  "schema_version": "vimd_amc.tvt.delivery_status.v2",
   "updated_date": "2026-07-28",
   "package_state": "pre_submission_convergence_not_upload_ready",
+  "upload_ready": false,
+  "first_github_push_cst": "2026-07-28T14:06:01+08:00",
+  "requested_1355_deadline_met": false,
   "long_running_jobs_started_by_this_package": false,
+  "formal_primary_reference": "cssl_amc_supervised_adaptation",
+  "macro_contract": {
+    "manifest_schema": "vimd_amc.tvt.macro_values.v3",
+    "release_lock_schema": "vimd_amc.tvt.release_lock.v2",
+    "provenance_records": 73,
+    "non_sentinel_tex_commands": 74,
+    "released_tex_commands_with_sentinel": 75,
+    "latency_commands": [
+      "VIMDLatencyPFifty",
+      "VIMDLatencyPNinetyFive",
+      "VIMDLatencyDevice"
+    ]
+  },
   "completed": {
     "method_implementation": true,
     "a0_a7_registry": true,
@@ -27,6 +43,11 @@
     "human_primary_source_audit": true,
     "upload_ready_release": true
   },
+  "integration_pending": {
+    "full_regression_after_latest_release_chain_changes": true,
+    "fresh_canonical_internal_pdf_and_page_qa": true,
+    "release_pdf": true
+  },
   "failed_candidates_not_promoted": [
     "temporal VIMD-v2",
     "annealed teacher route",
@@ -41,7 +62,9 @@
   },
   "next_machine_action": {
     "default_behavior": "dry_run_only",
-    "entrypoint": "tvt_submission/run_local.ps1",
-    "explicit_execution_switch": "-Execute"
+    "entrypoint": "tvt_submission/run_all_local_after_gpu_free.ps1",
+    "plan": "preflight",
+    "explicit_execution_switch": "-Execute",
+    "required_acknowledgement": "START_TVT_ONLY_WHEN_MACHINE_IS_IDLE"
   }
 }

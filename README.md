@@ -33,8 +33,8 @@ python experiments/run_diagnostics.py
 python experiments/run_experiment.py --profile smoke --models backbone,single_mask,vimd --seeds 17 --device cpu
 ```
 
-The complete controlled ablation ladder and both strong local baselines can be
-smoke-tested with:
+The complete controlled ablation ladder and both 256-sample-compatible
+literature baselines can be smoke-tested with:
 
 ```powershell
 python experiments/run_experiment.py --profile smoke --models a0_backbone,a1_single_mask,a2_tri_no_teacher,a3_tri_teacher,a4_tri_teacher_mtl,a5_vimd_full,a6_dual_full,a7_vimd_no_residual,mcldnn_reimplementation,iqformer_inspired --seeds 17 --device cpu
@@ -88,11 +88,13 @@ predictions, statistical comparison, and environment record are present.
 Execution completion is distinct from claim eligibility: smoke and screening
 artifacts remain ineligible even when their job status is `complete`.
 
-The audited `standards/cache_screening_v1` cache contains 512/128/256 sources,
-all ten declared modulation classes, six active jammer families, four speeds,
-and TDL-A/C/D-to-TDL-B/E profile holdout.  Its immutable digest is
-`e219930800a24844146087b6dfa7b2fa2daf1c61aaaf2ab5b0158c4c79a80b9a`;
-its designation is `screening_not_formal_tvt_evidence`.
+The authoritative audited screening cache is
+`standards/cache_factor_screening_1024_v1`.  It contains nine source-disjoint
+splits, 4,700 globally unique source sequences, 9,400 paired views, and all ten
+declared modulation classes.  Its immutable digest is
+`241b3aec6e74c79bac2d3ac22295098f0efe5cc79ff07acabf3593cbc32c49e3`;
+its designation is `screening_not_formal_tvt_evidence`, so none of its
+performance values is admissible as a paper result.
 
 ## Baseline and ablation claim boundaries
 
@@ -147,6 +149,12 @@ or execute the published momentum-encoder pretraining and fine-tuning
 protocol. Its required label is therefore **CSSL-AMC official-architecture
 supervised adaptation**, not a complete CSSL reproduction, official result, or
 structured-interference-specific method.
+
+In the frozen formal suite, this CSSL supervised adaptation is the
+prospectively fixed **primary reference**.
+
+IQFormer-inspired remains a required non-oracle comparator and a Holm-family
+candidate; it is not the primary reference.
 
 The item-by-item architecture checks and admissible claim language are fixed
 in [`docs/BASELINE_AND_ABLATION_AUDIT.md`](docs/BASELINE_AND_ABLATION_AUDIT.md).

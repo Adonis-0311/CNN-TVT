@@ -30,12 +30,13 @@ runs.]
 
 All reported results are intended to be reproducible from frozen,
 source-disjoint manifests, checksummed artifacts, predeclared model seeds,
-source-aligned predictions, and machine-generated tables. The manuscript is
-original, is not under consideration elsewhere, and has been approved by all
-authors. [Human authors must verify and complete originality, related
-submissions, authorship, funding, conflicts, and disclosure statements.]
+source-aligned predictions, and machine-generated tables.
+
+[Human authors must confirm originality, related-submission status, approval
+by every author, funding, conflicts, and disclosure statements before replacing
+this bracketed instruction with any corresponding declaration. None of those
+administrative declarations is verified by the current workspace.]
 
 Sincerely,
 
 [Corresponding author]
-

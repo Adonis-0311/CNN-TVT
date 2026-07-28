@@ -1,4 +1,4 @@
-# IEEE TVT 最终收敛报告
+# IEEE TVT 预投稿收敛状态报告（非最终投稿验收）
 
 状态日期：2026-07-28
 
@@ -26,14 +26,14 @@ release lock、IEEE 模板论文和 public-build 门均已有明确接口。
 | 11 模型 × 5 种子运行 | 未启动，目标目录不存在 | 否 |
 | CSSL-AMC 2025 比较器 | 官方架构来源已锁定，本地监督适配已注册 | 正式运行后才可比较 |
 | VIMD-v4 DSBN | 已实现为一次性候选诊断，尚未执行 | 否；不在当前 freeze |
-| 自动论文宏 | 生成器和来源审计链已就绪 | 当前无 eligible 输入 |
+| 自动论文宏 | manifest v3 接口已实现：73 个 provenance records、74 个 non-sentinel TeX commands、release 时 75 个 commands | 当前无 eligible 输入；最终全量回归仍待完成 |
 | `release_lock.json` | 不存在 | 否 |
 | IEEE Transactions 模板 | 使用用户提供 ZIP 中的本地 `IEEEtran.cls` | 是 |
-| 内部评审 PDF | 7 页、证据锁分支 | 仅内部评审 |
+| 内部评审 PDF | 最新 compile-check 为 8 页、证据锁分支；`paper/build/main.pdf` 的 7 页副本早于最新源文件，已陈旧 | 仅内部评审，不能作为投稿 PDF |
 | public PDF | 尚未构建 | 否 |
 | 作者/单位/披露 | 待人类作者提供 | 否 |
 
-## 已收敛的设计
+## 已冻结的预注册设计
 
 正式缓存固定为 1,024 点、96 点 guard、master seed `20260727` 的九个
 source-disjoint split：train、validation、ID test、hard interference、
@@ -42,8 +42,9 @@ retention。行政规模为 47,000 个源序列和 94,000 个配对视图。
 
 正式模型家族为 A0--A7、MCLDNN reimplementation、IQFormer-inspired 和
 `cssl_amc_supervised_adaptation`，种子为 `17,29,43,71,101`，总计 55 次
-拟合。主参考 `iqformer_inspired` 是训练前固定参考，不得事后称为“最强”。
-本地最优基线审计必须包含 CSSL。
+拟合。主参考 `cssl_amc_supervised_adaptation` 是训练前固定的 CSSL-AMC
+官方架构监督适配，不得事后称为“最强”。IQFormer-inspired 仍是必需的
+non-oracle 比较器和 Holm family 候选。
 
 CSSL 比较器来自 2025 年 CSSL-AMC 官方代码的编码器/分类器拓扑审计，但本地
 实验使用统一 1,024 点输入、统一监督训练预算和统一 split。它没有导入官方
@@ -62,10 +63,9 @@ VIMD-v4 DSBN 是前瞻性候选，不属于当前正式家族。它的任何诊�
   -> 正式 MATLAB-TDL 缓存
   -> 11 模型 × 5 种子正式运行
   -> runner-native JSON/CSV/NPZ
-  -> 自动宏清单
-  -> release 预检
-  -> results_auto.tex + release_lock.json
-  -> 科学晋级门
+  -> 自动 manifest-v3 宏清单 + scientific_release_gate
+  -> 从 artifacts 重推导并执行 release 预检
+  -> 仅在全部科学/完整性门通过后写 results_auto.tex + release_lock.json
   -> public LaTeX build
   -> 逐页人工审阅
 ```
@@ -76,12 +76,15 @@ VIMD-v4 DSBN 是前瞻性候选，不属于当前正式家族。它的任何诊�
 
 科学晋级门独立于软件“跑完”状态：
 
-- hard-interference 主终点相对最佳非 oracle 本地基线至少 +5 pp
-  macro-F1；
-- unseen jammer/speed/held-out channel 至少两个域达到 +3 pp；
+- hard-interference 主终点相对 A0、MCLDNN、IQFormer-inspired 和 CSSL
+  监督适配这四个必需 non-oracle 基线中的**每一个**至少 +5 pp macro-F1；
+- unseen jammer/speed/held-out channel 相对预注册 CSSL 主参考至少两个域达到
+  +3 pp；
 - clean retention 在 seen A/C/D 和 held B/E 两层分别满足点估计不低于
   -1 pp、配对 95% 区间下界不低于 -2 pp；
-- 机制、消融和置信区间方向支持论文叙述。
+- A5 在 hard-interference 上严格优于 A1 和 A6；
+- 必需机制值均有限，两项相关性非负，oracle-conditioned spectral component
+  ratio 严格为正；这些量不能改称 waveform SIR、SDR 或源分离证据。
 
 失败时不能从五个 seed 中挑选有利结果、改写主参考、改变门槛或覆盖运行。
 正确动作是保留负结果、维持内部评审状态，并在新的前瞻性冻结下迭代。
@@ -123,7 +126,8 @@ IEEE 模板合规来提高稿件质量并降低可避免的拒稿风险，但不
 
 ## 收敛判定
 
-静态设计与本地交接：已收敛。
+静态设计与本地交接：接口已形成；最终集成、全量回归和最新 PDF 逐页 QA
+尚未完成。
 
 正式机器证据：未开始。
 

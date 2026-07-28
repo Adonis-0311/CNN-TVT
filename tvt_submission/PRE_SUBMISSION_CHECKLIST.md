@@ -10,8 +10,9 @@
   normalization audits pass.
 - [ ] Five predeclared seeds complete for every required model.
 - [ ] The exact formal model family includes
-  `cssl_amc_supervised_adaptation`, and the `StrongestBaseline` audit includes
-  it with A0, MCLDNN, and IQFormer.
+  `cssl_amc_supervised_adaptation` as the prospectively fixed primary
+  reference; A0, MCLDNN, IQFormer-inspired, and CSSL are all present as the
+  required non-oracle hard-gate baselines.
 - [ ] Every fitted model selects at least one checkpoint after the complete
   objective becomes eligible; no final-state fallback is used.
 - [ ] Start/end executable-source fingerprints are identical.
@@ -20,11 +21,19 @@
 - [ ] `evidence_eligibility.eligible` is exactly `true`.
 - [ ] `generate_macro_values.py` derives the paper result manifest from that
   run; no performance value is typed or copied by hand.
+- [ ] The macro manifest is exactly schema
+  `vimd_amc.tvt.macro_values.v3`, contains 73 provenance records and the
+  complete `scientific_release_gate`, and canonical artifact reconstruction
+  agrees exactly.
 - [ ] The generator's JSON/CSV/NPZ cross-check passes with no missing,
   duplicate, nonfinite, inconsistent, or ambiguous required cell.
 - [ ] `validate_release.py --write` generates
-  `\EligibleLockedResults` only with an intact schema-v2 release lock, and
-  revalidation confirms the sentinel name/value and `results_auto.tex` hash.
+  74 non-sentinel commands plus `\EligibleLockedResults` only with an intact
+  schema-v2 release lock, and revalidation confirms the 75-command released
+  file, sentinel name/value, and `results_auto.tex` hash.
+- [ ] Latency commands are exactly `VIMDLatencyPFifty`,
+  `VIMDLatencyPNinetyFive`, and `VIMDLatencyDevice`; no digit-bearing `P50` or
+  `P95` TeX command name is accepted.
 - [ ] The final LaTeX build has no undefined citation/reference, fatal error,
   overfull box, or internal-review banner.
 
@@ -32,8 +41,9 @@
 
 - [ ] Primary endpoint and minimum meaningful paired effect were fixed before
   opening test results.
-- [ ] The predeclared primary reference is never called “strongest” unless a
-  separate auditable selection rule proves that description.
+- [ ] `PrimaryReference` is exactly the predeclared CSSL supervised adaptation;
+  it is never relabeled “strongest,” and no removed post-hoc winner contract is
+  reintroduced.
 - [ ] CSSL-AMC is labeled only as an official-architecture supervised
   adaptation; it is not described as a complete reproduction, official result,
   structured-interference-specific method, or MFENet substitute.
@@ -48,6 +58,13 @@
 - [ ] Supported-label masks govern jammer auxiliary metrics; held-out or
   excluded family logits are not presented as trained recognition.
 - [ ] Clean retention is stratified by seen A/C/D and held B/E profiles.
+- [ ] A5 hard macro-F1 is at least +5 pp versus each required non-oracle
+  baseline and strictly greater than A1 and A6; at least two of three held
+  factors gain +3 pp versus CSSL; both clean strata satisfy the -1 pp point and
+  -2 pp 95% lower-bound floors.
+- [ ] Required mechanism fields are finite, required correlations are
+  nonnegative, and the oracle-conditioned spectral component ratio is strictly
+  positive without being described as waveform SIR, SDR, or separation.
 - [ ] No cochannel, mixed-jammer, SDR, real-time, source-separation, waveform
   recovery, or V2X-compliance claim exceeds the frozen evidence.
 - [ ] If no SDR layer is added, title, abstract, conclusion, and cover letter
