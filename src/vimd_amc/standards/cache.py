@@ -148,7 +148,7 @@ class FactorSplitPolicy:
 def factor_isolated_split_policies(
     split_sizes: Mapping[str, int] | None = None,
 ) -> tuple[FactorSplitPolicy, ...]:
-    """Return the locked Table-I factor-isolation policy.
+    """Return the locked factor-isolation split policy.
 
     Sizes are deliberately supplied separately from factor support so a micro
     pipeline sentinel and a powered experiment can share exactly the same

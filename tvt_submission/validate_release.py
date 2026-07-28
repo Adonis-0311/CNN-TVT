@@ -63,6 +63,27 @@ REGIME_PROVENANCE_MACROS = tuple(
     for regime in REGIME_TOKENS
     for field in ("Reference", "AFive", "Gain", "CILow", "CIHigh")
 )
+ABLATION_MEAN_PROVENANCE_MACROS = (
+    "HeadlineHardAOneMacroFOne",
+    "HeadlineHardATwoMacroFOne",
+    "HeadlineHardAThreeMacroFOne",
+    "HeadlineHardAFourMacroFOne",
+    "HeadlineHardASixMacroFOne",
+    "HeadlineHardASevenMacroFOne",
+)
+ABLATION_CONTRAST_PREFIXES = (
+    "AblationTeacher",
+    "AblationMultitask",
+    "AblationExactSourceContrast",
+    "AblationFullVsSingle",
+    "AblationFullVsDual",
+    "AblationBypass",
+)
+ABLATION_CONTRAST_PROVENANCE_MACROS = tuple(
+    f"{prefix}{suffix}"
+    for prefix in ABLATION_CONTRAST_PREFIXES
+    for suffix in ("Gain", "CILow", "CIHigh")
+)
 MECHANISM_PROVENANCE_MACROS = (
     "MechanismMaskJS",
     "MechanismThirdRouteWeightedCorrelation",
@@ -77,6 +98,8 @@ PROVENANCE_MACROS = (
     "PrimaryReference",
     *HEADLINE_PROVENANCE_MACROS,
     *REGIME_PROVENANCE_MACROS,
+    *ABLATION_MEAN_PROVENANCE_MACROS,
+    *ABLATION_CONTRAST_PROVENANCE_MACROS,
     *MECHANISM_PROVENANCE_MACROS,
     "VIMDParameters",
     "VIMDLatencyPFifty",
@@ -84,7 +107,7 @@ PROVENANCE_MACROS = (
     "VIMDLatencyDevice",
 )
 # Compatibility name used by the generator tests and earlier release callers.
-# ResultSource is generated from run identity, so only these 73 macros carry
+# ResultSource is generated from run identity, so only these 97 macros carry
 # artifact-level provenance records.
 RESULT_MACROS = PROVENANCE_MACROS
 NON_SENTINEL_RESULT_MACROS = ("ResultSource", *PROVENANCE_MACROS)
@@ -93,11 +116,55 @@ SCIENTIFIC_RELEASE_GATE_KEYS = frozenset(
     {
         "passed",
         "hard_gain_pp_each_nonoracle_baseline",
-        "hard_ablation_gain_pp",
+        "hard_ablation_family",
         "ood_gain_pp",
         "ood_pass_count",
         "clean_noninferiority",
         "mechanism_means",
+    }
+)
+HARD_ABLATION_FAMILY_ID = "hard_macro_f1_ablation_family_v1"
+HARD_ABLATION_MULTIPLICITY_METHOD = (
+    "joint_max_absolute_centered_deviation_"
+    "hierarchical_paired_bootstrap"
+)
+HARD_ABLATION_CONFIDENCE_LEVEL = 0.95
+HARD_ABLATION_GATE_THRESHOLD_PP = 0.0
+HARD_ABLATION_CONTRASTS = (
+    ("teacher", "a2_tri_no_teacher", "a3_tri_teacher"),
+    ("multitask", "a3_tri_teacher", "a4_tri_teacher_mtl"),
+    (
+        "exact_source_contrast",
+        "a4_tri_teacher_mtl",
+        "a5_vimd_full",
+    ),
+    ("full_vs_single", "a1_single_mask", "a5_vimd_full"),
+    ("full_vs_dual", "a6_dual_full", "a5_vimd_full"),
+    ("bypass", "a7_vimd_no_residual", "a5_vimd_full"),
+)
+HARD_ABLATION_FAMILY_KEYS = frozenset(
+    {
+        "passed",
+        "family_id",
+        "regime",
+        "metric",
+        "direction",
+        "confidence_level",
+        "multiplicity_method",
+        "simultaneous_ci95_low_strictly_greater_than_pp",
+        "contrasts",
+    }
+)
+HARD_ABLATION_CONTRAST_KEYS = frozenset(
+    {
+        "reference",
+        "candidate",
+        "gain_pp",
+        "marginal_ci95_low_pp",
+        "marginal_ci95_high_pp",
+        "simultaneous_ci95_low_pp",
+        "simultaneous_ci95_high_pp",
+        "passed",
     }
 )
 RESULTS_AUTO_COMMENTS = (
@@ -145,6 +212,7 @@ MACRO_LINE = re.compile(
     r"^\s*\\newcommand\{\\(?P<name>[A-Za-z]+)\}"
     r"\{(?P<value>.*)\}\s*$"
 )
+ATOMIC_DECIMAL = re.compile(r"^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$")
 
 
 class ReleaseValidationError(RuntimeError):
@@ -405,6 +473,7 @@ def validate_source_run(
     run_record = load_strict_json(resolved)
     if run_record.get("runner") != "experiments/run_standard_experiment.py":
         raise ReleaseValidationError("run.json is not runner-native")
+    _require_sha256(run_record.get("cache_digest"), "run.json cache_digest")
     if run_record.get("checksums_verified") is not True:
         raise ReleaseValidationError("cache checksums were not verified")
     eligibility = run_record.get("evidence_eligibility")
@@ -420,6 +489,19 @@ def validate_source_run(
         )
 
     runner = _load_runner_module()
+    expected_seeds = getattr(
+        runner,
+        "FORMAL_ABLATION_ALGORITHM_SEEDS",
+        None,
+    )
+    if (
+        not isinstance(expected_seeds, tuple)
+        or tuple(run_record.get("seeds", ())) != expected_seeds
+    ):
+        raise ReleaseValidationError(
+            "run.json seeds do not exactly match the runner's ordered "
+            "formal ablation algorithm seeds"
+        )
     computed_gate = runner.submission_release_source_gate(run_record)
     if computed_gate.get("macro_generation_permitted") is not True:
         raise ReleaseValidationError(
@@ -505,6 +587,12 @@ def _finite_gate_number(value: Any, label: str) -> float:
     return float(value)
 
 
+def _public_pp_number(value: float) -> float:
+    """Round-trip one percentage-point value through the public cell format."""
+
+    return float(f"{value:+.2f}")
+
+
 def _validate_gate_number_mapping(value: Any, label: str) -> None:
     if not isinstance(value, dict) or not value:
         raise ReleaseValidationError(
@@ -518,6 +606,113 @@ def _validate_gate_number_mapping(value: Any, label: str) -> None:
         _finite_gate_number(number, f"{label}.{key}")
 
 
+def _validate_hard_ablation_family(value: Any) -> None:
+    label = "hard_ablation_family"
+    if not isinstance(value, dict) or set(value) != HARD_ABLATION_FAMILY_KEYS:
+        raise ReleaseValidationError(
+            "scientific_release_gate hard_ablation_family keys mismatch"
+        )
+    if value.get("passed") is not True:
+        raise ReleaseValidationError(
+            "scientific_release_gate hard_ablation_family did not pass"
+        )
+    expected_metadata = {
+        "family_id": HARD_ABLATION_FAMILY_ID,
+        "regime": "hard_interference",
+        "metric": "macro_f1",
+        "direction": "candidate_minus_reference",
+        "multiplicity_method": HARD_ABLATION_MULTIPLICITY_METHOD,
+    }
+    for field, expected in expected_metadata.items():
+        if value.get(field) != expected:
+            raise ReleaseValidationError(
+                f"scientific_release_gate {label}.{field} drifted"
+            )
+    confidence_level = _finite_gate_number(
+        value.get("confidence_level"),
+        f"{label}.confidence_level",
+    )
+    if confidence_level != HARD_ABLATION_CONFIDENCE_LEVEL:
+        raise ReleaseValidationError(
+            "scientific_release_gate hard_ablation_family confidence_level "
+            "drifted"
+        )
+    threshold = _finite_gate_number(
+        value.get("simultaneous_ci95_low_strictly_greater_than_pp"),
+        f"{label}.simultaneous_ci95_low_strictly_greater_than_pp",
+    )
+    if threshold != HARD_ABLATION_GATE_THRESHOLD_PP:
+        raise ReleaseValidationError(
+            "scientific_release_gate hard_ablation_family threshold drifted"
+        )
+
+    contrasts = value.get("contrasts")
+    expected_ids = {
+        contrast_id
+        for contrast_id, _, _ in HARD_ABLATION_CONTRASTS
+    }
+    if not isinstance(contrasts, dict) or set(contrasts) != expected_ids:
+        raise ReleaseValidationError(
+            "scientific_release_gate hard_ablation_family contrast set "
+            "mismatch"
+        )
+    for contrast_id, reference, candidate in HARD_ABLATION_CONTRASTS:
+        record = contrasts.get(contrast_id)
+        record_label = f"{label}.contrasts.{contrast_id}"
+        if (
+            not isinstance(record, dict)
+            or set(record) != HARD_ABLATION_CONTRAST_KEYS
+        ):
+            raise ReleaseValidationError(
+                f"scientific_release_gate {record_label} keys mismatch"
+            )
+        if (
+            record.get("reference") != reference
+            or record.get("candidate") != candidate
+        ):
+            raise ReleaseValidationError(
+                f"scientific_release_gate {record_label} direction drifted"
+            )
+        gain = _finite_gate_number(
+            record.get("gain_pp"),
+            f"{record_label}.gain_pp",
+        )
+        marginal_low = _finite_gate_number(
+            record.get("marginal_ci95_low_pp"),
+            f"{record_label}.marginal_ci95_low_pp",
+        )
+        marginal_high = _finite_gate_number(
+            record.get("marginal_ci95_high_pp"),
+            f"{record_label}.marginal_ci95_high_pp",
+        )
+        simultaneous_low = _finite_gate_number(
+            record.get("simultaneous_ci95_low_pp"),
+            f"{record_label}.simultaneous_ci95_low_pp",
+        )
+        simultaneous_high = _finite_gate_number(
+            record.get("simultaneous_ci95_high_pp"),
+            f"{record_label}.simultaneous_ci95_high_pp",
+        )
+        if not (
+            marginal_low <= gain <= marginal_high
+            and simultaneous_low <= gain <= simultaneous_high
+        ):
+            raise ReleaseValidationError(
+                f"scientific_release_gate {record_label} point estimate "
+                "lies outside a confidence interval"
+            )
+        expected_pass = (
+            simultaneous_low > threshold
+            and _public_pp_number(simultaneous_low) > threshold
+        )
+        if record.get("passed") is not expected_pass or not expected_pass:
+            raise ReleaseValidationError(
+                f"scientific_release_gate {record_label} simultaneous lower "
+                "bound did not remain strictly positive after the frozen "
+                "two-decimal public rendering"
+            )
+
+
 def _validate_scientific_release_gate(value: Any) -> None:
     if not isinstance(value, dict) or set(value) != SCIENTIFIC_RELEASE_GATE_KEYS:
         raise ReleaseValidationError(
@@ -529,11 +724,11 @@ def _validate_scientific_release_gate(value: Any) -> None:
         )
     for field in (
         "hard_gain_pp_each_nonoracle_baseline",
-        "hard_ablation_gain_pp",
         "ood_gain_pp",
         "mechanism_means",
     ):
         _validate_gate_number_mapping(value.get(field), field)
+    _validate_hard_ablation_family(value.get("hard_ablation_family"))
     ood_pass_count = value.get("ood_pass_count")
     ood_gains = value["ood_gain_pp"]
     if (
@@ -572,6 +767,69 @@ def _validate_scientific_release_gate(value: Any) -> None:
         )
 
 
+def _atomic_macro_number(value: str, label: str) -> float:
+    if ATOMIC_DECIMAL.fullmatch(value) is None:
+        raise ReleaseValidationError(
+            f"macro {label} is not an atomic decimal number"
+        )
+    number = float(value)
+    if not math.isfinite(number):
+        raise ReleaseValidationError(f"macro {label} is not finite")
+    return number
+
+
+def _validate_ablation_macro_values(
+    values: dict[str, str],
+    scientific_gate: dict[str, Any],
+) -> None:
+    for name in ABLATION_MEAN_PROVENANCE_MACROS:
+        mean = _atomic_macro_number(values[name], name)
+        if not 0.0 <= mean <= 100.0:
+            raise ReleaseValidationError(
+                f"macro {name} is outside the macro-F1 percentage range"
+            )
+
+    family = scientific_gate["hard_ablation_family"]
+    contrasts = family["contrasts"]
+    for prefix, (contrast_id, _, _) in zip(
+        ABLATION_CONTRAST_PREFIXES,
+        HARD_ABLATION_CONTRASTS,
+        strict=True,
+    ):
+        gain_name = f"{prefix}Gain"
+        low_name = f"{prefix}CILow"
+        high_name = f"{prefix}CIHigh"
+        gain = _atomic_macro_number(values[gain_name], gain_name)
+        low = _atomic_macro_number(values[low_name], low_name)
+        high = _atomic_macro_number(values[high_name], high_name)
+        if not low <= gain <= high:
+            raise ReleaseValidationError(
+                f"macro {prefix} confidence interval does not contain its "
+                "point estimate"
+            )
+        gate_record = contrasts[contrast_id]
+        expected = {
+            gain_name: _public_pp_number(gate_record["gain_pp"]),
+            low_name: _public_pp_number(
+                gate_record["simultaneous_ci95_low_pp"]
+            ),
+            high_name: _public_pp_number(
+                gate_record["simultaneous_ci95_high_pp"]
+            ),
+        }
+        actual = {
+            gain_name: gain,
+            low_name: low,
+            high_name: high,
+        }
+        for name in (gain_name, low_name, high_name):
+            if actual[name] != expected[name]:
+                raise ReleaseValidationError(
+                    f"macro {name} disagrees with the scientific release "
+                    "gate after the frozen two-decimal rendering"
+                )
+
+
 def validate_macro_manifest(
     path: Path,
     *,
@@ -600,9 +858,8 @@ def validate_macro_manifest(
         raise ReleaseValidationError(
             "macro-value manifest is not bound to the exact run.json"
         )
-    _validate_scientific_release_gate(
-        manifest.get("scientific_release_gate")
-    )
+    scientific_gate = manifest.get("scientific_release_gate")
+    _validate_scientific_release_gate(scientific_gate)
     records = manifest.get("macros")
     if not isinstance(records, dict) or set(records) != set(
         PROVENANCE_MACROS
@@ -651,6 +908,7 @@ def validate_macro_manifest(
             "source_sha256": sha256_file(source_path),
             "derivation": derivation.strip(),
         }
+    _validate_ablation_macro_values(values, scientific_gate)
     return values, provenance
 
 

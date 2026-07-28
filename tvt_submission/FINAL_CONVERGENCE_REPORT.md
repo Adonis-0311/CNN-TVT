@@ -26,10 +26,11 @@ release lock、IEEE 模板论文和 public-build 门均已有明确接口。
 | 11 模型 × 5 种子运行 | 未启动，目标目录不存在 | 否 |
 | CSSL-AMC 2025 比较器 | 官方架构来源已锁定，本地监督适配已注册 | 正式运行后才可比较 |
 | VIMD-v4 DSBN | 已实现为一次性候选诊断，尚未执行 | 否；不在当前 freeze |
-| 自动论文宏 | manifest v3 接口已实现：73 个 provenance records、74 个 non-sentinel TeX commands、release 时 75 个 commands | 当前无 eligible 输入；最终全量回归仍待完成 |
+| 自动论文宏 | manifest v3 接口已实现：97 个 provenance records、98 个 non-sentinel TeX commands、release 时 99 个 commands | 199 个主测试和 10 个 standards 测试已通过；当前仍无 eligible 正式输入 |
+| A0--A7 家族推断 | 已冻结 6 个直接对比、33 列配对统计产物和共同 family-wise 95% CI 合同 | 尚无正式产物；不得填入结果 |
 | `release_lock.json` | 不存在 | 否 |
 | IEEE Transactions 模板 | 使用用户提供 ZIP 中的本地 `IEEEtran.cls` | 是 |
-| 内部评审 PDF | 最新 compile-check 为 8 页、证据锁分支；`paper/build/main.pdf` 的 7 页副本早于最新源文件，已陈旧 | 仅内部评审，不能作为投稿 PDF |
+| 内部评审 PDF | canonical `paper/build/main.pdf` 为 8 页、420,895 bytes、SHA-256 `e99d21895ef31fc8c4291777ae8f34d53842571ca649ee986e483409385dc636`；internal gate 36/36、逐页 QA 8/8 | 仅内部评审，不能作为投稿 PDF |
 | public PDF | 尚未构建 | 否 |
 | 作者/单位/披露 | 待人类作者提供 | 否 |
 
@@ -53,6 +54,28 @@ checkpoint，也没有复现原论文的两阶段对比学习过程。因此准�
 
 VIMD-v4 DSBN 是前瞻性候选，不属于当前正式家族。它的任何诊断输出都不能
 进入当前论文结果；若未来通过候选门，需要新的 freeze 和新的正式运行。
+
+A0--A7 消融不增加拟合次数：它复用同一 55 次正式运行中已有的八个 A 系列
+模型结果。正式 runner 另写 `ablation_paired_statistics.csv`，将以下六个
+方向固定成同一个 hard-interference macro-F1 家族：
+
+| 对比 | 预注册解释边界 |
+|---|---|
+| A3-A2 | 固定物理 teacher 的增量 |
+| A4-A3 | jammer/quality/orthogonality 多任务捆绑干预，不拆成单因素 |
+| A5-A4 | exact-source cross-condition contrast 的增量 |
+| A5-A1 | 完整方法相对 single-mask 的复合对照 |
+| A5-A6 | 完整方法相对 dual-route full-objective 的复合对照，不归因为单纯 route count |
+| A5-A7 | bounded additive bypass 的 forward-path 干预 |
+
+六个对比共同使用精确五种子和相同 source clusters 的 class-stratified
+hierarchical paired bootstrap。family-wise 95% 区间采用非 studentized
+`joint_max_absolute_centered_deviation_hierarchical_paired_bootstrap`；
+所有 simultaneous lower bounds 在原始值及公开两位小数渲染后都必须严格
+大于 0；显示为 `+0.00` 不能解锁。有限且严格为正的共同
+critical value、SNR/SIR/profile/source 对齐、种子顺序和 64-hex cache digest
+由 33 列 CSV 与 source-aligned NPZ 确定性重推导；不能通过各自相对 CSSL 的
+区间相减来伪造直接对比。
 
 ## 强证据链与停止条件
 
@@ -82,7 +105,9 @@ VIMD-v4 DSBN 是前瞻性候选，不属于当前正式家族。它的任何诊�
   +3 pp；
 - clean retention 在 seen A/C/D 和 held B/E 两层分别满足点估计不低于
   -1 pp、配对 95% 区间下界不低于 -2 pp；
-- A5 在 hard-interference 上严格优于 A1 和 A6；
+- 预注册的 A3-A2、A4-A3、A5-A4、A5-A1、A5-A6、A5-A7 六个直接
+  hard-interference 对比，其共同 family-wise simultaneous 95% 区间下界
+  均严格大于 0；
 - 必需机制值均有限，两项相关性非负，oracle-conditioned spectral component
   ratio 严格为正；这些量不能改称 waveform SIR、SDR 或源分离证据。
 
@@ -126,8 +151,9 @@ IEEE 模板合规来提高稿件质量并降低可避免的拒稿风险，但不
 
 ## 收敛判定
 
-静态设计与本地交接：接口已形成；最终集成、全量回归和最新 PDF 逐页 QA
-尚未完成。
+静态设计与本地交接：接口已形成；最终集成、199/199 主测试、
+10/10 standards 测试、formal-freeze 只读预检、8 页 canonical internal PDF
+及逐页 QA 均已完成。
 
 正式机器证据：未开始。
 

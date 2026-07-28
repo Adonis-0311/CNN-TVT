@@ -212,9 +212,12 @@ because:
 6. the current fixed schedule has not yet been supplemented by
    architecture-specific tuning sensitivity.
 
-The formal `StrongestBaseline` audit must include CSSL-AMC alongside A0,
-MCLDNN, and IQFormer and remain locked until eligible results exist. The
-manuscript must not upgrade that local selection to “strongest published” or
+The historical `StrongestBaseline` selector is superseded and must not be
+reintroduced. The formal hard gate instead compares A5 separately against
+**each** frozen non-oracle baseline: A0, MCLDNN, IQFormer-inspired, and the
+CSSL-AMC supervised adaptation. All four comparisons remain locked until
+eligible results exist; none is selected post hoc as a winner. The manuscript
+must not upgrade this local comparator set to “strongest published” or
 “strongest structured-interference” language.
 
 ## Minimum author-contact and reproduction plan

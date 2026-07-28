@@ -23,10 +23,12 @@ result macros, and release lock reached their audited state.
 
 Internal mode requires exactly one active line-level
 `\internalreviewtrue` directive. It permits the safe placeholder
-`results_auto.tex`, but that file must still contain every non-sentinel macro
-exported by `validate_release.ALL_MACROS` and no other executable TeX content.
-The build gate imports that list at runtime; it does not maintain a second
-macro schema. A valid internal build is not submission evidence.
+`results_auto.tex`, but that file must still contain all 98 non-sentinel
+macros exported by `validate_release.NON_SENTINEL_RESULT_MACROS` and no other
+executable TeX content. The current release contract contains 97
+provenance-bound macros and 99 macros including `ResultSource` and the release
+sentinel. The build gate imports those tuples at runtime; it does not maintain
+a second macro schema. A valid internal build is not submission evidence.
 
 ### Initial release
 
@@ -43,10 +45,17 @@ Release mode additionally requires:
   `validate_release.parse_results_auto` grammar, with all exported macros
   populated by non-placeholder values;
 - every dynamically classified numeric result represented as one finite
-  unit-free number, with a positive integer parameter count, ordered
-  confidence bounds, and
+  unit-free number, including all six additional A1/A2/A3/A4/A6/A7 hard
+  macro-F1 means and all 18 members of the six ablation-contrast triples;
+- every `Gain/CILow/CIHigh` triple having ordered bounds and containing its
+  point gain, together with a positive integer parameter count and
   `VIMDLatencyPFifty <= VIMDLatencyPNinetyFive`;
-- every exported public macro referenced by `main.tex`;
+- every exported public macro referenced in the source selected for a public
+  build, so an internal-only mention cannot satisfy the contract; this
+  explicitly binds the 24 new A0--A7 means/contrast leaves exactly once
+  inside the `table` or `table*` environment that contains
+  `\label{tab:ablations}`; moving one to decoy prose elsewhere in the public
+  branch does not satisfy the table contract;
 - `\EligibleLockedResults` defined as `eligible_locked_formal_run`, matching
   the evidence sentinel emitted by the result-release validator and required
   by `paper/main.tex`;
@@ -186,11 +195,17 @@ The synthetic fixtures cover:
 - wrong review mode, placeholders, a missing lock, a missing evidence
   sentinel, an invalid lock digest, and page overflow;
 - a black-box `generate_macro_values` -> `validate_release.write_release` ->
-  paper-gate integration with the exported macro counts, alphabetic
+  paper-gate integration with the 97/98/99 exported macro counts, alphabetic
   `VIMDLatencyPFifty` / `VIMDLatencyPNinetyFive` names, scientific release
   gate, and provenance count checked;
 - finite atomic numeric leaves plus invalid units, nonfinite values, and
   reversed confidence bounds;
+- all six A0--A7 incremental/control means, all 18 ablation contrast values,
+  point gains outside their confidence intervals, and public-versus-
+  internal-only macro consumption;
+- parsing the `table`/`table*` boundary containing `\label{tab:ablations}`,
+  including rejection when any of its 24 new result macros is moved into
+  decoy prose or appears more than once inside that table;
 - rejection of digit-bearing TeX control-sequence names such as
   `VIMDLatencyP50`;
 - JSON stdout plus nonzero CLI failure behavior; and

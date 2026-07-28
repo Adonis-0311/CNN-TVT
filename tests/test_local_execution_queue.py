@@ -184,13 +184,26 @@ class LocalExecutionQueueTests(unittest.TestCase):
             "固定主参考是 `cssl_amc_supervised_adaptation`",
             source,
         )
-        self.assertIn("73 个 provenance 宏", source)
-        self.assertIn("共 74 个", source)
-        self.assertIn("共 75 个", source)
+        self.assertIn("97 个 provenance 宏", source)
+        self.assertIn("共 98 个", source)
+        self.assertIn("共 99 个", source)
         self.assertIn("`PFifty`", source)
         self.assertIn("`PNinetyFive`", source)
         self.assertIn("分别高于 A0、MCLDNN", source)
         self.assertIn("`scientific_release_gate`", source)
+        self.assertIn("ablation_paired_statistics.csv", source)
+        self.assertIn("A3-A2", source)
+        self.assertIn("A4-A3", source)
+        self.assertIn("A5-A4", source)
+        self.assertIn("A5-A1", source)
+        self.assertIn("A5-A6", source)
+        self.assertIn("A5-A7", source)
+        self.assertIn(
+            "joint_max_absolute_centered_deviation_"
+            "hierarchical_paired_bootstrap",
+            source,
+        )
+        self.assertIn("正式总数仍为 55", source)
 
     def test_write_release_without_execute_is_blocked_and_read_only(
         self,

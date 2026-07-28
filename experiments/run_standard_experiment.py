@@ -15,6 +15,7 @@ import json
 import math
 from pathlib import Path
 import platform
+import re
 import sys
 import time
 import traceback
@@ -43,6 +44,7 @@ from vimd_amc.evaluation import (  # noqa: E402
 )
 from vimd_amc.losses import VIMDLossWeights  # noqa: E402
 from vimd_amc.metrics import (  # noqa: E402
+    ablation_family_paired_bootstrap,
     headline_paired_bootstrap,
     holm_adjust,
     paired_accuracy_macro_f1_bootstrap,
@@ -103,17 +105,131 @@ FORMAL_HOLM_CANDIDATES = (
     "mcldnn_reimplementation",
     "iqformer_inspired",
 )
+FORMAL_ABLATION_FAMILY_ID = "hard_macro_f1_ablation_family_v1"
+FORMAL_ABLATION_REGIME = "hard_interference"
+FORMAL_ABLATION_METRIC = "macro_f1"
+FORMAL_ABLATION_DIRECTION = "candidate_minus_reference"
+FORMAL_ABLATION_CONFIDENCE_LEVEL = 0.95
+FORMAL_ABLATION_MULTIPLICITY_METHOD = (
+    "joint_max_absolute_centered_deviation_"
+    "hierarchical_paired_bootstrap"
+)
+FORMAL_ABLATION_CONTRASTS = (
+    {
+        "contrast_id": "teacher",
+        "reference": "a2_tri_no_teacher",
+        "candidate": "a3_tri_teacher",
+        "intervention": "fixed_physical_teacher",
+        "interpretation_scope": "incremental_fixed_protocol",
+    },
+    {
+        "contrast_id": "multitask",
+        "reference": "a3_tri_teacher",
+        "candidate": "a4_tri_teacher_mtl",
+        "intervention": "jammer_quality_orthogonality_bundle",
+        "interpretation_scope": "incremental_fixed_protocol_bundle",
+    },
+    {
+        "contrast_id": "exact_source_contrast",
+        "reference": "a4_tri_teacher_mtl",
+        "candidate": "a5_vimd_full",
+        "intervention": "exact_source_cross_condition_contrast",
+        "interpretation_scope": "incremental_fixed_protocol",
+    },
+    {
+        "contrast_id": "full_vs_single",
+        "reference": "a1_single_mask",
+        "candidate": "a5_vimd_full",
+        "intervention": "full_method_vs_single_mask",
+        "interpretation_scope": "composite_control",
+    },
+    {
+        "contrast_id": "full_vs_dual",
+        "reference": "a6_dual_full",
+        "candidate": "a5_vimd_full",
+        "intervention": "tri_route_vs_dual_route_full_objective",
+        "interpretation_scope": "composite_control_no_route_count_attribution",
+    },
+    {
+        "contrast_id": "bypass",
+        "reference": "a7_vimd_no_residual",
+        "candidate": "a5_vimd_full",
+        "intervention": "bounded_additive_bypass",
+        "interpretation_scope": "forward_path_intervention",
+    },
+)
+FORMAL_ABLATION_GATE_THRESHOLD = 0.0
+FORMAL_ABLATION_ALGORITHM_SEEDS = (17, 29, 43, 71, 101)
 CLEAN_RETENTION_PROFILE_STRATA = {
     "clean_retention_seen_acd": (0, 2, 3),
     "clean_retention_held_be": (1, 4),
 }
 SCIENTIFIC_RELEASE_THRESHOLDS = {
     "hard_macro_f1_min_gain_pp_each_baseline": 5.0,
-    "hard_ablation_controls": (
-        "a1_single_mask",
-        "a6_dual_full",
-    ),
-    "hard_ablation_strictly_positive": True,
+    "hard_ablation_family": {
+        "family_id": "hard_macro_f1_ablation_family_v1",
+        "regime": "hard_interference",
+        "metric": "macro_f1",
+        "direction": "candidate_minus_reference",
+        "confidence_level": 0.95,
+        "multiplicity_method": (
+            "joint_max_absolute_centered_deviation_"
+            "hierarchical_paired_bootstrap"
+        ),
+        "simultaneous_ci95_low_strictly_greater_than": 0.0,
+        "contrasts": (
+            {
+                "contrast_id": "teacher",
+                "reference": "a2_tri_no_teacher",
+                "candidate": "a3_tri_teacher",
+                "intervention": "fixed_physical_teacher",
+                "interpretation_scope": "incremental_fixed_protocol",
+            },
+            {
+                "contrast_id": "multitask",
+                "reference": "a3_tri_teacher",
+                "candidate": "a4_tri_teacher_mtl",
+                "intervention": "jammer_quality_orthogonality_bundle",
+                "interpretation_scope": (
+                    "incremental_fixed_protocol_bundle"
+                ),
+            },
+            {
+                "contrast_id": "exact_source_contrast",
+                "reference": "a4_tri_teacher_mtl",
+                "candidate": "a5_vimd_full",
+                "intervention": (
+                    "exact_source_cross_condition_contrast"
+                ),
+                "interpretation_scope": "incremental_fixed_protocol",
+            },
+            {
+                "contrast_id": "full_vs_single",
+                "reference": "a1_single_mask",
+                "candidate": "a5_vimd_full",
+                "intervention": "full_method_vs_single_mask",
+                "interpretation_scope": "composite_control",
+            },
+            {
+                "contrast_id": "full_vs_dual",
+                "reference": "a6_dual_full",
+                "candidate": "a5_vimd_full",
+                "intervention": (
+                    "tri_route_vs_dual_route_full_objective"
+                ),
+                "interpretation_scope": (
+                    "composite_control_no_route_count_attribution"
+                ),
+            },
+            {
+                "contrast_id": "bypass",
+                "reference": "a7_vimd_no_residual",
+                "candidate": "a5_vimd_full",
+                "intervention": "bounded_additive_bypass",
+                "interpretation_scope": "forward_path_intervention",
+            },
+        ),
+    },
     "ood_macro_f1_min_gain_pp": 3.0,
     "ood_required_pass_count": 2,
     "ood_regimes": (
@@ -2046,6 +2162,192 @@ def analysis_seed(base_seed: int, *tokens: Any) -> int:
     return int.from_bytes(digest[:4], byteorder="big", signed=False)
 
 
+ABLATION_PAIRED_COLUMNS = [
+    "family_id",
+    "contrast_id",
+    "reference",
+    "candidate",
+    "intervention",
+    "interpretation_scope",
+    "regime",
+    "metric",
+    "direction",
+    "cache_digest",
+    "reference_macro_f1_mean",
+    "candidate_macro_f1_mean",
+    "macro_f1_difference",
+    "macro_f1_marginal_ci95_low",
+    "macro_f1_marginal_ci95_high",
+    "macro_f1_simultaneous_ci95_low",
+    "macro_f1_simultaneous_ci95_high",
+    "bootstrap_draws",
+    "bootstrap_seed",
+    "algorithm_seed_count",
+    "algorithm_seed_ids",
+    "test_source_cluster_count",
+    "bootstrap_stratified_by_class",
+    "bootstrap_hierarchy",
+    "confidence_level",
+    "family_size",
+    "multiplicity_method",
+    "simultaneous_critical_value",
+    "quantile_method",
+    "source_alignment_verified",
+    "gate_threshold",
+    "gate_passed",
+    "family_gate_passed",
+]
+
+
+def build_ablation_paired_rows(
+    *,
+    prediction_bundles: dict[tuple[str, int, str], Any],
+    seeds: list[int],
+    cache_digest: str,
+    bootstrap_draws: int,
+    bootstrap_seed_base: int,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Build the six-row formal ablation family from stored predictions.
+
+    Statistical values in the CSV remain on raw macro-F1 proportion scale.
+    The macro generator is the only layer that converts gains and bounds to
+    percentage points for the paper.
+    """
+
+    if tuple(seeds) != FORMAL_ABLATION_ALGORITHM_SEEDS:
+        raise ValueError(
+            "formal ablation family requires the exact ordered algorithm "
+            f"seeds {list(FORMAL_ABLATION_ALGORITHM_SEEDS)}"
+        )
+    if (
+        not isinstance(cache_digest, str)
+        or re.fullmatch(r"[0-9a-f]{64}", cache_digest) is None
+    ):
+        raise ValueError(
+            "formal ablation family requires a lowercase 64-hex cache digest"
+        )
+    contrast_mapping = {
+        str(record["contrast_id"]): (
+            str(record["reference"]),
+            str(record["candidate"]),
+        )
+        for record in FORMAL_ABLATION_CONTRASTS
+    }
+    required_models = {
+        model
+        for pair in contrast_mapping.values()
+        for model in pair
+    }
+    bundles_by_model_and_seed = {
+        model: {
+            seed: prediction_bundles[
+                (model, seed, FORMAL_ABLATION_REGIME)
+            ]
+            for seed in seeds
+        }
+        for model in sorted(required_models)
+    }
+    family_seed = analysis_seed(
+        bootstrap_seed_base,
+        "ablation_family",
+        FORMAL_ABLATION_FAMILY_ID,
+        FORMAL_ABLATION_REGIME,
+    )
+    family = ablation_family_paired_bootstrap(
+        bundles_by_model_and_seed,
+        contrast_mapping,
+        draws=bootstrap_draws,
+        seed=family_seed,
+        confidence_level=FORMAL_ABLATION_CONFIDENCE_LEVEL,
+    )
+    if family["multiplicity_method"] != (
+        FORMAL_ABLATION_MULTIPLICITY_METHOD
+    ):
+        raise RuntimeError(
+            "ablation bootstrap multiplicity method drifted from freeze"
+        )
+    simultaneous_critical_value = float(
+        family["simultaneous_critical_value"]
+    )
+    if (
+        not np.isfinite(simultaneous_critical_value)
+        or simultaneous_critical_value <= 0.0
+    ):
+        raise RuntimeError(
+            "formal ablation family bootstrap is degenerate: "
+            "simultaneous_critical_value must be finite and strictly positive"
+        )
+    by_id = {
+        str(record["contrast_id"]): record
+        for record in FORMAL_ABLATION_CONTRASTS
+    }
+    preliminary = []
+    for contrast_id, statistics in family["contrasts"].items():
+        gate_passed = (
+            float(statistics["macro_f1_simultaneous_ci95_low"])
+            > FORMAL_ABLATION_GATE_THRESHOLD
+        )
+        specification = by_id[contrast_id]
+        preliminary.append(
+            {
+                "family_id": FORMAL_ABLATION_FAMILY_ID,
+                "contrast_id": contrast_id,
+                "reference": specification["reference"],
+                "candidate": specification["candidate"],
+                "intervention": specification["intervention"],
+                "interpretation_scope": specification[
+                    "interpretation_scope"
+                ],
+                "regime": FORMAL_ABLATION_REGIME,
+                "metric": FORMAL_ABLATION_METRIC,
+                "direction": FORMAL_ABLATION_DIRECTION,
+                "cache_digest": cache_digest,
+                **statistics,
+                **{
+                    key: family[key]
+                    for key in (
+                        "bootstrap_draws",
+                        "bootstrap_seed",
+                        "algorithm_seed_count",
+                        "algorithm_seed_ids",
+                        "test_source_cluster_count",
+                        "bootstrap_stratified_by_class",
+                        "bootstrap_hierarchy",
+                        "confidence_level",
+                        "family_size",
+                        "multiplicity_method",
+                        "simultaneous_critical_value",
+                        "quantile_method",
+                        "source_alignment_verified",
+                    )
+                },
+                "gate_threshold": FORMAL_ABLATION_GATE_THRESHOLD,
+                "gate_passed": gate_passed,
+            }
+        )
+    family_gate_passed = all(row["gate_passed"] for row in preliminary)
+    rows = [
+        {**row, "family_gate_passed": family_gate_passed}
+        for row in preliminary
+    ]
+    summary = {
+        "family_id": FORMAL_ABLATION_FAMILY_ID,
+        "artifact": "ablation_paired_statistics.csv",
+        "regime": FORMAL_ABLATION_REGIME,
+        "metric": FORMAL_ABLATION_METRIC,
+        "direction": FORMAL_ABLATION_DIRECTION,
+        "contrast_ids": list(contrast_mapping),
+        "family_size": len(contrast_mapping),
+        "confidence_level": FORMAL_ABLATION_CONFIDENCE_LEVEL,
+        "multiplicity_method": FORMAL_ABLATION_MULTIPLICITY_METHOD,
+        "simultaneous_ci95_low_strictly_greater_than": (
+            FORMAL_ABLATION_GATE_THRESHOLD
+        ),
+        "family_gate_passed": family_gate_passed,
+    }
+    return rows, summary
+
+
 def validate_training_config(config: TrainingConfig) -> None:
     if config.epochs <= 0 or config.batch_size <= 0:
         raise ValueError("epochs and batch size must be positive")
@@ -2958,9 +3260,54 @@ def main() -> None:
             run_directory / "headline_paired_statistics.csv",
             index=False,
         )
+        ablation_rows: list[dict[str, Any]] = []
+        ablation_summary: dict[str, Any] | None = None
+        ablation_models = {
+            str(record["reference"])
+            for record in FORMAL_ABLATION_CONTRASTS
+        } | {
+            str(record["candidate"])
+            for record in FORMAL_ABLATION_CONTRASTS
+        }
+        has_ablation_family = (
+            len(seeds) > 1
+            and FORMAL_ABLATION_REGIME in evaluation_splits
+            and ablation_models.issubset(models)
+        )
+        if has_ablation_family:
+            ablation_rows, ablation_summary = build_ablation_paired_rows(
+                prediction_bundles=prediction_bundles,
+                seeds=seeds,
+                cache_digest=contract.cache_digest,
+                bootstrap_draws=arguments.bootstrap_draws,
+                bootstrap_seed_base=arguments.bootstrap_seed,
+            )
+            pd.DataFrame(
+                ablation_rows,
+                columns=ABLATION_PAIRED_COLUMNS,
+            ).to_csv(
+                run_directory / "ablation_paired_statistics.csv",
+                index=False,
+            )
+        elif (
+            contract.manifest["configuration"].get(
+                "evidence_designation"
+            )
+            == FORMAL_RELEASE_DESIGNATION
+        ):
+            raise RuntimeError(
+                "formal headline execution did not produce the complete "
+                "predeclared ablation family"
+            )
         run_record["statistical_outputs"] = {
             "single_seed_pairs": "paired_statistics.csv",
             "multi_seed_headline_pairs": "headline_paired_statistics.csv",
+            "ablation_pairs": (
+                "ablation_paired_statistics.csv"
+                if ablation_summary is not None
+                else None
+            ),
+            "ablation_family": ablation_summary,
             "clean_retention_profile_strata": {
                 name: {
                     "parent_regime": "clean_retention",

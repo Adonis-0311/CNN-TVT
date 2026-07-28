@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from vimd_amc.metrics import (  # noqa: E402
     PredictionBundle,
+    ablation_family_paired_bootstrap,
     classification_metrics,
     headline_paired_bootstrap,
     holm_adjust,
@@ -243,6 +244,198 @@ class MetricsTests(unittest.TestCase):
                 candidates,
                 draws=10,
             )
+
+    def test_ablation_family_joint_bootstrap_is_deterministic_and_simultaneous(
+        self,
+    ) -> None:
+        labels = np.repeat(np.arange(3, dtype=np.int64), 20)
+        sources = np.arange(1_000, 1_060, dtype=np.int64)
+
+        def with_errors(errors_per_class: int) -> np.ndarray:
+            predictions = labels.copy()
+            for class_index in range(3):
+                selected = np.flatnonzero(labels == class_index)
+                predictions[selected[:errors_per_class]] = (
+                    class_index + 1
+                ) % 3
+            return predictions
+
+        model_errors = {
+            "a2": 15,
+            "a3": 10,
+            "a4": 5,
+        }
+        algorithm_seeds = (17, 29, 43, 71, 101)
+        bundles = {
+            model: {
+                seed: _bundle_from_predictions(
+                    with_errors(errors),
+                    labels,
+                    source_ids=sources,
+                    classes=3,
+                )
+                for seed in algorithm_seeds
+            }
+            for model, errors in model_errors.items()
+        }
+        contrasts = {
+            "teacher": ("a2", "a3"),
+            "multitask": ("a3", "a4"),
+        }
+        result = ablation_family_paired_bootstrap(
+            bundles,
+            contrasts,
+            draws=300,
+            seed=919,
+        )
+        repeated = ablation_family_paired_bootstrap(
+            bundles,
+            contrasts,
+            draws=300,
+            seed=919,
+        )
+        self.assertEqual(result, repeated)
+        self.assertEqual(
+            result["multiplicity_method"],
+            (
+                "joint_max_absolute_centered_deviation_"
+                "hierarchical_paired_bootstrap"
+            ),
+        )
+        self.assertEqual(result["family_size"], 2)
+        self.assertEqual(
+            result["algorithm_seed_ids"],
+            ["17", "29", "43", "71", "101"],
+        )
+        half_widths = []
+        for record in result["contrasts"].values():
+            point = record["macro_f1_difference"]
+            low = record["macro_f1_simultaneous_ci95_low"]
+            high = record["macro_f1_simultaneous_ci95_high"]
+            self.assertLessEqual(low, point)
+            self.assertGreaterEqual(high, point)
+            self.assertGreater(low, 0.0)
+            half_widths.append(high - point)
+        self.assertAlmostEqual(half_widths[0], half_widths[1])
+        self.assertAlmostEqual(
+            half_widths[0],
+            result["simultaneous_critical_value"],
+        )
+
+    def test_ablation_family_rejects_cross_model_source_drift(self) -> None:
+        labels = np.asarray([0, 0, 1, 1])
+        reference = _bundle_from_predictions(
+            labels,
+            labels,
+            source_ids=np.asarray([10, 11, 20, 21]),
+        )
+        candidate = _bundle_from_predictions(
+            labels,
+            labels,
+            source_ids=np.asarray([10, 12, 20, 21]),
+        )
+        with self.assertRaisesRegex(ValueError, "source IDs"):
+            ablation_family_paired_bootstrap(
+                {
+                    "reference": {17: reference},
+                    "candidate": {17: candidate},
+                },
+                {"contrast": ("reference", "candidate")},
+                draws=10,
+            )
+
+    def test_ablation_family_rejects_snr_or_sir_pairing_drift(self) -> None:
+        labels = np.asarray([0, 0, 1, 1])
+        reference = _bundle_from_predictions(labels, labels)
+        candidate = _bundle_from_predictions(labels, labels)
+        candidate.snr_db[1] = 4.0
+        with self.assertRaisesRegex(ValueError, "snr_db"):
+            ablation_family_paired_bootstrap(
+                {
+                    "reference": {17: reference},
+                    "candidate": {17: candidate},
+                },
+                {"contrast": ("reference", "candidate")},
+                draws=10,
+            )
+
+        candidate.snr_db = reference.snr_db.copy()
+        candidate.sir_db[2] = -5.0
+        with self.assertRaisesRegex(ValueError, "sir_db"):
+            ablation_family_paired_bootstrap(
+                {
+                    "reference": {17: reference},
+                    "candidate": {17: candidate},
+                },
+                {"contrast": ("reference", "candidate")},
+                draws=10,
+            )
+
+    def test_ablation_family_rejects_nonfinite_hard_regime_covariates(
+        self,
+    ) -> None:
+        labels = np.asarray([0, 0, 1, 1])
+        reference = _bundle_from_predictions(labels, labels)
+        candidate = _bundle_from_predictions(
+            np.asarray([0, 1, 1, 1]),
+            labels,
+        )
+        reference.sir_db[0] = np.inf
+        candidate.sir_db[0] = np.inf
+        with self.assertRaisesRegex(ValueError, "finite sir_db"):
+            ablation_family_paired_bootstrap(
+                {
+                    "reference": {17: reference},
+                    "candidate": {17: candidate},
+                },
+                {"contrast": ("reference", "candidate")},
+                draws=10,
+            )
+
+    def test_ablation_family_requires_fixed_ninety_five_percent_stratification(
+        self,
+    ) -> None:
+        labels = np.asarray([0, 0, 1, 1])
+        reference = _bundle_from_predictions(labels, labels)
+        candidate = _bundle_from_predictions(
+            np.asarray([0, 1, 1, 1]),
+            labels,
+        )
+        family = {
+            "reference": {17: reference},
+            "candidate": {17: candidate},
+        }
+        contrasts = {"contrast": ("reference", "candidate")}
+        with self.assertRaisesRegex(ValueError, "confidence_level=0.95"):
+            ablation_family_paired_bootstrap(
+                family,
+                contrasts,
+                draws=10,
+                confidence_level=0.90,
+            )
+        with self.assertRaisesRegex(ValueError, "stratify_by_class=True"):
+            ablation_family_paired_bootstrap(
+                family,
+                contrasts,
+                draws=10,
+                stratify_by_class=False,
+            )
+
+    def test_ablation_family_exposes_degenerate_zero_width_interval(
+        self,
+    ) -> None:
+        labels = np.asarray([0, 0, 1, 1])
+        reference = _bundle_from_predictions(labels, labels)
+        candidate = _bundle_from_predictions(labels, labels)
+        result = ablation_family_paired_bootstrap(
+            {
+                "reference": {17: reference},
+                "candidate": {17: candidate},
+            },
+            {"contrast": ("reference", "candidate")},
+            draws=10,
+        )
+        self.assertEqual(result["simultaneous_critical_value"], 0.0)
 
 
 if __name__ == "__main__":

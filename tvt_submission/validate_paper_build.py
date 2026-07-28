@@ -47,6 +47,19 @@ REGIME_TOKENS = tuple(release_contract.REGIME_TOKENS)
 REGIME_NUMERIC_MACROS = tuple(
     release_contract.REGIME_PROVENANCE_MACROS
 )
+ABLATION_MEAN_NUMERIC_MACROS = tuple(
+    release_contract.ABLATION_MEAN_PROVENANCE_MACROS
+)
+ABLATION_CONTRAST_PREFIXES = tuple(
+    release_contract.ABLATION_CONTRAST_PREFIXES
+)
+ABLATION_CONTRAST_NUMERIC_MACROS = tuple(
+    release_contract.ABLATION_CONTRAST_PROVENANCE_MACROS
+)
+ABLATION_TABLE_NUMERIC_MACROS = (
+    *ABLATION_MEAN_NUMERIC_MACROS,
+    *ABLATION_CONTRAST_NUMERIC_MACROS,
+)
 MECHANISM_NUMERIC_MACROS = tuple(
     release_contract.MECHANISM_PROVENANCE_MACROS
 )
@@ -58,14 +71,12 @@ VIMD_NUMERIC_MACROS = tuple(
 NUMERIC_RESULT_MACROS = (
     *HEADLINE_NUMERIC_MACROS,
     *REGIME_NUMERIC_MACROS,
+    *ABLATION_MEAN_NUMERIC_MACROS,
+    *ABLATION_CONTRAST_NUMERIC_MACROS,
     *MECHANISM_NUMERIC_MACROS,
     *VIMD_NUMERIC_MACROS,
 )
-RESULT_MACROS = tuple(
-    name
-    for name in release_contract.ALL_MACROS
-    if name != RELEASE_SENTINEL
-)
+RESULT_MACROS = tuple(release_contract.NON_SENTINEL_RESULT_MACROS)
 PLACEHOLDER_TERMS = release_contract.PLACEHOLDER_TERMS
 CANONICAL_FINITE_NUMBER = re.compile(
     r"^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$"
@@ -133,6 +144,15 @@ PDFINFO_PAGES = re.compile(r"^Pages:\s*(?P<pages>\d+)\s*$", re.MULTILINE)
 PDFINFO_FILE_SIZE = re.compile(
     r"^File\s+size:\s*(?P<bytes>\d+)\s+bytes\s*$",
     re.MULTILINE | re.IGNORECASE,
+)
+TABLE_ENVIRONMENT_TOKEN = re.compile(
+    r"\\(?P<command>begin|end)(?![A-Za-z@])\s*"
+    r"\{\s*(?P<environment>table\*?)\s*\}"
+)
+ABLATION_TABLE_LABEL = "tab:ablations"
+ABLATION_TABLE_LABEL_TOKEN = re.compile(
+    rf"\\label(?![A-Za-z@])\s*"
+    rf"\{{\s*{re.escape(ABLATION_TABLE_LABEL)}\s*\}}"
 )
 
 
@@ -437,42 +457,156 @@ def _parse_release_numbers(
             "95th-percentile latency"
         )
 
-    regime_macro_set = set(REGIME_NUMERIC_MACROS)
-    for regime in REGIME_TOKENS:
-        lower_name = f"Regime{regime}CILow"
-        upper_name = f"Regime{regime}CIHigh"
-        if lower_name not in regime_macro_set or upper_name not in regime_macro_set:
+    def validate_point_interval(
+        prefix: str,
+        *,
+        label: str,
+        classified_macros: tuple[str, ...],
+    ) -> None:
+        point_name = f"{prefix}Gain"
+        lower_name = f"{prefix}CILow"
+        upper_name = f"{prefix}CIHigh"
+        classified = set(classified_macros)
+        if not {point_name, lower_name, upper_name}.issubset(classified):
             errors.append(
-                f"Regime{regime}: canonical CI macro classification is "
+                f"{label}: canonical Gain/CILow/CIHigh classification is "
                 "incomplete"
             )
-            continue
+            return
         if (
-            lower_name in values
+            point_name in values
+            and lower_name in values
             and upper_name in values
-            and values[lower_name] > values[upper_name]
         ):
-            errors.append(
-                f"Regime{regime}: CI lower exceeds CI upper"
-            )
+            point = values[point_name]
+            lower = values[lower_name]
+            upper = values[upper_name]
+            if lower > upper:
+                errors.append(f"{label}: CI lower exceeds CI upper")
+            if not lower <= point <= upper:
+                errors.append(
+                    f"{label}: point Gain lies outside [CILow, CIHigh]"
+                )
+
+    for regime in REGIME_TOKENS:
+        validate_point_interval(
+            f"Regime{regime}",
+            label=f"Regime{regime}",
+            classified_macros=REGIME_NUMERIC_MACROS,
+        )
+
+    expected_ablation_macros = tuple(
+        f"{prefix}{suffix}"
+        for prefix in ABLATION_CONTRAST_PREFIXES
+        for suffix in ("Gain", "CILow", "CIHigh")
+    )
+    if expected_ablation_macros != ABLATION_CONTRAST_NUMERIC_MACROS:
+        errors.append(
+            "canonical ablation contrast prefixes disagree with the exported "
+            "contrast macro classification"
+        )
+    for prefix in ABLATION_CONTRAST_PREFIXES:
+        validate_point_interval(
+            prefix,
+            label=prefix,
+            classified_macros=ABLATION_CONTRAST_NUMERIC_MACROS,
+        )
     return values, errors
+
+
+def _ablation_table_contract_errors(public_text: str) -> list[str]:
+    """Bind every A0--A7 extension macro to the labelled ablation table."""
+
+    errors: list[str] = []
+    expected_macros = tuple(ABLATION_TABLE_NUMERIC_MACROS)
+    if len(expected_macros) != 24 or len(set(expected_macros)) != 24:
+        errors.append(
+            "canonical release contract must export exactly 24 unique "
+            "A0--A7 ablation-table macros"
+        )
+
+    stack: list[tuple[str, int]] = []
+    table_spans: list[tuple[int, int, str]] = []
+    for match in TABLE_ENVIRONMENT_TOKEN.finditer(public_text):
+        command = match.group("command")
+        environment = match.group("environment")
+        if command == "begin":
+            if stack:
+                errors.append(
+                    "main.tex public source contains nested table/table* "
+                    "environments while locating "
+                    rf"\label{{{ABLATION_TABLE_LABEL}}}"
+                )
+            stack.append((environment, match.start()))
+            continue
+        if not stack:
+            errors.append(
+                f"main.tex public source has unmatched "
+                rf"\end{{{environment}}}"
+            )
+            continue
+        opened_environment, start = stack.pop()
+        if opened_environment != environment:
+            errors.append(
+                "main.tex public source has mismatched table boundary: "
+                rf"\begin{{{opened_environment}}} closed by "
+                rf"\end{{{environment}}}"
+            )
+            continue
+        table_spans.append((start, match.end(), environment))
+    for environment, _start in stack:
+        errors.append(
+            f"main.tex public source has unterminated "
+            rf"\begin{{{environment}}}"
+        )
+
+    labels = list(ABLATION_TABLE_LABEL_TOKEN.finditer(public_text))
+    if len(labels) != 1:
+        errors.append(
+            "main.tex public source must contain exactly one "
+            rf"\label{{{ABLATION_TABLE_LABEL}}}; found {len(labels)}"
+        )
+        return errors
+    label = labels[0]
+    containing_tables = [
+        span
+        for span in table_spans
+        if span[0] <= label.start() and label.end() <= span[1]
+    ]
+    if len(containing_tables) != 1:
+        errors.append(
+            rf"\label{{{ABLATION_TABLE_LABEL}}} must occur inside exactly "
+            "one table or table* environment; found "
+            f"{len(containing_tables)}"
+        )
+        return errors
+
+    start, end, _environment = containing_tables[0]
+    table_text = public_text[start:end]
+    wrong_counts: list[str] = []
+    for name in expected_macros:
+        count = len(
+            re.findall(
+                rf"\\{re.escape(name)}(?![A-Za-z0-9])",
+                table_text,
+            )
+        )
+        if count != 1:
+            wrong_counts.append(f"{name}={count}")
+    if wrong_counts:
+        errors.append(
+            "the table containing "
+            rf"\label{{{ABLATION_TABLE_LABEL}}} must consume each of the "
+            "24 A0--A7 extension macros exactly once; observed "
+            + ",".join(wrong_counts)
+        )
+    return errors
 
 
 def _main_result_contract_errors(text: str) -> list[str]:
     """Require every macro exported by the canonical release contract."""
 
-    active = "\n".join(line for _, line in _active_tex_lines(text))
     errors: list[str] = []
-    missing_references = [
-        name
-        for name in RESULT_MACROS
-        if re.search(rf"\\{re.escape(name)}(?![A-Za-z0-9])", active) is None
-    ]
-    if missing_references:
-        errors.append(
-            "main.tex does not reference required public-table macros: "
-            + ",".join(missing_references)
-        )
     public_text, _, expansion_errors = _expand_internalreview_source(
         text,
         internal_review=False,
@@ -482,7 +616,23 @@ def _main_result_contract_errors(text: str) -> list[str]:
             "main.tex public-table conditional expansion failed: "
             + "; ".join(expansion_errors)
         )
-    else:
+        public_text = ""
+    missing_references = [
+        name
+        for name in RESULT_MACROS
+        if re.search(
+            rf"\\{re.escape(name)}(?![A-Za-z0-9])",
+            public_text,
+        )
+        is None
+    ]
+    if missing_references:
+        errors.append(
+            "main.tex does not reference required public-table macros: "
+            + ",".join(missing_references)
+        )
+    if not expansion_errors:
+        errors.extend(_ablation_table_contract_errors(public_text))
         literal_findings = _placeholder_findings(
             public_text,
             PUBLIC_BRANCH_PLACEHOLDER,
@@ -1226,8 +1376,11 @@ def audit_paper_build(
                 not result_contract_errors,
                 actual=result_contract_errors,
                 required=(
-                    "every macro exported by validate_release.ALL_MACROS is "
-                    "referenced by main.tex"
+                    "every non-sentinel result macro exported by "
+                    "validate_release is referenced by the selected public "
+                    "main.tex source, and every A0--A7 extension macro is "
+                    "consumed exactly once by the table/table* containing "
+                    r"\label{tab:ablations}"
                 ),
                 failure="; ".join(result_contract_errors),
             )

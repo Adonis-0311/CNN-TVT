@@ -68,11 +68,59 @@
         "cssl_amc_supervised_adaptation"
       ],
       "hard_macro_f1_min_gain_pp_each_baseline": 5.0,
-      "hard_ablation_controls": [
-        "a1_single_mask",
-        "a6_dual_full"
-      ],
-      "hard_ablation_strictly_positive": true,
+      "hard_ablation_family": {
+        "family_id": "hard_macro_f1_ablation_family_v1",
+        "regime": "hard_interference",
+        "metric": "macro_f1",
+        "direction": "candidate_minus_reference",
+        "confidence_level": 0.95,
+        "multiplicity_method": "joint_max_absolute_centered_deviation_hierarchical_paired_bootstrap",
+        "simultaneous_ci95_low_strictly_greater_than": 0.0,
+        "contrasts": [
+          {
+            "contrast_id": "teacher",
+            "reference": "a2_tri_no_teacher",
+            "candidate": "a3_tri_teacher",
+            "intervention": "fixed_physical_teacher",
+            "interpretation_scope": "incremental_fixed_protocol"
+          },
+          {
+            "contrast_id": "multitask",
+            "reference": "a3_tri_teacher",
+            "candidate": "a4_tri_teacher_mtl",
+            "intervention": "jammer_quality_orthogonality_bundle",
+            "interpretation_scope": "incremental_fixed_protocol_bundle"
+          },
+          {
+            "contrast_id": "exact_source_contrast",
+            "reference": "a4_tri_teacher_mtl",
+            "candidate": "a5_vimd_full",
+            "intervention": "exact_source_cross_condition_contrast",
+            "interpretation_scope": "incremental_fixed_protocol"
+          },
+          {
+            "contrast_id": "full_vs_single",
+            "reference": "a1_single_mask",
+            "candidate": "a5_vimd_full",
+            "intervention": "full_method_vs_single_mask",
+            "interpretation_scope": "composite_control"
+          },
+          {
+            "contrast_id": "full_vs_dual",
+            "reference": "a6_dual_full",
+            "candidate": "a5_vimd_full",
+            "intervention": "tri_route_vs_dual_route_full_objective",
+            "interpretation_scope": "composite_control_no_route_count_attribution"
+          },
+          {
+            "contrast_id": "bypass",
+            "reference": "a7_vimd_no_residual",
+            "candidate": "a5_vimd_full",
+            "intervention": "bounded_additive_bypass",
+            "interpretation_scope": "forward_path_intervention"
+          }
+        ]
+      },
       "ood_regimes": [
         "unseen_jammer",
         "unseen_speed",
@@ -144,7 +192,7 @@
     "no_placeholder_result_macro": true,
     "human_primary_source_audit": true,
     "hard_all_baseline_gain_gate_artifact_derived": true,
-    "hard_ablation_direction_gate_artifact_derived": true,
+    "hard_ablation_simultaneous_ci_gate_artifact_derived": true,
     "ood_two_of_three_gate_artifact_derived": true,
     "clean_dual_stratum_noninferiority_gate_artifact_derived": true,
     "mechanism_consistency_gate_artifact_derived": true,

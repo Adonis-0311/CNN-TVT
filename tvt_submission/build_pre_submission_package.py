@@ -9,7 +9,6 @@ that has not passed the release chain.  Dry-run is the default.
 from __future__ import annotations
 
 import argparse
-from datetime import datetime, timezone
 import hashlib
 import json
 from pathlib import Path, PurePosixPath
@@ -25,9 +24,14 @@ DEFAULT_OUTPUT = (
 )
 SCHEMA = "vimd_amc.tvt.pre_submission_handoff.v1"
 FIXED_ZIP_TIME = (2026, 7, 28, 0, 0, 0)
+# This is an explicit schema-snapshot marker, not a filesystem timestamp.
+# Change it only for an intentional package-schema snapshot so identical
+# content remains byte-reproducible across clones and checkouts.
+SOURCE_SNAPSHOT_UTC = "2026-07-28T00:00:00+00:00"
 MAX_FILE_BYTES = 20 * 1024 * 1024
 
 ROOT_FILES = {
+    "HANDOFF.md",
     "README.md",
     "pyproject.toml",
 }
@@ -214,13 +218,9 @@ def build_manifest(files: list[Path]) -> dict[str, object]:
                 "role": _role(relative),
             }
         )
-    snapshot_time = datetime.fromtimestamp(
-        max(path.stat().st_mtime_ns for path in files) / 1_000_000_000,
-        tz=timezone.utc,
-    ).isoformat()
     return {
         "schema_version": SCHEMA,
-        "source_snapshot_utc": snapshot_time,
+        "source_snapshot_utc": SOURCE_SNAPSHOT_UTC,
         "package_role": "pre_submission_handoff",
         "upload_ready": False,
         "reason_not_upload_ready": [

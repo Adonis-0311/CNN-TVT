@@ -63,18 +63,13 @@ class ReleaseGateTest(unittest.TestCase):
             },
         )
         run_root = root / "formal_run"
-        model_root = run_root / "models" / "model_seed1"
-        model_root.mkdir(parents=True)
-        (model_root / "model.pt").write_bytes(b"checkpoint")
-        with zipfile.ZipFile(
-            model_root / "predictions_validation.npz",
-            mode="w",
-        ) as archive:
-            archive.writestr("dummy.npy", b"prediction")
+        run_root.mkdir(parents=True)
+        seeds = list(self.runner.FORMAL_ABLATION_ALGORITHM_SEEDS)
         for name in (
             "metrics.csv",
             "paired_statistics.csv",
             "headline_paired_statistics.csv",
+            "seed_aggregates.csv",
         ):
             (run_root / name).write_text("value\n1\n", encoding="utf-8")
         for name in ("cache_reference", "train", "validation"):
@@ -92,40 +87,51 @@ class ReleaseGateTest(unittest.TestCase):
             "auxiliary_losses_included": False,
             "validation_loader_shuffle": False,
         }
-        result = {
-            "model": "model",
-            "seed": 1,
-            "checkpoint": "models/model_seed1/model.pt",
-            "teacher_checkpoint": None,
-            "training": {
-                "history": [
-                    {
-                        "epoch": 1.0,
-                        "checkpoint_selection_eligible": 1.0,
-                        "validation_loss": 0.25,
-                    }
-                ],
-                "checkpoint_selection": {
-                    "status": "eligible_validation_checkpoint_selected",
-                    "selected_checkpoint_eligible": True,
-                    "fallback_used": False,
-                    "selected_epoch": 1,
-                    "selected_validation_loss": 0.25,
-                    "eligible_checkpoint_count": 1,
-                    "criterion": criterion,
+        results = []
+        for seed in seeds:
+            model_root = run_root / "models" / f"model_seed{seed}"
+            model_root.mkdir(parents=True)
+            (model_root / "model.pt").write_bytes(b"checkpoint")
+            with zipfile.ZipFile(
+                model_root / "predictions_validation.npz",
+                mode="w",
+            ) as archive:
+                archive.writestr("dummy.npy", b"prediction")
+            result = {
+                "model": "model",
+                "seed": seed,
+                "checkpoint": f"models/model_seed{seed}/model.pt",
+                "teacher_checkpoint": None,
+                "training": {
+                    "history": [
+                        {
+                            "epoch": 1.0,
+                            "checkpoint_selection_eligible": 1.0,
+                            "validation_loss": 0.25,
+                        }
+                    ],
+                    "checkpoint_selection": {
+                        "status": "eligible_validation_checkpoint_selected",
+                        "selected_checkpoint_eligible": True,
+                        "fallback_used": False,
+                        "selected_epoch": 1,
+                        "selected_validation_loss": 0.25,
+                        "eligible_checkpoint_count": 1,
+                        "criterion": criterion,
+                    },
                 },
-            },
-            "regimes": {
-                "validation": {
-                    "accuracy": 0.8,
-                    "macro_f1": 0.79,
-                    "worst_recall": 0.70,
-                    "nll": 0.5,
-                    "ece": 0.03,
-                }
-            },
-        }
-        self._write_json(model_root / "result.json", result)
+                "regimes": {
+                    "validation": {
+                        "accuracy": 0.8,
+                        "macro_f1": 0.79,
+                        "worst_recall": 0.70,
+                        "nll": 0.5,
+                        "ece": 0.03,
+                    }
+                },
+            }
+            results.append(result)
+            self._write_json(model_root / "result.json", result)
         run_record = {
             "run_id": "formal_test_run",
             "runner": "experiments/run_standard_experiment.py",
@@ -135,7 +141,7 @@ class ReleaseGateTest(unittest.TestCase):
             "cache_digest": "a" * 64,
             "checksums_verified": True,
             "models": ["model"],
-            "seeds": [1],
+            "seeds": seeds,
             "splits": {"train": 1, "validation": 1},
             "training_configuration": {
                 "epochs": 1,
@@ -146,7 +152,7 @@ class ReleaseGateTest(unittest.TestCase):
                 "minimum_full_stage_epochs": 1,
                 "patience": 1,
             },
-            "results": [result],
+            "results": results,
             "evidence_eligibility": {
                 "policy_version": "vimd-evidence-gate-v2",
                 "cache_designation": self.validator.FORMAL_DESIGNATION,
@@ -189,6 +195,32 @@ class ReleaseGateTest(unittest.TestCase):
         self._write_macro_manifest(macro_manifest, run_json, run_record)
         return run_json, paper_root, macro_manifest
 
+    def _artifact_derived_fixture(
+        self,
+        root: Path,
+    ) -> tuple[Path, Path, Path, unittest.TestCase]:
+        from tests.test_macro_generator import MacroGeneratorTest
+        from tvt_submission import generate_macro_values as generator
+
+        generator_fixture = MacroGeneratorTest()
+        generator_fixture.runner = self.runner
+        run_json, macro_manifest = generator_fixture._fixture(root)
+        generator.write_macro_manifest(
+            run_json=run_json,
+            output=macro_manifest,
+        )
+        paper_root = root / "paper"
+        paper_root.mkdir()
+        (paper_root / "main.tex").write_text(
+            "\\documentclass{article}\n",
+            encoding="utf-8",
+        )
+        (paper_root / "results_auto.tex").write_text(
+            "\\newcommand{\\ResultSource}{No eligible locked run}\n",
+            encoding="utf-8",
+        )
+        return run_json, paper_root, macro_manifest, generator_fixture
+
     def _write_macro_manifest(
         self,
         path: Path,
@@ -198,10 +230,30 @@ class ReleaseGateTest(unittest.TestCase):
         placeholder_macro: str | None = None,
     ) -> None:
         records = {}
+        contrast_values = {
+            f"{prefix}Gain": "+1.50"
+            for prefix in self.validator.ABLATION_CONTRAST_PREFIXES
+        }
+        contrast_values.update(
+            {
+                f"{prefix}CILow": "+0.50"
+                for prefix in self.validator.ABLATION_CONTRAST_PREFIXES
+            }
+        )
+        contrast_values.update(
+            {
+                f"{prefix}CIHigh": "+2.50"
+                for prefix in self.validator.ABLATION_CONTRAST_PREFIXES
+            }
+        )
         for index, name in enumerate(self.validator.PROVENANCE_MACROS):
             value = (
                 "--"
                 if name == placeholder_macro
+                else contrast_values[name]
+                if name in contrast_values
+                else "50.00"
+                if name in self.validator.ABLATION_MEAN_PROVENANCE_MACROS
                 else "CSSL-AMC supervised adaptation"
                 if name == "PrimaryReference"
                 else f"{index + 1}.0"
@@ -226,9 +278,33 @@ class ReleaseGateTest(unittest.TestCase):
                     "iqformer_inspired": 6.0,
                     "cssl_amc_supervised_adaptation": 6.0,
                 },
-                "hard_ablation_gain_pp": {
-                    "a1_single_mask": 1.0,
-                    "a6_dual_full": 1.0,
+                "hard_ablation_family": {
+                    "passed": True,
+                    "family_id": "hard_macro_f1_ablation_family_v1",
+                    "regime": "hard_interference",
+                    "metric": "macro_f1",
+                    "direction": "candidate_minus_reference",
+                    "confidence_level": 0.95,
+                    "multiplicity_method": (
+                        "joint_max_absolute_centered_deviation_"
+                        "hierarchical_paired_bootstrap"
+                    ),
+                    "simultaneous_ci95_low_strictly_greater_than_pp": 0.0,
+                    "contrasts": {
+                        contrast_id: {
+                            "reference": reference,
+                            "candidate": candidate,
+                            "gain_pp": 1.5,
+                            "marginal_ci95_low_pp": 0.75,
+                            "marginal_ci95_high_pp": 2.25,
+                            "simultaneous_ci95_low_pp": 0.5,
+                            "simultaneous_ci95_high_pp": 2.5,
+                            "passed": True,
+                        }
+                        for contrast_id, reference, candidate in (
+                            self.validator.HARD_ABLATION_CONTRASTS
+                        )
+                    },
                 },
                 "ood_gain_pp": {
                     "unseen_jammer": 4.0,
@@ -278,10 +354,10 @@ class ReleaseGateTest(unittest.TestCase):
             self.validator.RESULT_MACROS,
             self.validator.PROVENANCE_MACROS,
         )
-        self.assertEqual(len(self.validator.PROVENANCE_MACROS), 73)
-        self.assertEqual(len(set(self.validator.PROVENANCE_MACROS)), 73)
-        self.assertEqual(len(self.validator.NON_SENTINEL_RESULT_MACROS), 74)
-        self.assertEqual(len(self.validator.ALL_MACROS), 75)
+        self.assertEqual(len(self.validator.PROVENANCE_MACROS), 97)
+        self.assertEqual(len(set(self.validator.PROVENANCE_MACROS)), 97)
+        self.assertEqual(len(self.validator.NON_SENTINEL_RESULT_MACROS), 98)
+        self.assertEqual(len(self.validator.ALL_MACROS), 99)
         self.assertEqual(
             self.validator.ALL_MACROS,
             (
@@ -302,6 +378,352 @@ class ReleaseGateTest(unittest.TestCase):
                 for name in self.validator.PROVENANCE_MACROS
             )
         )
+        self.assertEqual(
+            len(self.validator.ABLATION_MEAN_PROVENANCE_MACROS),
+            6,
+        )
+        self.assertEqual(
+            len(self.validator.ABLATION_CONTRAST_PROVENANCE_MACROS),
+            18,
+        )
+        self.assertTrue(
+            all(
+                name.isalpha()
+                for name in (
+                    *self.validator.ABLATION_MEAN_PROVENANCE_MACROS,
+                    *self.validator.ABLATION_CONTRAST_PROVENANCE_MACROS,
+                )
+            )
+        )
+
+    def test_source_run_rejects_noncanonical_cache_digest(self) -> None:
+        with tempfile.TemporaryDirectory(
+            prefix="vimd_release_cache_digest_"
+        ) as temporary:
+            run_json, _, _ = self._fixture(Path(temporary))
+            run_record = self.validator.load_strict_json(run_json)
+            cache_manifest_path = (
+                Path(run_record["cache_root"]) / "manifest.json"
+            )
+            cache_manifest = self.validator.load_strict_json(
+                cache_manifest_path
+            )
+            run_record["cache_digest"] = "A" * 64
+            cache_manifest["cache_digest"] = "A" * 64
+            self._write_json(cache_manifest_path, cache_manifest)
+            self._write_json(run_json, run_record)
+
+            with self.assertRaisesRegex(
+                self.validator.ReleaseValidationError,
+                "run.json cache_digest is not a lowercase SHA-256",
+            ):
+                self.validator.validate_source_run(run_json)
+
+    def test_release_rederives_hardened_ablation_evidence(
+        self,
+    ) -> None:
+        from tvt_submission import generate_macro_values as generator
+        import numpy as np
+
+        cases = (
+            "zero_critical",
+            "nonfinite_critical",
+            "wrong_confidence",
+            "unstratified",
+            "wrong_seed_ids",
+            "snr_pair_drift",
+            "sir_pair_drift",
+        )
+        for case in cases:
+            with self.subTest(case=case), tempfile.TemporaryDirectory(
+                prefix=f"vimd_release_ablation_{case}_"
+            ) as temporary:
+                root = Path(temporary)
+                (
+                    run_json,
+                    paper_root,
+                    macro_manifest,
+                    generator_fixture,
+                ) = self._artifact_derived_fixture(root)
+                run_root = run_json.parent
+                ablation_csv = (
+                    run_root / "ablation_paired_statistics.csv"
+                )
+                if case in {
+                    "zero_critical",
+                    "nonfinite_critical",
+                    "wrong_confidence",
+                    "unstratified",
+                    "wrong_seed_ids",
+                }:
+                    column, value = {
+                        "zero_critical": (
+                            "simultaneous_critical_value",
+                            "0",
+                        ),
+                        "nonfinite_critical": (
+                            "simultaneous_critical_value",
+                            "nan",
+                        ),
+                        "wrong_confidence": (
+                            "confidence_level",
+                            "0.90",
+                        ),
+                        "unstratified": (
+                            "bootstrap_stratified_by_class",
+                            "false",
+                        ),
+                        "wrong_seed_ids": (
+                            "algorithm_seed_ids",
+                            "['17', '29', '43', '101', '71']",
+                        ),
+                    }[case]
+                    generator_fixture._rewrite_ablation_value(
+                        ablation_csv,
+                        contrast_id="teacher",
+                        column=column,
+                        value=value,
+                    )
+                else:
+                    candidate = next(
+                        record["candidate"]
+                        for record in generator.ABLATION_CONTRASTS
+                        if record["contrast_id"] == "teacher"
+                    )
+                    bundle_path = (
+                        run_root
+                        / "models"
+                        / f"{candidate}_seed17"
+                        / "predictions_hard_interference.npz"
+                    )
+                    with np.load(bundle_path, allow_pickle=False) as archive:
+                        arrays = {
+                            name: archive[name]
+                            for name in archive.files
+                        }
+                    field = "snr_db" if case == "snr_pair_drift" else "sir_db"
+                    arrays[field] = arrays[field].copy()
+                    arrays[field][0] += 0.25
+                    np.savez(bundle_path, **arrays)
+
+                before = (paper_root / "results_auto.tex").read_bytes()
+                with self.assertRaises(
+                    self.validator.ReleaseValidationError
+                ):
+                    self.validator.write_release(
+                        run_json=run_json,
+                        paper_root=paper_root,
+                        macro_values=macro_manifest,
+                    )
+                self.assertEqual(
+                    (paper_root / "results_auto.tex").read_bytes(),
+                    before,
+                )
+                self.assertFalse(
+                    (paper_root / "release_lock.json").exists()
+                )
+
+    def test_release_rebuild_rejects_coherently_reordered_formal_seeds(
+        self,
+    ) -> None:
+        import csv
+
+        with tempfile.TemporaryDirectory(
+            prefix="vimd_release_coherent_seed_reorder_"
+        ) as temporary:
+            root = Path(temporary)
+            (
+                run_json,
+                _,
+                _,
+                generator_fixture,
+            ) = self._artifact_derived_fixture(root)
+            run_record = self.validator.load_strict_json(run_json)
+            reordered = [29, 17, 43, 71, 101]
+            run_record["seeds"] = reordered
+            generator_fixture._write_json(run_json, run_record)
+
+            ablation_csv = (
+                run_json.parent / "ablation_paired_statistics.csv"
+            )
+            with ablation_csv.open(
+                "r",
+                encoding="utf-8",
+                newline="",
+            ) as stream:
+                reader = csv.DictReader(stream)
+                fieldnames = list(reader.fieldnames or [])
+                rows = list(reader)
+            for row in rows:
+                row["algorithm_seed_ids"] = repr(
+                    [str(seed) for seed in reordered]
+                )
+            generator_fixture._write_csv(
+                ablation_csv,
+                fieldnames,
+                rows,
+            )
+
+            with self.assertRaisesRegex(
+                self.validator.ReleaseValidationError,
+                "ordered formal ablation algorithm seeds",
+            ):
+                self.validator.rebuild_expected_macro_manifest(run_json)
+
+    def test_ablation_family_gate_is_exact_and_fail_closed(self) -> None:
+        with tempfile.TemporaryDirectory(
+            prefix="vimd_release_ablation_family_"
+        ) as temporary:
+            _, _, macro_manifest = self._fixture(Path(temporary))
+            base_gate = self._expected_manifest(macro_manifest)[
+                "scientific_release_gate"
+            ]
+
+            def extra_family_key(gate: dict) -> None:
+                gate["hard_ablation_family"]["unexpected"] = True
+
+            def missing_contrast(gate: dict) -> None:
+                del gate["hard_ablation_family"]["contrasts"]["teacher"]
+
+            def reverse_direction(gate: dict) -> None:
+                record = gate["hard_ablation_family"]["contrasts"]["teacher"]
+                record["reference"], record["candidate"] = (
+                    record["candidate"],
+                    record["reference"],
+                )
+
+            def drift_method(gate: dict) -> None:
+                gate["hard_ablation_family"]["multiplicity_method"] = (
+                    "marginal_percentile"
+                )
+
+            def drift_threshold(gate: dict) -> None:
+                gate["hard_ablation_family"][
+                    "simultaneous_ci95_low_strictly_greater_than_pp"
+                ] = -0.01
+
+            def nonpositive_simultaneous_low(gate: dict) -> None:
+                gate["hard_ablation_family"]["contrasts"]["teacher"][
+                    "simultaneous_ci95_low_pp"
+                ] = 0.0
+
+            def point_outside_interval(gate: dict) -> None:
+                gate["hard_ablation_family"]["contrasts"]["teacher"][
+                    "marginal_ci95_high_pp"
+                ] = 1.0
+
+            mutations = (
+                extra_family_key,
+                missing_contrast,
+                reverse_direction,
+                drift_method,
+                drift_threshold,
+                nonpositive_simultaneous_low,
+                point_outside_interval,
+            )
+            for mutate in mutations:
+                with self.subTest(mutation=mutate.__name__):
+                    gate = json.loads(json.dumps(base_gate))
+                    mutate(gate)
+                    with self.assertRaises(
+                        self.validator.ReleaseValidationError
+                    ):
+                        self.validator._validate_scientific_release_gate(gate)
+
+    def test_ablation_macro_numbers_are_bound_to_family_gate(self) -> None:
+        mutations = {
+            "gate_disagreement": (
+                "AblationTeacherGain",
+                "+999.99",
+            ),
+            "point_outside_ci": (
+                "AblationTeacherCILow",
+                "+2.00",
+            ),
+            "non_atomic": (
+                "AblationTeacherGain",
+                "1e0",
+            ),
+            "mean_out_of_range": (
+                "HeadlineHardAOneMacroFOne",
+                "101.00",
+            ),
+        }
+        for label, (macro_name, value) in mutations.items():
+            with self.subTest(case=label), tempfile.TemporaryDirectory(
+                prefix=f"vimd_release_ablation_macro_{label}_"
+            ) as temporary:
+                run_json, _, macro_manifest = self._fixture(Path(temporary))
+                manifest = self._expected_manifest(macro_manifest)
+                manifest["macros"][macro_name]["value"] = value
+                macro_manifest.write_text(
+                    self.validator.canonical_macro_manifest_text(manifest),
+                    encoding="utf-8",
+                )
+                with self.assertRaises(
+                    self.validator.ReleaseValidationError
+                ):
+                    self.validator.validate_macro_manifest(
+                        macro_manifest,
+                        run_json=run_json,
+                        run_record=self.validator.load_strict_json(run_json),
+                    )
+
+    def test_near_zero_ablation_is_ineligible_at_public_precision(self) -> None:
+        with tempfile.TemporaryDirectory(
+            prefix="vimd_release_ablation_public_precision_"
+        ) as temporary:
+            run_json, paper_root, macro_manifest = self._fixture(
+                Path(temporary)
+            )
+            manifest = self._expected_manifest(macro_manifest)
+            family = manifest["scientific_release_gate"][
+                "hard_ablation_family"
+            ]
+            teacher = family["contrasts"]["teacher"]
+            teacher["simultaneous_ci95_low_pp"] = 0.004
+            teacher["passed"] = True
+            manifest["macros"]["AblationTeacherCILow"]["value"] = "+0.00"
+            macro_manifest.write_text(
+                self.validator.canonical_macro_manifest_text(manifest),
+                encoding="utf-8",
+            )
+
+            self.assertGreater(
+                teacher["simultaneous_ci95_low_pp"],
+                family[
+                    "simultaneous_ci95_low_strictly_greater_than_pp"
+                ],
+            )
+            self.assertEqual(
+                self.validator._public_pp_number(
+                    teacher["simultaneous_ci95_low_pp"]
+                ),
+                0.0,
+            )
+            self.assertEqual(
+                manifest["run_json_sha256"],
+                self.validator.sha256_file(run_json),
+            )
+            before = (paper_root / "results_auto.tex").read_bytes()
+            with mock.patch.object(
+                self.validator,
+                "rebuild_expected_macro_manifest",
+                return_value=manifest,
+            ), self.assertRaisesRegex(
+                self.validator.ReleaseValidationError,
+                "two-decimal public rendering",
+            ):
+                self.validator.write_release(
+                    run_json=run_json,
+                    paper_root=paper_root,
+                    macro_values=macro_manifest,
+                )
+            self.assertEqual(
+                (paper_root / "results_auto.tex").read_bytes(),
+                before,
+            )
+            self.assertFalse((paper_root / "release_lock.json").exists())
 
     def test_placeholder_detection_uses_token_boundaries(self) -> None:
         self.assertFalse(
@@ -415,7 +837,7 @@ class ReleaseGateTest(unittest.TestCase):
                     self._write_json(
                         run_json.parent
                         / "models"
-                        / "model_seed1"
+                        / f"model_seed{run_record['seeds'][0]}"
                         / "result.json",
                         run_record["results"][0],
                     )

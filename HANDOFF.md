@@ -92,32 +92,58 @@ Current machine evidence:
 Therefore no diagnostic/screening number may be inserted into the paper and
 no public submission PDF may be built.
 
-## 4. Urgent WIP contract at this snapshot
+## 4. Final integrated contract and validation
 
-This GitHub upload is intentionally a checkpoint while the final release-chain
-repair is still in progress. Python syntax was checked immediately before the
-snapshot, but the full test suite has not yet been rerun after the latest
-parallel edits.
+The non-training implementation and release chain are integrated and frozen.
+No formal cache, training run, or result release was started. Final read-only
+validation on 2026-07-28 produced:
 
-Known integration state:
+- main project tests: **199/199 passed**;
+- standards tests: **10/10 passed**;
+- formal-freeze CLI: `valid=true`, `read_only=true`, 11 models, ordered seeds
+  `17,29,43,71,101`, nine splits, and 47,000 declared sources;
+- canonical internal PDF: `paper/build/main.pdf`, 8 pages, 420,895 bytes,
+  SHA-256
+  `E99D21895EF31FC8C4291777AE8F34D53842571CA649EE986E483409385DC636`;
+- canonical paper source: `paper/main.tex`, 47,816 bytes, SHA-256
+  `4485272A2D6EC55A313E6F2145B0A33A80BD7ED0D94137509FDA46A84E5A3F43`;
+- internal paper gate: 36/36 checks passed, zero issues;
+- release paper gate: deliberately fail-closed, 38/46 checks passed and eight
+  expected failures because the formal release lock, verified authors,
+  non-placeholder results, public review mode, and release sentinel are absent;
+- all eight canonical PDF pages rendered and visually checked with no clipping,
+  overlap, garbling, or out-of-bounds content.
 
-- `metrics.py`, `evaluation.py`, and runner changes are carrying
-  `target_profile_index` toward clean-retention A/C/D versus B/E statistics.
+Integrated contract:
+
+- `metrics.py`, `evaluation.py`, and the runner preserve
+  `target_profile_index` for clean-retention A/C/D versus B/E statistics.
 - The formal reference is locked to the predeclared CSSL supervised adaptation;
   it must be described as the **primary reference**, never as post-hoc
   “strongest.” IQFormer-inspired remains a required non-oracle comparator.
 - `generate_macro_values.py`, `validate_release.py`, `paper/main.tex`, and
   `paper/results_auto.tex` share a manifest-v3 artifact-derived contract:
-  73 provenance records, 74 non-sentinel TeX commands after adding
-  `ResultSource`, and 75 commands in a released file after adding
+  97 provenance records, 98 non-sentinel TeX commands after adding
+  `ResultSource`, and 99 commands in a released file after adding
   `EligibleLockedResults`. The latency commands spell out the percentiles as
   `VIMDLatencyPFifty` and `VIMDLatencyPNinetyFive`; TeX command names containing
-  digit tokens such as `P50` or `P95` are not part of the contract. At snapshot
-  time, final integration and full regression remain pending.
+  digit tokens such as `P50` or `P95` are not part of the contract. Ordinary
+  p50/p95 statistic labels remain valid in runner artifacts. The additional
+  24 records expose the six missing A1/A2/A3/A4/A6/A7 hard macro-F1 means and
+  the gain/family-wise simultaneous 95% interval for each predeclared A0--A7
+  contrast.
+- The formal run writes `ablation_paired_statistics.csv` for one six-contrast
+  family. Its 33-column rows and source-aligned prediction NPZ bundles bind
+  the lowercase 64-hex cache digest, exact ordered seeds
+  `17,29,43,71,101`, class-stratified source clusters, source/SNR/SIR/profile
+  alignment, bootstrap settings, and a finite strictly positive simultaneous
+  critical value. The compact `run.json` summary binds the family and artifact;
+  the generator and release validator deterministically rebuild the statistics
+  instead of trusting that summary alone.
 - The public paper must never render literal `generated`, `pending`, `TBD`,
   or manually typed performance cells.
-- `validate_release.py` owns the single writer contract. Preserve/finish these
-  security properties:
+- `validate_release.py` owns the single writer contract. Its validated security
+  properties are:
   1. reconstruct the expected manifest from runner-native artifacts before
      writing;
   2. require canonical exact agreement, so a hand-edited
@@ -126,13 +152,17 @@ Known integration state:
      `\newcommand` set;
   4. reject unknown macros, `\input`, or other executable TeX;
   5. bind and re-render the exact result/table payload in release lock v2.
-- `validate_paper_build.py` must consume the writer's single exported macro
-  contract rather than invent a second set. It must verify actual PDF page
+- `validate_paper_build.py` consumes the writer's single exported macro
+  contract rather than inventing a second set. It verifies actual PDF page
   count, all transitive inputs (authors, references, figures, class, result
-  files), final-log rerun warnings, and release-lock v2.
+  files), final-log rerun warnings, release-lock v2, and exact Table IV
+  consumption of all 24 A0--A7 extension macros.
 
-The independent reviewer audit is:
-`docs/FINAL_TVT_REVIEWER_ATTACK_AUDIT.md`.
+The reviewer-attack and template-compliance documents under `docs/` retain
+their observation-time findings (including earlier page counts and repair
+items) as an audit trail. They are not the current release-status authority.
+The final state is the validation record in this section together with
+`tvt_submission/FINAL_CONVERGENCE_REPORT.md`.
 
 ## 5. Scientific release gates that must be executable
 
@@ -147,11 +177,25 @@ of the following scientific gates pass:
 3. Clean retention is evaluated separately on seen A/C/D and held B/E.
    Each stratum requires point difference >= -1 pp and hierarchical paired
    95% CI lower bound >= -2 pp.
-4. A5 must improve over the single-mask A1 and dual-route A6 controls in the
-   hard region if the paper retains route-count/tri-mask improvement language.
+4. The six predeclared hard-region A0--A7 contrasts form one family:
+   A3-A2 (teacher), A4-A3 (jammer/quality/orthogonality bundle), A5-A4
+   (exact-source cross-condition contrast), A5-A1 (full versus single-mask),
+   A5-A6 (composite full-versus-dual control), and A5-A7 (bounded additive
+   bypass). Each family-wise simultaneous 95% macro-F1 lower bound must be
+   strictly greater than zero both at full precision and after the public
+   two-decimal percentage-point rendering; a displayed `+0.00` cannot unlock
+   release.
 5. Mechanism values must be finite and must not contradict any public
    mechanism claim. The visible metric is an oracle-conditioned spectral
    component ratio, not waveform SIR, SDR, or source separation.
+
+The six contrasts share one class-stratified hierarchical paired bootstrap
+over the exact five algorithm seeds and aligned test-source clusters. Its
+family-wise interval is the non-studentized
+`joint_max_absolute_centered_deviation_hierarchical_paired_bootstrap`, not a
+bootstrap-t interval. A4-A3 is a bundled intervention and A5-A6 is a composite
+control; neither supports a single-factor causal claim. This evidence uses the
+already frozen A0--A7 fits and does not add to the 55-fit campaign.
 
 Failure is a result, not permission to lower thresholds after test access.
 
@@ -191,28 +235,30 @@ V4 is a separate candidate diagnostic and is not current paper evidence:
 # Add -Execute only under a separate approved, idle-GPU window.
 ```
 
-The all-local wrapper is implemented and dry-run by default; its final
-integration audit remains part of the pending regression. Execution requires
-the exact acknowledgment documented in `LOCAL_EXECUTION_QUEUE.md` and must
-refuse to start while foreign work or insufficient free GPU memory is detected.
-No command in this handoff grants permission to disrupt an active local task.
+The all-local wrapper is implemented, integration-tested, and dry-run by
+default. Execution requires the exact acknowledgment documented in
+`LOCAL_EXECUTION_QUEUE.md` and must refuse to start while foreign work or
+insufficient free GPU memory is detected. No command in this handoff grants
+permission to disrupt an active local task.
 
 ## 7. Immediate next-agent sequence
 
-1. Read this file, `TVT_Flagship...Idea.md` (external), the patent traceability
-   report, and `docs/FINAL_TVT_REVIEWER_ATTACK_AUDIT.md`.
-2. Inspect current diffs; do not roll back parallel/user changes.
-3. Make `validate_release.py` the only source of the macro/table contract.
-4. Reconcile writer, generator, paper placeholders, and paper gate.
-5. Complete clean profile strata and scientific promotion tests.
-6. Run targeted tests, then the entire main and standards test suites.
-7. Run formal-freeze validation and dry-run scripts; do not start training.
-8. Recompile the internal paper with local `IEEEtran.cls`, render all pages,
-   and perform visual QA.
-9. Update evidence/readiness/handoff documents with exact test counts and
-   checksums.
-10. Build the explicitly non-upload-ready author handoff archive. Public
-    release remains locked until formal results and human authorship exist.
+1. Read this handoff, `LOCAL_FORMAL_RUN_HANDOFF.md`, and the external patent
+   and Idea sources; preserve all frozen hashes and contracts.
+2. Confirm that no Python, MATLAB, LibreOffice, or foreign GPU workload is
+   active; run the queue in dry-run mode first.
+3. On an explicitly approved idle machine, build and validate the formal
+   headline cache. Stop on any designation, checksum, component, or
+   source-disjointness failure.
+4. Run the frozen 11-model/five-seed campaign (55 fits) without changing the
+   model family, reference, thresholds, seeds, or test protocol.
+5. Generate the manifest from runner-native artifacts. Do not edit result
+   macros or copy screening/diagnostic numbers.
+6. Write the release only if every administrative and scientific gate passes;
+   a negative result remains a valid outcome.
+7. Human authors must then verify authorship, citations, claims, disclosure,
+   and live TVT policy before a public build. The current internal PDF and
+   handoff ZIP are explicitly not submission-ready.
 
 ## 8. Human-only blockers
 

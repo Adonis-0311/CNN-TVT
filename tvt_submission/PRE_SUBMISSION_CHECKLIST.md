@@ -17,22 +17,24 @@
   objective becomes eligible; no final-state fallback is used.
 - [ ] Start/end executable-source fingerprints are identical.
 - [ ] Source-aligned probability bundles, metrics, paired statistics,
-  mechanism probes, and complexity records exist.
+  the 33-column `ablation_paired_statistics.csv`, mechanism probes, and
+  complexity records exist.
 - [ ] `evidence_eligibility.eligible` is exactly `true`.
 - [ ] `generate_macro_values.py` derives the paper result manifest from that
   run; no performance value is typed or copied by hand.
 - [ ] The macro manifest is exactly schema
-  `vimd_amc.tvt.macro_values.v3`, contains 73 provenance records and the
+  `vimd_amc.tvt.macro_values.v3`, contains 97 provenance records and the
   complete `scientific_release_gate`, and canonical artifact reconstruction
   agrees exactly.
 - [ ] The generator's JSON/CSV/NPZ cross-check passes with no missing,
   duplicate, nonfinite, inconsistent, or ambiguous required cell.
 - [ ] `validate_release.py --write` generates
-  74 non-sentinel commands plus `\EligibleLockedResults` only with an intact
-  schema-v2 release lock, and revalidation confirms the 75-command released
+  98 non-sentinel commands plus `\EligibleLockedResults` only with an intact
+  schema-v2 release lock, and revalidation confirms the 99-command released
   file, sentinel name/value, and `results_auto.tex` hash.
 - [ ] Latency commands are exactly `VIMDLatencyPFifty`,
-  `VIMDLatencyPNinetyFive`, and `VIMDLatencyDevice`; no digit-bearing `P50` or
+  `VIMDLatencyPNinetyFive`, and `VIMDLatencyDevice`; ordinary p50/p95
+  statistic labels remain valid in artifacts, but no digit-bearing `P50` or
   `P95` TeX command name is accepted.
 - [ ] The final LaTeX build has no undefined citation/reference, fatal error,
   overfull box, or internal-review banner.
@@ -50,18 +52,29 @@
 - [ ] Any strongest-published or strongest-interference-specific claim remains
   prohibited unless the open comparator and architecture-specific tuning
   sensitivity gates are prospectively closed.
-- [ ] A0--A7 causal interpretations match the actual controls; A6 remains a
-  composite control.
+- [ ] A0--A7 causal interpretations match the actual controls; A4-A3 remains
+  a jammer/quality/orthogonality bundle and A5-A6 remains a composite control,
+  not a route-count-only effect.
 - [ ] Hierarchical seed/source bootstrap is the headline inference.
+- [ ] The six direct hard-region A0--A7 contrasts are exactly A3-A2, A4-A3,
+  A5-A4, A5-A1, A5-A6, and A5-A7 in candidate-minus-reference direction.
+- [ ] Those six contrasts share the exact ordered seeds `17,29,43,71,101`,
+  class-stratified aligned source clusters, and one non-studentized
+  `joint_max_absolute_centered_deviation_hierarchical_paired_bootstrap`;
+  every family-wise simultaneous 95% lower bound is strictly greater than
+  zero and the common critical value is finite and strictly positive.
+- [ ] The ablation CSV and source-aligned NPZ deterministic rebuild agree on
+  the lowercase 64-hex cache digest, seed IDs, source/SNR/SIR/profile
+  alignment, class stratification, critical value, and all six direct effects.
 - [ ] All per-seed McNemar tests are labeled supplemental and their
   multiplicity family is explicit.
 - [ ] Supported-label masks govern jammer auxiliary metrics; held-out or
   excluded family logits are not presented as trained recognition.
 - [ ] Clean retention is stratified by seen A/C/D and held B/E profiles.
 - [ ] A5 hard macro-F1 is at least +5 pp versus each required non-oracle
-  baseline and strictly greater than A1 and A6; at least two of three held
-  factors gain +3 pp versus CSSL; both clean strata satisfy the -1 pp point and
-  -2 pp 95% lower-bound floors.
+  baseline; all six direct ablation simultaneous lower bounds pass; at least
+  two of three held factors gain +3 pp versus CSSL; both clean strata satisfy
+  the -1 pp point and -2 pp 95% lower-bound floors.
 - [ ] Required mechanism fields are finite, required correlations are
   nonnegative, and the oracle-conditioned spectral component ratio is strictly
   positive without being described as waveform SIR, SDR, or separation.
@@ -82,4 +95,6 @@
   submission instructions are rechecked on the upload date.
 - [ ] Any required disclosure of generative-AI-assisted language editing is
   prepared by the human authors.
+- [ ] Human authors have substantively authored and verified the final paper;
+  this engineering draft has not been uploaded unchanged.
 - [ ] The human authors approve the final PDF and source archive.

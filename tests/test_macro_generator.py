@@ -14,6 +14,22 @@ from tvt_submission import generate_macro_values as generator
 
 
 class MacroGeneratorTest(unittest.TestCase):
+    def test_ablation_lower_bound_must_remain_positive_when_rendered(
+        self,
+    ) -> None:
+        self.assertFalse(
+            generator._strictly_positive_at_public_precision(0.004)
+        )
+        self.assertFalse(
+            generator._strictly_positive_at_public_precision(0.0)
+        )
+        self.assertFalse(
+            generator._strictly_positive_at_public_precision(-0.004)
+        )
+        self.assertTrue(
+            generator._strictly_positive_at_public_precision(0.006)
+        )
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.runner = generator.validate_release._load_runner_module()
@@ -100,6 +116,7 @@ class MacroGeneratorTest(unittest.TestCase):
         root: Path,
         *,
         hard_gate_fails: bool = False,
+        ablation_gate_fails: bool = False,
     ) -> tuple[Path, Path]:
         cache_digest = "a" * 64
         cache_root = root / "formal_cache"
@@ -118,13 +135,17 @@ class MacroGeneratorTest(unittest.TestCase):
         models = [
             "a0_backbone",
             "a1_single_mask",
+            "a2_tri_no_teacher",
+            "a3_tri_teacher",
+            "a4_tri_teacher_mtl",
             "a5_vimd_full",
             "a6_dual_full",
+            "a7_vimd_no_residual",
             "mcldnn_reimplementation",
             "iqformer_inspired",
             "cssl_amc_supervised_adaptation",
         ]
-        seeds = [17, 29]
+        seeds = [17, 29, 43, 71, 101]
         regimes = [
             "hard_interference",
             "unseen_jammer",
@@ -143,9 +164,13 @@ class MacroGeneratorTest(unittest.TestCase):
 
         default_error_counts = {
             "a0_backbone": 4,
-            "a1_single_mask": 1,
+            "a1_single_mask": 6,
+            "a2_tri_no_teacher": 9,
+            "a3_tri_teacher": 6,
+            "a4_tri_teacher_mtl": 3,
             "a5_vimd_full": 0,
-            "a6_dual_full": 1,
+            "a6_dual_full": 6,
+            "a7_vimd_no_residual": 6,
             "mcldnn_reimplementation": 3,
             "iqformer_inspired": 2,
             "cssl_amc_supervised_adaptation": 2,
@@ -182,6 +207,12 @@ class MacroGeneratorTest(unittest.TestCase):
             regime_error_counts["hard_interference"][
                 "cssl_amc_supervised_adaptation"
             ] = 0
+        if ablation_gate_fails:
+            regime_error_counts["hard_interference"][
+                "a3_tri_teacher"
+            ] = regime_error_counts["hard_interference"][
+                "a2_tri_no_teacher"
+            ]
         predictions = {
             (model, regime): self._cyclic_errors(
                 labels,
@@ -560,6 +591,40 @@ class MacroGeneratorTest(unittest.TestCase):
             headline_fields,
             headline_rows,
         )
+        prediction_bundles = {}
+        for model in generator.ABLATION_MODELS:
+            predicted = predictions[(model, generator.HARD_REGIME)]
+            probabilities = np.full(
+                (len(labels), classes),
+                0.1,
+                dtype=np.float64,
+            )
+            probabilities[np.arange(len(labels)), predicted] = 0.8
+            for seed in seeds:
+                prediction_bundles[
+                    (model, seed, generator.HARD_REGIME)
+                ] = generator.PredictionBundle(
+                    probabilities=probabilities,
+                    labels=labels,
+                    source_ids=source_ids,
+                    snr_db=np.full(len(labels), 5.0),
+                    sir_db=np.full(len(labels), -5.0),
+                    target_profile_index=target_profile_index,
+                )
+        ablation_rows, ablation_summary = (
+            self.runner.build_ablation_paired_rows(
+                prediction_bundles=prediction_bundles,
+                seeds=seeds,
+                cache_digest=cache_digest,
+                bootstrap_draws=100,
+                bootstrap_seed_base=bootstrap_seed_base,
+            )
+        )
+        self._write_csv(
+            run_root / "ablation_paired_statistics.csv",
+            list(self.runner.ABLATION_PAIRED_COLUMNS),
+            ablation_rows,
+        )
 
         for name in ("cache_reference", "train", *regimes):
             self._write_json(
@@ -634,6 +699,8 @@ class MacroGeneratorTest(unittest.TestCase):
                 "multi_seed_headline_pairs": (
                     "headline_paired_statistics.csv"
                 ),
+                "ablation_pairs": "ablation_paired_statistics.csv",
+                "ablation_family": ablation_summary,
                 "holm_families": [],
                 "clean_retention_profile_strata": {
                     name: list(indices)
@@ -686,6 +753,26 @@ class MacroGeneratorTest(unittest.TestCase):
             self.fail("target headline row is absent")
         self._write_csv(path, fieldnames, rows)
 
+    def _rewrite_ablation_value(
+        self,
+        path: Path,
+        *,
+        contrast_id: str,
+        column: str,
+        value: str,
+    ) -> None:
+        with path.open("r", encoding="utf-8", newline="") as stream:
+            reader = csv.DictReader(stream)
+            fieldnames = list(reader.fieldnames or [])
+            rows = list(reader)
+        for row in rows:
+            if row["contrast_id"] == contrast_id:
+                row[column] = value
+                break
+        else:
+            self.fail("target ablation row is absent")
+        self._write_csv(path, fieldnames, rows)
+
     def test_generates_release_compatible_manifest_from_artifacts(self) -> None:
         with tempfile.TemporaryDirectory(
             prefix="vimd_macro_success_"
@@ -697,13 +784,14 @@ class MacroGeneratorTest(unittest.TestCase):
             )
             self.assertEqual(
                 result["macro_count"],
-                len(generator.validate_release.RESULT_MACROS),
+                97,
             )
             manifest = generator.validate_release.load_strict_json(output)
             self.assertEqual(
                 set(manifest["macros"]),
-                set(generator.validate_release.RESULT_MACROS),
+                set(generator.PROVENANCE_MACROS),
             )
+            self.assertEqual(len(manifest["macros"]), 97)
             self.assertTrue(
                 manifest["scientific_release_gate"]["passed"]
             )
@@ -726,6 +814,33 @@ class MacroGeneratorTest(unittest.TestCase):
                 "80.00",
             )
             self.assertEqual(
+                manifest["macros"]["HeadlineHardATwoMacroFOne"]["value"],
+                "10.00",
+            )
+            self.assertEqual(
+                manifest["macros"]["HeadlineHardAThreeMacroFOne"]["value"],
+                "40.00",
+            )
+            self.assertGreater(
+                float(
+                    manifest["macros"]["AblationTeacherCILow"]["value"]
+                ),
+                0.0,
+            )
+            self.assertTrue(
+                manifest["scientific_release_gate"][
+                    "hard_ablation_family"
+                ]["passed"]
+            )
+            self.assertEqual(
+                len(
+                    manifest["scientific_release_gate"][
+                        "hard_ablation_family"
+                    ]["contrasts"]
+                ),
+                6,
+            )
+            self.assertEqual(
                 manifest["macros"]["RegimeUnseenJammerGain"]["value"],
                 "+10.00",
             )
@@ -735,7 +850,7 @@ class MacroGeneratorTest(unittest.TestCase):
             )
             self.assertEqual(
                 manifest["macros"]["OracleSpectralRatioGain"]["value"],
-                "3.000000",
+                "3.600000",
             )
             self.assertEqual(
                 manifest["macros"]["VIMDParameters"]["value"],
@@ -743,11 +858,11 @@ class MacroGeneratorTest(unittest.TestCase):
             )
             self.assertEqual(
                 manifest["macros"]["VIMDLatencyPFifty"]["value"],
-                "1.300",
+                "1.400",
             )
             self.assertEqual(
                 manifest["macros"]["VIMDLatencyPNinetyFive"]["value"],
-                "1.900",
+                "2.000",
             )
             self.assertEqual(
                 manifest["macros"]["VIMDLatencyDevice"]["value"],
@@ -774,7 +889,7 @@ class MacroGeneratorTest(unittest.TestCase):
             )
             self.assertEqual(
                 set(values),
-                set(generator.validate_release.RESULT_MACROS),
+                set(generator.PROVENANCE_MACROS),
             )
             self.assertEqual(set(provenance), set(values))
 
@@ -819,6 +934,29 @@ class MacroGeneratorTest(unittest.TestCase):
                 )
             self.assertFalse(output.exists())
 
+    def test_tampered_ablation_simultaneous_bound_fails_without_output(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory(
+            prefix="vimd_macro_ablation_tamper_"
+        ) as temporary:
+            run_json, output = self._fixture(Path(temporary))
+            self._rewrite_ablation_value(
+                run_json.parent / "ablation_paired_statistics.csv",
+                contrast_id="teacher",
+                column="macro_f1_simultaneous_ci95_low",
+                value="0.999",
+            )
+            with self.assertRaisesRegex(
+                generator.MacroGenerationError,
+                "ablation row teacher",
+            ):
+                generator.write_macro_manifest(
+                    run_json=run_json,
+                    output=output,
+                )
+            self.assertFalse(output.exists())
+
     def test_hard_gain_gate_fails_without_output(self) -> None:
         with tempfile.TemporaryDirectory(
             prefix="vimd_macro_hard_gate_"
@@ -833,6 +971,24 @@ class MacroGeneratorTest(unittest.TestCase):
                     "A5 hard macro-F1 gain must be "
                     ">= 5.00 pp versus every non-oracle baseline"
                 ),
+            ):
+                generator.write_macro_manifest(
+                    run_json=run_json,
+                    output=output,
+                )
+            self.assertFalse(output.exists())
+
+    def test_ablation_family_gate_fails_without_output(self) -> None:
+        with tempfile.TemporaryDirectory(
+            prefix="vimd_macro_ablation_gate_"
+        ) as temporary:
+            run_json, output = self._fixture(
+                Path(temporary),
+                ablation_gate_fails=True,
+            )
+            with self.assertRaisesRegex(
+                generator.MacroGenerationError,
+                "family-wise simultaneous macro-F1 CI lower bound",
             ):
                 generator.write_macro_manifest(
                     run_json=run_json,

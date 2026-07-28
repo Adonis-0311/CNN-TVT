@@ -510,8 +510,9 @@ The evidence is intentionally layered.
   \item A deterministic Python proxy generator is used for unit tests,
   diagnostics, and inexpensive screening.  Its channel heuristics cannot
   support a standards-compliance claim.
-  \item The main simulation cache uses MATLAB \texttt{nrTDLChannel} primitives
-  corresponding to TDL-A through TDL-E in 3GPP TR~38.901
+  \item The frozen headline-cache builder is configured to use MATLAB
+  \texttt{nrTDLChannel} primitives corresponding to TDL-A through TDL-E in
+  3GPP TR~38.901
   \cite{3gpp38901}. Target and jammer waveforms traverse independent channel
   objects before shared receiver effects and exact realized SNR/SIR scaling.
   TDL-A/C/D are allocated to training and validation; TDL-B/E are reserved for
@@ -591,14 +592,14 @@ audits returned filter and path delays, then crops the central window.  It
 records target and jammer profile, delay spread, maximum Doppler, channel
 seed, guard margin, source ID, requested and realized SNR/SIR, component
 residual, file SHA-256, and a deterministic manifest digest.
-The eligible headline manifest is the sole source of reportable audit values;
-the current integration sentinels validate pipeline structure only and are not
-performance evidence.
+If built and validated, the eligible headline manifest is the sole source of
+reportable audit values.  The current screening and integration sentinels
+validate pipeline structure only and are not performance evidence.
 
 \begin{table}[t]
 \centering
-\caption{Fail-Closed Cache-Audit Gates Bound to the Eligible Headline
-Manifest; No Sentinel Value Is Promoted Into the Manuscript.}
+\caption{Required Fail-Closed Cache-Audit Gates for an Eligible Headline
+Manifest; No Screening or Integration Sentinel Is Promoted.}
 \label{tab:cacheaudit}
 \footnotesize
 \begin{tabular}{ll}
@@ -615,6 +616,63 @@ Source disjointness & pair/split source-ID intersections\\
 \end{table}
 
 \section{Experimental Design}
+\subsection{Frozen Implementation and Protocol}
+Table~\ref{tab:frozenprotocol} records the prospective formal configuration.
+\ifinternalreview
+The formal headline cache and run have not been generated in this
+internal-review build; only screening/integration cache evidence exists, and
+none of its metrics enters a result table.
+\fi
+
+\begin{table*}[t]
+\centering
+\caption{Frozen Implementation and Formal Evidence Protocol. Values Are
+Configured Prospectively; Eligibility Requires an Artifact-Bound Release Lock.}
+\label{tab:frozenprotocol}
+\scriptsize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.06}
+\begin{tabular}{@{}p{0.12\textwidth}p{0.345\textwidth}p{0.12\textwidth}p{0.345\textwidth}@{}}
+\toprule
+Item & Frozen setting & Item & Frozen setting\\
+\midrule
+Input/cache & $L=1024$ complex I/Q samples; 96-sample guard; $f_s=1$~MHz;
+$f_c=5.9$~GHz; master seed 20260727 &
+Targets & BPSK, $\pi/2$-BPSK, QPSK, 8PSK, 16/64/256QAM, GMSK, CPFSK, and
+4FSK\\
+Channel/mobility & TDL-A/C/D seen, TDL-B/E held; 30/100/300-ns delay
+spreads; 0/60/120/150~km/h seen, 180/250~km/h held &
+Jammers & tone, multitone, chirp, sweep, partial-band, and comb seen; pulse
+and OFDM-like held; cochannel and mixed excluded\\
+Quality grids & SNR $\{-10,-6,-2,2,6,10,14,18\}$~dB; ordinary SIR
+$\{-10,-5,0,5,10\}$~dB; hard SIR $\{-15,-10,-5,0\}$~dB &
+Source budget & train/validation 10,000/2,000; each of seven test splits
+5,000; 47,000 disjoint source IDs and 94,000 cached views\\
+Transform/widths & STFT 64/16 (FFT/hop); complex widths 8/16;
+feature/spectral widths 32/24; embedding/environment 48/32; dropout 0.05 &
+Routing/objective & $\rho\in[0.05,0.35]$, $\tau_c\in[0.5,2]$;
+$\lambda_{j,q,m,x,\perp}=(0.25,0.05,0.50,0.10,0.01)$; smoothing 0.05;
+$\tau_x=0.12$\\
+Optimization & AdamW; 30 epochs; batch 64; $\eta=3\!\times\!10^{-4}$;
+weight decay $10^{-2}$; gradient clip 5; workers 0; CPU intra/inter-op
+threads 1/1; CUDA AMP (teacher in FP32) &
+Curriculum/selection & mask/XCC first active at epochs 3/6 (one-based), each
+ramps for 3 epochs; full objective at epoch 8; selection starts at 10;
+patience 8\\
+Execution matrix & A0--A7 plus MCLDNN, IQFormer-inspired, and CSSL
+adaptation; seeds $\{17,29,43,71,101\}$; 55 fits; CSSL-AMC
+official-architecture supervised adaptation is the fixed primary anchor &
+Inference/statistics & one view; 10,000-draw seed/source hierarchical paired
+bootstrap (seed 20260727); class-stratified source clusters; validation
+excluded\\
+Latency protocol & batch one; 10 warm-up passes; 30 synchronized timed
+passes; P50/P95 on the recorded isolated device &
+Release integrity & checksum and component validation; unchanged source tree;
+eligible checkpoint, no fallback; artifact-derived result cells only\\
+\bottomrule
+\end{tabular}
+\end{table*}
+
 \subsection{Comparators and Ablations}
 All trainable models receive identical source pairs, split manifests, epoch
 budget, optimizer family, label smoothing, and checkpoint policy.  Literature
@@ -623,38 +681,15 @@ adaptation'' according to their provenance unless official code and the
 complete published protocol are executed unchanged.  Quoted paper numbers are
 never mixed with unified retraining.
 
-\begin{table*}[t]
-\centering
-\caption{Pre-Registered Ablation Chain.  ``Teacher'' Is the Fixed
-Simulation-Component Power Mask Teacher, and XCC Is Exact-Source
-Cross-Condition Contrast.}
-\label{tab:ablations}
-\footnotesize
-\setlength{\tabcolsep}{5.0pt}
-\begin{tabular}{clccccccl}
-\toprule
-ID & Representation & Routes & Teacher & Jam/quality MTL & XCC &
-Bypass & Purpose\\
-\midrule
-A0 & Direct spectral backbone & -- & -- & -- & -- & -- &
-shared-feature lower baseline; not parameter-matched\\
-A1 & Single sigmoid mask & 1 & -- & -- & -- & -- &
-ordinary soft selection\\
-A2 & Conditioned tri-mask & 3 & -- & -- & -- & yes &
-third-route allocation and bypass without teacher\\
-A3 & Conditioned tri-mask & 3 & yes & -- & -- & yes &
-incremental physical supervision\\
-A4 & Conditioned tri-mask & 3 & yes & yes & -- & yes &
-incremental branch semantics\\
-A5 & \method\ & 3 & yes & yes & yes & yes &
-complete method\\
-A6 & Conditioned dual-mask & 2 & yes & yes & yes & yes &
-composite control; no route-count causal attribution\\
-A7 & Conditioned tri-mask & 3 & yes & yes & yes & -- &
-bounded-bypass test\\
-\bottomrule
-\end{tabular}
-\end{table*}
+The A2--A5 chain adds one predeclared intervention block at each step under
+the shared protocol: the fixed teacher at A3--A2, the bundled jammer, quality,
+and orthogonality objectives at A4--A3, and exact-source contrast at A5--A4.
+The A4--A3 block is not decomposed into three separate effects.  A5--A6 is a
+composite control because route count, capacity, and overlap allocation change
+together; it does not identify a route-count-only causal effect.
+The complete A0--A7 numeric ladder is placed with the formal results in
+Table~\ref{tab:ablations}; in the internal build its cells remain placeholders,
+and public values become visible only through the eligible release lock.
 
 The formal comparator set is exactly the A0 direct shared backbone, MCLDNN
 \cite{xu2020mcldnn}, the transparent IQFormer-inspired baseline, and the
@@ -664,7 +699,8 @@ post-hoc winner claim.  The recent low-SNR/noise-robust AMC
 comparator is a 2025 CSSL-AMC
 official-architecture supervised adaptation
 \cite{du2025contrastive}: its encoder/classifier graph is audited against the
-authors' Apache-2.0 source at commit \texttt{2fbc5b3e12f7}, but it is randomly
+authors' Apache-2.0 source snapshot \cite{du2025csslcode} at commit
+\texttt{2fbc5b3e12f7}, but it is randomly
 initialized and trained with the common paired-view classification objective,
 not the published two-stage protocol.  It imports neither official weights nor
 reported results and is not a structured-interference-specific method.  MFENet
@@ -737,13 +773,56 @@ synchronization.  The operator must isolate that device before measurement;
 the release records the device, runtime, window length, and synchronization
 policy.  No CPU--GPU comparison or cross-device latency claim is made.
 
+\begin{table*}[!t]
+\centering
+\caption{Artifact-Locked A0--A7 Ablation Evidence on Hard Interference.
+Macro-F1 Values Are Five-Seed Means in Percent.  Every Reported Gain Is
+Candidate Minus Reference in Percentage Points with a Family-Wise Simultaneous
+95\% CI from One Joint Non-Studentized Max-Absolute-Centered-Deviation
+Hierarchical Paired Bootstrap.}
+\label{tab:ablations}
+\footnotesize
+\setlength{\tabcolsep}{4.2pt}
+\begin{tabular}{clrc}
+\toprule
+ID & Fixed-protocol role or added component & Hard macro-F1 &
+Predeclared gain [simultaneous 95\% CI]\\
+\midrule
+A0 & direct spectral backbone & \HeadlineHardAZeroMacroFOne & --\\
+A1 & single learned mask & \HeadlineHardAOneMacroFOne &
+A5--A1: \AblationFullVsSingleGain\
+[\AblationFullVsSingleCILow,\AblationFullVsSingleCIHigh]\\
+A2 & tri-mask and bypass, CE only & \HeadlineHardATwoMacroFOne & --\\
+A3 & A2 + fixed physical teacher & \HeadlineHardAThreeMacroFOne &
+A3--A2: \AblationTeacherGain\
+[\AblationTeacherCILow,\AblationTeacherCIHigh]\\
+A4 & A3 + jammer/quality/orthogonality bundle &
+\HeadlineHardAFourMacroFOne &
+A4--A3: \AblationMultitaskGain\
+[\AblationMultitaskCILow,\AblationMultitaskCIHigh]\\
+A5 & A4 + exact-source contrast; full \method &
+\HeadlineHardAFiveMacroFOne &
+A5--A4: \AblationExactSourceContrastGain\
+[\AblationExactSourceContrastCILow,
+\AblationExactSourceContrastCIHigh]\\
+A6 & full dual-route composite control & \HeadlineHardASixMacroFOne &
+A5--A6: \AblationFullVsDualGain\
+[\AblationFullVsDualCILow,\AblationFullVsDualCIHigh]\\
+A7 & A5 without the applied bypass & \HeadlineHardASevenMacroFOne &
+A5--A7: \AblationBypassGain\
+[\AblationBypassCILow,\AblationBypassCIHigh]\\
+\bottomrule
+\end{tabular}
+\end{table*}
+
 \section{Results and Falsification Gates}
 \ifinternalreview
-This section is intentionally unpopulated.  The executable pipeline has passed
-unit, data-identity, cache, gradient-routing, and fixed-batch optimization
-checks, but the available smoke profiles are too small to estimate
-generalization.  No ineligible diagnostic or screening run is promoted into
-Tables~\ref{tab:headline}--\ref{tab:mechanism}.
+This section is intentionally unpopulated.  The executable pipeline and
+screening/integration caches have passed unit, data-identity, cache,
+gradient-routing, and fixed-batch optimization checks, but no formal headline
+cache or run has been generated.  The available screening profiles are too
+small to estimate generalization.  No ineligible diagnostic or screening run
+is promoted into Tables~\ref{tab:ablations}--\ref{tab:mechanism}.
 \else
 The locked evidence source is \ResultSource.  Unless stated otherwise, values
 are five-seed means from single-view inference with source-paired statistical
@@ -783,7 +862,7 @@ CSSL-AMC sup. adapt. & \HeadlineHardCSSLAccuracy &
 \begin{table}[t]
 \centering
 \caption{Factor-Isolated Macro-F1 Percentages and Paired Gain in Percentage
-Points over the Predeclared Primary Reference.}
+Points over the Predeclared \PrimaryReference.}
 \label{tab:ood}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
@@ -840,11 +919,15 @@ Batch-one P50/P95 on \VIMDLatencyDevice\ (ms) &
 \end{tabular}
 \end{table}
 
-The method is rejected or narrowed if any of the following occurs: (i) the
-tri-mask does not outperform single- and dual-mask controls in the hard region;
-(ii) teacher supervision does not improve both mask agreement and downstream
-robustness; (iii) held-out gains disappear after paired multiplicity
-correction; (iv) clean-condition macro-F1 degradation exceeds 1.0~\pp\ in
+The method is rejected or narrowed if any of the following occurs: (i) any
+of the six predeclared hard-region ablation contrasts in
+Table~\ref{tab:ablations} has a family-wise simultaneous 95\% lower bound at
+or below zero; (ii) the A3--A2 teacher addition therefore lacks downstream
+robustness evidence under the fixed protocol; (iii) fewer than two of unseen
+jammer, unseen speed, and held-out channel attain the predeclared
+$+3.0$~\pp\ macro-F1 point-gain floor---the per-seed Holm-adjusted McNemar
+family is supplemental and cannot rescue a failed headline gate; (iv)
+clean-condition macro-F1 degradation exceeds 1.0~\pp\ in
 point estimate or its paired 95\% lower confidence bound falls below
 $-2.0$~\pp.  Clean retention is reported separately for seen-profile A/C/D
 and held-profile B/E strata; a predeclared aggregate may be descriptive but
@@ -852,7 +935,8 @@ cannot replace either stratum.  In these cases, failure is
 reported rather than repaired by deleting difficult classes or conditions.
 
 \section{Reproducibility, Limitations, and Scope}
-Every run stores the complete configuration, environment record, dataset
+Each executed run is required to store the complete configuration, environment
+record, dataset
 manifest, digest, model seed, checkpoint, source-aligned probabilities,
 per-regime metrics, and paired statistics.  Student initialization occurs
 after seeding.  Validation selection is delayed until the full objective is
@@ -878,19 +962,36 @@ unexplained-or-power-ambiguous teacher, dual task branches, and exact-source
 cross-condition learning on a shared complex-STFT lattice.  Its simulation
 claims are deliberately falsifiable through source-disjoint factor holds,
 single-view inference with source-paired statistics, and oracle-conditioned
-diagnostic component probes.  The internal build establishes the method and
-locked protocol; quantitative conclusions will be stated only after the
-predeclared multi-seed evidence gate is satisfied.  No SDR, field, deployment,
-or complete V2X-scenario conclusion is drawn.
+diagnostic component probes.
+\ifinternalreview
+The internal build establishes the method and locked protocol; quantitative
+conclusions will be stated only after the predeclared multi-seed evidence gate
+is satisfied.
+\else
+Under the eligible locked simulation run, \method improves hard-interference
+macro-F1 by \RegimeHardGain\ \pp\ over the predeclared \PrimaryReference\
+(\(\smash{[\RegimeHardCILow,\RegimeHardCIHigh]}\)~\pp).  All six predeclared
+hard-region ablation contrasts pass their family-wise simultaneous lower-bound
+gate, and the frozen two-of-three held-factor and dual-stratum clean-retention
+gates are satisfied.  These findings support physically supervised
+representation allocation only within the stated source-disjoint TR~38.901
+TDL-profile simulation scope.
+\fi
+No SDR, field, deployment, or complete V2X-scenario conclusion is drawn.
 
 \ifinternalreview
 \section*{Internal Submission Note}
 Before submission, the human authors must (i) replace authorship placeholders,
 (ii) verify every scientific claim and citation against the primary source,
 (iii) supply eligible locked simulation results without expanding the scope,
-(iv) set \texttt{\string\internalreviewfalse}, and (v) provide any disclosure
-required by the current IEEE/TVT policy for generative-AI-assisted language
-editing.  An AI system cannot assume authorship or author responsibility.
+and (iv) confirm compliance with the live IEEE/TVT policy before setting
+\texttt{\string\internalreviewfalse}.  This internal engineering draft must not
+be submitted unchanged: an AI tool cannot replace an author in generating
+article content or assume author responsibility.  Human authors must
+substantively author, independently verify, and take responsibility for the
+final article.  Any permitted AI-assisted modification of text written by the
+authors must be disclosed in the public manuscript's Acknowledgment.  This
+internal note is an operational gate, not that disclosure.
 \fi
 
 \bibliographystyle{IEEEtran}

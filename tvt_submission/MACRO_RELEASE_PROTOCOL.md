@@ -53,9 +53,77 @@ govern:
       "iqformer_inspired": 5.0,
       "cssl_amc_supervised_adaptation": 5.0
     },
-    "hard_ablation_gain_pp": {
-      "a1_single_mask": 0.01,
-      "a6_dual_full": 0.01
+    "hard_ablation_family": {
+      "passed": true,
+      "family_id": "hard_macro_f1_ablation_family_v1",
+      "regime": "hard_interference",
+      "metric": "macro_f1",
+      "direction": "candidate_minus_reference",
+      "confidence_level": 0.95,
+      "multiplicity_method": "joint_max_absolute_centered_deviation_hierarchical_paired_bootstrap",
+      "simultaneous_ci95_low_strictly_greater_than_pp": 0.0,
+      "contrasts": {
+        "teacher": {
+          "reference": "a2_tri_no_teacher",
+          "candidate": "a3_tri_teacher",
+          "gain_pp": 0.02,
+          "marginal_ci95_low_pp": 0.01,
+          "marginal_ci95_high_pp": 0.03,
+          "simultaneous_ci95_low_pp": 0.01,
+          "simultaneous_ci95_high_pp": 0.04,
+          "passed": true
+        },
+        "multitask": {
+          "reference": "a3_tri_teacher",
+          "candidate": "a4_tri_teacher_mtl",
+          "gain_pp": 0.02,
+          "marginal_ci95_low_pp": 0.01,
+          "marginal_ci95_high_pp": 0.03,
+          "simultaneous_ci95_low_pp": 0.01,
+          "simultaneous_ci95_high_pp": 0.04,
+          "passed": true
+        },
+        "exact_source_contrast": {
+          "reference": "a4_tri_teacher_mtl",
+          "candidate": "a5_vimd_full",
+          "gain_pp": 0.02,
+          "marginal_ci95_low_pp": 0.01,
+          "marginal_ci95_high_pp": 0.03,
+          "simultaneous_ci95_low_pp": 0.01,
+          "simultaneous_ci95_high_pp": 0.04,
+          "passed": true
+        },
+        "full_vs_single": {
+          "reference": "a1_single_mask",
+          "candidate": "a5_vimd_full",
+          "gain_pp": 0.02,
+          "marginal_ci95_low_pp": 0.01,
+          "marginal_ci95_high_pp": 0.03,
+          "simultaneous_ci95_low_pp": 0.01,
+          "simultaneous_ci95_high_pp": 0.04,
+          "passed": true
+        },
+        "full_vs_dual": {
+          "reference": "a6_dual_full",
+          "candidate": "a5_vimd_full",
+          "gain_pp": 0.02,
+          "marginal_ci95_low_pp": 0.01,
+          "marginal_ci95_high_pp": 0.03,
+          "simultaneous_ci95_low_pp": 0.01,
+          "simultaneous_ci95_high_pp": 0.04,
+          "passed": true
+        },
+        "bypass": {
+          "reference": "a7_vimd_no_residual",
+          "candidate": "a5_vimd_full",
+          "gain_pp": 0.02,
+          "marginal_ci95_low_pp": 0.01,
+          "marginal_ci95_high_pp": 0.03,
+          "simultaneous_ci95_low_pp": 0.01,
+          "simultaneous_ci95_high_pp": 0.04,
+          "passed": true
+        }
+      }
     },
     "ood_gain_pp": {
       "unseen_jammer": 3.0,
@@ -94,24 +162,30 @@ govern:
 }
 ```
 
-The numeric values above only illustrate a threshold-edge shape. They may
+The numeric values above only illustrate a threshold-edge shape. They are not
+formal results and may
 never be copied into a real manifest: the generator must derive the exact
 values from the named artifacts, and the release validator reconstructs them
 before accepting the file.
 
-The `macros` object must contain exactly 73 provenance records:
+The `macros` object must contain exactly 97 provenance records:
 
 - one `PrimaryReference`, fixed to the CSSL-AMC official-architecture
   supervised adaptation;
 - 25 `HeadlineHard{Model}{Metric}` records for five models by five metrics;
 - 35 `Regime{Regime}{Field}` records for seven regimes by five fields;
+- six absolute hard-region macro-F1 records for A1, A2, A3, A4, A6, and A7
+  (A0 and A5 are already in the headline group);
+- 18 records giving `Gain`, `CILow`, and `CIHigh` for each of the six direct
+  ablation contrasts;
 - eight mechanism records; and
 - `VIMDParameters`, `VIMDLatencyPFifty`,
   `VIMDLatencyPNinetyFive`, and `VIMDLatencyDevice`.
 
 The percentile tokens are spelled out because the controlled TeX parser accepts
 letter-only command names; `P50` and `P95` are not macro-name tokens in this
-contract.
+contract. Ordinary p50/p95 latency statistic labels remain valid in the runner
+artifacts.
 
 Every record has exactly `value`, `source_artifact`, and `derivation`.
 `source_artifact` is relative to the formal run directory and must exist.
@@ -130,6 +204,26 @@ the formal artifacts and must pass the preregistered hard-baseline,
 hard-ablation, two-of-three OOD, clean-stratum noninferiority, and mechanism
 checks. Canonical mismatch between the supplied manifest and the reconstructed
 manifest aborts release.
+
+The hard-ablation gate is one six-contrast family, not two unadjusted point
+comparisons. It fixes A3-A2 (teacher), A4-A3
+(jammer/quality/orthogonality bundle), A5-A4 (exact-source cross-condition
+contrast), A5-A1 (full versus single-mask), A5-A6 (full versus dual-route
+composite control), and A5-A7 (bounded additive bypass). Every simultaneous
+95% lower bound must be strictly greater than zero. A4-A3 cannot be decomposed
+into single-loss causal claims, and A5-A6 cannot be labeled a route-count-only
+effect.
+
+All six contrasts share the exact ordered seeds `17,29,43,71,101` and one
+class-stratified hierarchical paired bootstrap over aligned test-source
+clusters. The family-wise method is the non-studentized
+`joint_max_absolute_centered_deviation_hierarchical_paired_bootstrap`; its
+common critical value must be finite and strictly positive. The
+`run.json` family summary binds the family and artifact, while the generator
+and release validator deterministically rebuild the 33-column
+`ablation_paired_statistics.csv` from source-aligned NPZ bundles to verify the
+cache digest, seeds, source/SNR/SIR/profile alignment, stratification, and
+critical value. No new fits are required; the formal campaign remains 55 fits.
 
 The old v2 eight-record contract and its winner, feature-SIR, compact-gain, and
 single-latency names are rejected. Its former SDR placeholder also remains
@@ -161,9 +255,9 @@ preflight passes:
 
 An eligible write defines
 `\newcommand{\EligibleLockedResults}{eligible_locked_formal_run}` in
-`results_auto.tex`. The manifest contributes 73 provenance records; the writer
-adds `ResultSource`, producing 74 non-sentinel commands, and then adds the
-sentinel for 75 commands in the released file. The internal placeholder
+`results_auto.tex`. The manifest contributes 97 provenance records; the writer
+adds `ResultSource`, producing 98 non-sentinel commands, and then adds the
+sentinel for 99 commands in the released file. The internal placeholder
 intentionally omits the sentinel. The macro manifest is schema v3, while the
 release lock remains schema v2 and records the sentinel name/value and the
 complete macro-file hash; parsing and existing-release validation reject a

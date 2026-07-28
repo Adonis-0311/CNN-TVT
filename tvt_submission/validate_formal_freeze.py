@@ -80,7 +80,7 @@ PROMOTION_REQUIREMENTS = frozenset(
         "no_placeholder_result_macro",
         "human_primary_source_audit",
         "hard_all_baseline_gain_gate_artifact_derived",
-        "hard_ablation_direction_gate_artifact_derived",
+        "hard_ablation_simultaneous_ci_gate_artifact_derived",
         "ood_two_of_three_gate_artifact_derived",
         "clean_dual_stratum_noninferiority_gate_artifact_derived",
         "mechanism_consistency_gate_artifact_derived",
@@ -138,8 +138,7 @@ SCIENTIFIC_RELEASE_GATE_KEYS = frozenset(
         "primary_reference_model",
         "required_nonoracle_baselines",
         "hard_macro_f1_min_gain_pp_each_baseline",
-        "hard_ablation_controls",
-        "hard_ablation_strictly_positive",
+        "hard_ablation_family",
         "ood_regimes",
         "ood_macro_f1_min_gain_pp",
         "ood_required_pass_count",
@@ -151,6 +150,99 @@ SCIENTIFIC_RELEASE_GATE_KEYS = frozenset(
         "oracle_spectral_ratio_field",
         "oracle_spectral_ratio_strictly_positive",
     }
+)
+HARD_ABLATION_FAMILY_KEYS = frozenset(
+    {
+        "family_id",
+        "regime",
+        "metric",
+        "direction",
+        "confidence_level",
+        "multiplicity_method",
+        "simultaneous_ci95_low_strictly_greater_than",
+        "contrasts",
+    }
+)
+HARD_ABLATION_CONTRAST_KEYS = frozenset(
+    {
+        "contrast_id",
+        "reference",
+        "candidate",
+        "intervention",
+        "interpretation_scope",
+    }
+)
+LOCKED_HARD_ABLATION_FAMILY = {
+    "family_id": "hard_macro_f1_ablation_family_v1",
+    "regime": "hard_interference",
+    "metric": "macro_f1",
+    "direction": "candidate_minus_reference",
+    "confidence_level": 0.95,
+    "multiplicity_method": (
+        "joint_max_absolute_centered_deviation_"
+        "hierarchical_paired_bootstrap"
+    ),
+    "simultaneous_ci95_low_strictly_greater_than": 0.0,
+    "contrasts": (
+        {
+            "contrast_id": "teacher",
+            "reference": "a2_tri_no_teacher",
+            "candidate": "a3_tri_teacher",
+            "intervention": "fixed_physical_teacher",
+            "interpretation_scope": "incremental_fixed_protocol",
+        },
+        {
+            "contrast_id": "multitask",
+            "reference": "a3_tri_teacher",
+            "candidate": "a4_tri_teacher_mtl",
+            "intervention": "jammer_quality_orthogonality_bundle",
+            "interpretation_scope": "incremental_fixed_protocol_bundle",
+        },
+        {
+            "contrast_id": "exact_source_contrast",
+            "reference": "a4_tri_teacher_mtl",
+            "candidate": "a5_vimd_full",
+            "intervention": "exact_source_cross_condition_contrast",
+            "interpretation_scope": "incremental_fixed_protocol",
+        },
+        {
+            "contrast_id": "full_vs_single",
+            "reference": "a1_single_mask",
+            "candidate": "a5_vimd_full",
+            "intervention": "full_method_vs_single_mask",
+            "interpretation_scope": "composite_control",
+        },
+        {
+            "contrast_id": "full_vs_dual",
+            "reference": "a6_dual_full",
+            "candidate": "a5_vimd_full",
+            "intervention": "tri_route_vs_dual_route_full_objective",
+            "interpretation_scope": (
+                "composite_control_no_route_count_attribution"
+            ),
+        },
+        {
+            "contrast_id": "bypass",
+            "reference": "a7_vimd_no_residual",
+            "candidate": "a5_vimd_full",
+            "intervention": "bounded_additive_bypass",
+            "interpretation_scope": "forward_path_intervention",
+        },
+    ),
+}
+LOCKED_FORMAL_ALGORITHM_SEEDS = (17, 29, 43, 71, 101)
+RUNNER_ABLATION_FAMILY_CONSTANTS = (
+    ("FORMAL_ABLATION_FAMILY_ID", "family_id"),
+    ("FORMAL_ABLATION_REGIME", "regime"),
+    ("FORMAL_ABLATION_METRIC", "metric"),
+    ("FORMAL_ABLATION_DIRECTION", "direction"),
+    ("FORMAL_ABLATION_CONFIDENCE_LEVEL", "confidence_level"),
+    ("FORMAL_ABLATION_MULTIPLICITY_METHOD", "multiplicity_method"),
+    ("FORMAL_ABLATION_CONTRASTS", "contrasts"),
+    (
+        "FORMAL_ABLATION_GATE_THRESHOLD",
+        "simultaneous_ci95_low_strictly_greater_than",
+    ),
 )
 RECENT_COMPARATOR_KEYS = frozenset(
     {
@@ -831,6 +923,193 @@ def _json_normalize_literal(value: Any) -> Any:
     return value
 
 
+def _validate_hard_ablation_family(
+    value: Mapping[str, Any],
+    label: str,
+) -> dict[str, Any]:
+    _exact_keys(value, HARD_ABLATION_FAMILY_KEYS, label)
+    contrasts = value.get("contrasts")
+    _require(
+        isinstance(contrasts, (list, tuple)),
+        f"{label}.contrasts must be an ordered list",
+    )
+    for index, contrast_value in enumerate(contrasts):
+        contrast = _mapping(
+            contrast_value,
+            f"{label}.contrasts[{index}]",
+        )
+        _exact_keys(
+            contrast,
+            HARD_ABLATION_CONTRAST_KEYS,
+            f"{label}.contrasts[{index}]",
+        )
+    _require(
+        type(value.get("confidence_level")) is float,
+        f"{label}.confidence_level must remain a JSON number",
+    )
+    _require(
+        type(
+            value.get("simultaneous_ci95_low_strictly_greater_than")
+        )
+        is float,
+        f"{label} simultaneous CI threshold must remain a JSON number",
+    )
+    normalized = _json_normalize_literal(dict(value))
+    locked = _json_normalize_literal(LOCKED_HARD_ABLATION_FAMILY)
+    _require(
+        normalized == locked,
+        f"{label} must exactly match the locked ordered six-contrast contract",
+    )
+    return normalized
+
+
+def _unique_module_function(
+    tree: ast.Module,
+    name: str,
+    label: str,
+) -> ast.FunctionDef | ast.AsyncFunctionDef:
+    bindings = _module_bindings(tree, name)
+    if (
+        len(bindings) != 1
+        or bindings[0][0] != "function definition"
+        or bindings[0][1] not in tree.body
+        or not isinstance(
+            bindings[0][1],
+            (ast.FunctionDef, ast.AsyncFunctionDef),
+        )
+    ):
+        raise FormalFreezeValidationError(
+            f"{label} must define exactly one unshadowed module-level "
+            f"function {name}"
+        )
+    return bindings[0][1]
+
+
+def _direction_value_from_dict(
+    node: ast.Dict,
+    label: str,
+) -> ast.expr:
+    values = [
+        value
+        for key, value in zip(node.keys, node.values)
+        if isinstance(key, ast.Constant) and key.value == "direction"
+    ]
+    _require(
+        len(values) == 1,
+        f"{label} must contain exactly one direction field",
+    )
+    return values[0]
+
+
+def _validate_ablation_direction_ast(runner_tree: ast.Module) -> None:
+    function = _unique_module_function(
+        runner_tree,
+        "build_ablation_paired_rows",
+        "standard runner",
+    )
+    function_scope = ast.Module(body=function.body, type_ignores=[])
+    for constant_name, _ in (
+        *RUNNER_ABLATION_FAMILY_CONSTANTS,
+        ("FORMAL_ABLATION_ALGORITHM_SEEDS", "algorithm_seeds"),
+    ):
+        _require(
+            not _module_bindings(function_scope, constant_name),
+            "build_ablation_paired_rows must not shadow audited constant "
+            f"{constant_name}",
+        )
+
+    row_dicts = [
+        node.args[0]
+        for node in ast.walk(function)
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and node.func.attr == "append"
+        and isinstance(node.func.value, ast.Name)
+        and node.func.value.id == "preliminary"
+        and len(node.args) == 1
+        and isinstance(node.args[0], ast.Dict)
+    ]
+    _require(
+        len(row_dicts) == 1,
+        "build_ablation_paired_rows must build exactly one preliminary row "
+        "dictionary",
+    )
+    summary_dicts = [
+        node.value
+        for node in ast.walk(function)
+        if isinstance(node, ast.Assign)
+        and any(
+            isinstance(target, ast.Name) and target.id == "summary"
+            for target in node.targets
+        )
+        and isinstance(node.value, ast.Dict)
+    ]
+    _require(
+        len(summary_dicts) == 1,
+        "build_ablation_paired_rows must build exactly one summary dictionary",
+    )
+    for dictionary, label in (
+        (row_dicts[0], "formal ablation row"),
+        (summary_dicts[0], "formal ablation summary"),
+    ):
+        value = _direction_value_from_dict(dictionary, label)
+        _require(
+            isinstance(value, ast.Name)
+            and isinstance(value.ctx, ast.Load)
+            and value.id == "FORMAL_ABLATION_DIRECTION",
+            f"{label}.direction must load FORMAL_ABLATION_DIRECTION",
+        )
+    direction_loads = [
+        node
+        for node in ast.walk(function)
+        if isinstance(node, ast.Name)
+        and isinstance(node.ctx, ast.Load)
+        and node.id == "FORMAL_ABLATION_DIRECTION"
+    ]
+    _require(
+        len(direction_loads) == 2,
+        "build_ablation_paired_rows must use FORMAL_ABLATION_DIRECTION "
+        "exactly for its row and summary",
+    )
+
+
+def _validate_runner_ablation_constants(
+    *,
+    runner_tree: ast.Module,
+    hard_ablation_family: Mapping[str, Any],
+    algorithm_seeds: Sequence[int],
+) -> None:
+    locked = _json_normalize_literal(LOCKED_HARD_ABLATION_FAMILY)
+    for constant_name, family_field in RUNNER_ABLATION_FAMILY_CONSTANTS:
+        value = _module_literal(
+            runner_tree,
+            constant_name,
+            "standard runner",
+        )
+        normalized = _json_normalize_literal(value)
+        _require(
+            type(value) is type(LOCKED_HARD_ABLATION_FAMILY[family_field])
+            and normalized == locked[family_field]
+            and normalized == hard_ablation_family[family_field],
+            f"standard-runner {constant_name} disagrees with the locked "
+            f"hard_ablation_family.{family_field}",
+        )
+    runner_seeds = _module_literal(
+        runner_tree,
+        "FORMAL_ABLATION_ALGORITHM_SEEDS",
+        "standard runner",
+    )
+    _require(
+        isinstance(runner_seeds, tuple)
+        and all(type(seed) is int for seed in runner_seeds)
+        and runner_seeds == LOCKED_FORMAL_ALGORITHM_SEEDS
+        and list(runner_seeds) == list(algorithm_seeds),
+        "standard-runner FORMAL_ABLATION_ALGORITHM_SEEDS, the formal freeze, "
+        "and the locked ordered five-seed contract must agree",
+    )
+    _validate_ablation_direction_ast(runner_tree)
+
+
 def _validate_scientific_release_gates(
     gates: Mapping[str, Any],
     *,
@@ -838,6 +1117,7 @@ def _validate_scientific_release_gates(
     models: Sequence[str],
     reference_model: str,
     holm_candidates: Sequence[str],
+    algorithm_seeds: Sequence[int],
 ) -> dict[str, Any]:
     """Lock every release threshold to one static runner declaration."""
 
@@ -885,6 +1165,29 @@ def _validate_scientific_release_gates(
         and isinstance(thresholds, dict),
         "standard-runner scientific release declarations are malformed",
     )
+    runner_hard_ablation_family = _validate_hard_ablation_family(
+        _mapping(
+            thresholds.get("hard_ablation_family"),
+            "standard-runner hard_ablation_family",
+        ),
+        "standard-runner hard_ablation_family",
+    )
+    freeze_hard_ablation_family = _validate_hard_ablation_family(
+        _mapping(
+            gates.get("hard_ablation_family"),
+            "experiment.scientific_release_gates.hard_ablation_family",
+        ),
+        "experiment.scientific_release_gates.hard_ablation_family",
+    )
+    _require(
+        freeze_hard_ablation_family == runner_hard_ablation_family,
+        "freeze and runner hard_ablation_family declarations disagree",
+    )
+    _validate_runner_ablation_constants(
+        runner_tree=runner_tree,
+        hard_ablation_family=runner_hard_ablation_family,
+        algorithm_seeds=algorithm_seeds,
+    )
 
     expected = {
         "method_model": method_model,
@@ -911,12 +1214,17 @@ def _validate_scientific_release_gates(
         "the primary CSSL reference",
     )
 
+    hard_ablation_models = {
+        model
+        for contrast in runner_hard_ablation_family["contrasts"]
+        for model in (contrast["reference"], contrast["candidate"])
+    }
     required_models = {
         method_model,
         primary_reference,
         *required_baselines,
         *formal_holm,
-        *thresholds["hard_ablation_controls"],
+        *hard_ablation_models,
     }
     _require(
         required_models.issubset(models),
@@ -1532,6 +1840,11 @@ def validate_formal_freeze(
         len(seeds) >= 5,
         "formal freeze requires at least five independent seeds",
     )
+    _require(
+        seeds == list(LOCKED_FORMAL_ALGORITHM_SEEDS),
+        "experiment.seeds must exactly match the locked ordered formal "
+        f"algorithm seeds {list(LOCKED_FORMAL_ALGORITHM_SEEDS)}",
+    )
     reference_model = _nonempty_string(
         experiment.get("reference_model"),
         "experiment.reference_model",
@@ -1597,6 +1910,7 @@ def validate_formal_freeze(
         models=models,
         reference_model=reference_model,
         holm_candidates=holm_candidates,
+        algorithm_seeds=seeds,
     )
     _require(
         experiment.get("device") in {"cpu", "cuda", "auto"},

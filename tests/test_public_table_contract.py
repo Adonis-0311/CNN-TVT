@@ -27,6 +27,12 @@ def _valid_numeric_macros() -> dict[str, str]:
         values[f"Regime{regime}Gain"] = "+5.00"
         values[f"Regime{regime}CILow"] = "+2.00"
         values[f"Regime{regime}CIHigh"] = "+8.00"
+    for name in gate.ABLATION_MEAN_NUMERIC_MACROS:
+        values[name] = "50.00"
+    for prefix in gate.ABLATION_CONTRAST_PREFIXES:
+        values[f"{prefix}Gain"] = "+5.00"
+        values[f"{prefix}CILow"] = "+2.00"
+        values[f"{prefix}CIHigh"] = "+8.00"
     values.update(
         {
             "MechanismMaskJS": "0.10",
@@ -75,6 +81,23 @@ def _valid_lock() -> dict:
 
 class PublicTableContractTest(unittest.TestCase):
     def test_checked_in_placeholder_has_exact_interface_and_wiring(self) -> None:
+        self.assertEqual(len(gate.PROVENANCE_MACROS), 97)
+        self.assertEqual(len(gate.RESULT_MACROS), 98)
+        self.assertEqual(len(gate.release_contract.ALL_MACROS), 99)
+        self.assertEqual(
+            gate.PROVENANCE_MACROS,
+            tuple(gate.release_contract.PROVENANCE_MACROS),
+        )
+        self.assertEqual(
+            gate.RESULT_MACROS,
+            tuple(gate.release_contract.NON_SENTINEL_RESULT_MACROS),
+        )
+        self.assertTrue(
+            all(
+                name.isascii() and name.isalpha()
+                for name in gate.release_contract.ALL_MACROS
+            )
+        )
         result_text = (PROJECT_ROOT / "paper" / "results_auto.tex").read_text(
             encoding="utf-8"
         )
@@ -98,23 +121,119 @@ class PublicTableContractTest(unittest.TestCase):
         )
         self.assertEqual(errors, [])
         self.assertEqual(set(values), set(gate.NUMERIC_RESULT_MACROS))
-        self.assertEqual(len(values), 71)
+        self.assertEqual(len(values), 95)
+        self.assertEqual(len(gate.ABLATION_MEAN_NUMERIC_MACROS), 6)
+        self.assertEqual(len(gate.ABLATION_CONTRAST_NUMERIC_MACROS), 18)
 
     def test_numeric_contract_rejects_units_nonfinite_and_bad_ordering(
         self,
     ) -> None:
         macros = _valid_numeric_macros()
+        first_prefix, second_prefix, third_prefix = (
+            gate.ABLATION_CONTRAST_PREFIXES[:3]
+        )
         macros["HeadlineHardAZeroAccuracy"] = "nan"
         macros["RegimeUnseenSpeedCILow"] = "+9.00"
         macros["RegimeUnseenSpeedCIHigh"] = "+8.00"
+        macros[gate.ABLATION_MEAN_NUMERIC_MACROS[0]] = "inf"
+        macros[f"{first_prefix}CILow"] = "+9.00"
+        macros[f"{first_prefix}CIHigh"] = "+8.00"
+        macros[f"{second_prefix}Gain"] = "+9.00"
+        macros[f"{third_prefix}Gain"] = "5.00 pp"
         macros["VIMDParameters"] = "12,345"
         macros["VIMDLatencyPFifty"] = "3.00 ms"
         _, errors = gate._parse_release_numbers(macros)
         joined = "\n".join(errors)
         self.assertIn("HeadlineHardAZeroAccuracy", joined)
         self.assertIn("RegimeUnseenSpeed: CI lower", joined)
+        self.assertIn(gate.ABLATION_MEAN_NUMERIC_MACROS[0], joined)
+        self.assertIn(f"{first_prefix}: CI lower", joined)
+        self.assertIn(f"{second_prefix}: point Gain lies outside", joined)
+        self.assertIn(f"{third_prefix}Gain", joined)
         self.assertIn("VIMDParameters", joined)
         self.assertIn("VIMDLatencyPFifty", joined)
+
+    def test_public_branch_consumes_every_ablation_result(self) -> None:
+        main_text = (PROJECT_ROOT / "paper" / "main.tex").read_text(
+            encoding="utf-8"
+        )
+        ablation_macros = (
+            *gate.ABLATION_MEAN_NUMERIC_MACROS,
+            *gate.ABLATION_CONTRAST_NUMERIC_MACROS,
+        )
+        self.assertEqual(len(ablation_macros), 24)
+        for name in ablation_macros:
+            with self.subTest(macro=name):
+                tampered = main_text.replace(
+                    rf"\{name}",
+                    "1.00",
+                    1,
+                )
+                self.assertNotEqual(tampered, main_text)
+                errors = gate._main_result_contract_errors(tampered)
+                self.assertTrue(
+                    any(name in error for error in errors),
+                    errors,
+                )
+
+        internal_only = gate.ABLATION_MEAN_NUMERIC_MACROS[0]
+        tampered = main_text.replace(
+            rf"\{internal_only}",
+            "1.00",
+            1,
+        ).replace(
+            r"\begin{document}",
+            (
+                rf"\ifinternalreview\{internal_only}\fi"
+                + "\n"
+                + r"\begin{document}"
+            ),
+            1,
+        )
+        errors = gate._main_result_contract_errors(tampered)
+        self.assertTrue(
+            any(internal_only in error for error in errors),
+            errors,
+        )
+
+        decoy_name = gate.ABLATION_TABLE_NUMERIC_MACROS[0]
+        reference = rf"\{decoy_name}"
+        self.assertEqual(main_text.count(reference), 1)
+        tampered = main_text.replace(reference, "1.00", 1).replace(
+            r"\end{table*}",
+            (
+                r"\end{table*}"
+                + "\n"
+                + rf"Decoy prose outside the table: \{decoy_name}."
+            ),
+            1,
+        )
+        self.assertEqual(tampered.count(reference), 1)
+        errors = gate._main_result_contract_errors(tampered)
+        joined = "\n".join(errors)
+        self.assertIn(r"\label{tab:ablations}", joined)
+        self.assertIn(f"{decoy_name}=0", joined)
+        self.assertNotIn(
+            "main.tex does not reference required public-table macros: "
+            + decoy_name,
+            joined,
+        )
+
+        duplicate_name = gate.ABLATION_TABLE_NUMERIC_MACROS[-1]
+        tampered = main_text.replace(
+            r"\label{tab:ablations}",
+            (
+                r"\label{tab:ablations}"
+                + "\n"
+                + rf"\{duplicate_name}"
+            ),
+            1,
+        )
+        errors = gate._main_result_contract_errors(tampered)
+        self.assertTrue(
+            any(f"{duplicate_name}=2" in error for error in errors),
+            errors,
+        )
 
     def test_release_lock_v2_binds_every_reportable_value(self) -> None:
         lock = _valid_lock()

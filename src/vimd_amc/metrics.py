@@ -230,6 +230,15 @@ def _validate_paired_bundles(
         raise ValueError("paired bundles have different source IDs or ordering")
     if not np.array_equal(reference.labels, candidate.labels):
         raise ValueError("paired bundles have different labels")
+    for covariate in ("snr_db", "sir_db"):
+        if not np.array_equal(
+            np.asarray(getattr(reference, covariate)),
+            np.asarray(getattr(candidate, covariate)),
+            equal_nan=True,
+        ):
+            raise ValueError(
+                f"paired bundles have different {covariate} values or ordering"
+            )
     if (reference.target_profile_index is None) != (
         candidate.target_profile_index is None
     ):
@@ -642,6 +651,259 @@ def headline_paired_bootstrap(
             "pooled multi-seed predictions reuse test sources and are not "
             "independent Bernoulli pairs"
         ),
+    }
+
+
+def ablation_family_paired_bootstrap(
+    bundles_by_model_and_seed: Mapping[
+        str,
+        Mapping[Any, PredictionBundle],
+    ],
+    contrasts: Mapping[str, tuple[str, str]],
+    *,
+    draws: int = 10_000,
+    seed: int = 20260727,
+    confidence_level: float = 0.95,
+    stratify_by_class: bool = True,
+) -> dict[str, Any]:
+    """Joint hierarchical paired bootstrap for a fixed contrast family.
+
+    Every draw uses one common resample of algorithm seeds and one common
+    class-stratified resample of test-source clusters for every model and
+    contrast.  Marginal intervals are percentile intervals.  The simultaneous
+    intervals use the confidence-level quantile of the maximum absolute
+    centered bootstrap deviation across the complete contrast family, thereby
+    targeting simultaneous family coverage under the bootstrap approximation.
+    This is deliberately named a non-studentized max-absolute-deviation
+    interval; it is not a bootstrap-t or an exact finite-sample guarantee.
+
+    ``contrasts`` maps a stable contrast identifier to
+    ``(reference_model, candidate_model)``.  Positive differences always mean
+    that the candidate has higher macro-F1 than the reference.  Returned
+    macro-F1 means, differences, and bounds use raw proportion scale; paper
+    macros convert them to percent or percentage points exactly once.
+    """
+
+    if draws <= 0:
+        raise ValueError("draws must be positive")
+    if confidence_level != 0.95:
+        raise ValueError(
+            "the formal ablation family requires confidence_level=0.95"
+        )
+    if stratify_by_class is not True:
+        raise ValueError(
+            "the formal ablation family requires stratify_by_class=True"
+        )
+    if not contrasts:
+        raise ValueError("contrasts must be nonempty")
+    if any(
+        not isinstance(identifier, str) or not identifier.strip()
+        for identifier in contrasts
+    ):
+        raise ValueError("contrast identifiers must be nonempty strings")
+    if any(
+        not isinstance(pair, tuple)
+        or len(pair) != 2
+        or not all(isinstance(model, str) and model for model in pair)
+        or pair[0] == pair[1]
+        for pair in contrasts.values()
+    ):
+        raise ValueError(
+            "each contrast must be a distinct reference/candidate model pair"
+        )
+
+    required_models = {
+        model
+        for reference, candidate in contrasts.values()
+        for model in (reference, candidate)
+    }
+    missing_models = sorted(
+        required_models.difference(bundles_by_model_and_seed)
+    )
+    if missing_models:
+        raise ValueError(
+            "ablation family is missing models: " + ",".join(missing_models)
+        )
+
+    first_model = next(iter(sorted(required_models)))
+    seed_keys = sorted(
+        bundles_by_model_and_seed[first_model],
+        key=lambda value: (
+            0,
+            int(value),
+        )
+        if isinstance(value, (int, np.integer))
+        and not isinstance(value, (bool, np.bool_))
+        else (1, str(value)),
+    )
+    if not seed_keys:
+        raise ValueError("ablation family requires at least one algorithm seed")
+    seed_key_set = set(seed_keys)
+    for model in sorted(required_models):
+        current_keys = set(bundles_by_model_and_seed[model])
+        if current_keys != seed_key_set:
+            raise ValueError(
+                "ablation models must have the same algorithm-seed keys"
+            )
+
+    canonical = bundles_by_model_and_seed[first_model][seed_keys[0]]
+    canonical.validate()
+    for covariate in ("snr_db", "sir_db"):
+        if not np.isfinite(
+            np.asarray(getattr(canonical, covariate), dtype=np.float64)
+        ).all():
+            raise ValueError(
+                "formal ablation family requires finite "
+                f"{covariate} values"
+            )
+    classes = int(canonical.probabilities.shape[1])
+    labels = np.asarray(canonical.labels, dtype=np.int64)
+    source_ids = np.asarray(canonical.source_ids)
+    target_profiles = (
+        np.asarray(canonical.target_profile_index)
+        if canonical.target_profile_index is not None
+        else None
+    )
+
+    predictions: dict[str, list[np.ndarray]] = {}
+    for model in sorted(required_models):
+        predictions[model] = []
+        for algorithm_seed in seed_keys:
+            bundle = bundles_by_model_and_seed[model][algorithm_seed]
+            current_classes = _validate_paired_bundles(canonical, bundle)
+            if current_classes != classes:
+                raise ValueError("class taxonomy differs across ablation bundles")
+            current_profiles = (
+                np.asarray(bundle.target_profile_index)
+                if bundle.target_profile_index is not None
+                else None
+            )
+            if (current_profiles is None) != (target_profiles is None) or (
+                current_profiles is not None
+                and not np.array_equal(current_profiles, target_profiles)
+            ):
+                raise ValueError(
+                    "target-profile indices differ across ablation bundles"
+                )
+            predictions[model].append(bundle.predictions)
+
+    strata, cluster_count = _cluster_strata(
+        labels,
+        source_ids,
+        stratify_by_class=stratify_by_class,
+    )
+    seed_count = len(seed_keys)
+    all_source_indices = np.arange(len(labels))
+    model_means: dict[str, float] = {}
+    for model in sorted(required_models):
+        model_means[model] = float(
+            np.mean(
+                [
+                    _macro_f1(
+                        labels,
+                        predictions[model][seed_index],
+                        classes,
+                    )
+                    for seed_index in range(seed_count)
+                ]
+            )
+        )
+
+    contrast_ids = list(contrasts)
+    observed = np.asarray(
+        [
+            model_means[candidate] - model_means[reference]
+            for reference, candidate in contrasts.values()
+        ],
+        dtype=np.float64,
+    )
+    bootstrap = np.empty(
+        (draws, len(contrast_ids)),
+        dtype=np.float64,
+    )
+    rng = np.random.default_rng(seed)
+    for draw in range(draws):
+        selected_seeds = rng.integers(0, seed_count, size=seed_count)
+        selected_sources = _sample_cluster_indices(rng, strata)
+        selected_labels = labels[selected_sources]
+        draw_model_means: dict[str, float] = {}
+        for model in sorted(required_models):
+            draw_model_means[model] = float(
+                np.mean(
+                    [
+                        _macro_f1(
+                            selected_labels,
+                            predictions[model][int(seed_index)][
+                                selected_sources
+                            ],
+                            classes,
+                        )
+                        for seed_index in selected_seeds
+                    ]
+                )
+            )
+        for contrast_index, (reference, candidate) in enumerate(
+            contrasts.values()
+        ):
+            bootstrap[draw, contrast_index] = (
+                draw_model_means[candidate] - draw_model_means[reference]
+            )
+
+    alpha = 1.0 - confidence_level
+    marginal_low = np.quantile(bootstrap, alpha / 2.0, axis=0)
+    marginal_high = np.quantile(bootstrap, 1.0 - alpha / 2.0, axis=0)
+    maximum_absolute_centered_deviation = np.max(
+        np.abs(bootstrap - observed[None, :]),
+        axis=1,
+    )
+    simultaneous_critical_value = float(
+        np.quantile(
+            maximum_absolute_centered_deviation,
+            confidence_level,
+        )
+    )
+    simultaneous_low = observed - simultaneous_critical_value
+    simultaneous_high = observed + simultaneous_critical_value
+
+    records: dict[str, dict[str, Any]] = {}
+    for index, identifier in enumerate(contrast_ids):
+        reference, candidate = contrasts[identifier]
+        records[identifier] = {
+            "reference": reference,
+            "candidate": candidate,
+            "reference_macro_f1_mean": model_means[reference],
+            "candidate_macro_f1_mean": model_means[candidate],
+            "macro_f1_difference": float(observed[index]),
+            "macro_f1_marginal_ci95_low": float(marginal_low[index]),
+            "macro_f1_marginal_ci95_high": float(marginal_high[index]),
+            "macro_f1_simultaneous_ci95_low": float(
+                simultaneous_low[index]
+            ),
+            "macro_f1_simultaneous_ci95_high": float(
+                simultaneous_high[index]
+            ),
+        }
+    return {
+        "contrasts": records,
+        "bootstrap_draws": int(draws),
+        "bootstrap_seed": int(seed),
+        "algorithm_seed_count": int(seed_count),
+        "algorithm_seed_ids": [str(value) for value in seed_keys],
+        "test_source_cluster_count": int(cluster_count),
+        "bootstrap_stratified_by_class": bool(stratify_by_class),
+        "bootstrap_hierarchy": (
+            "algorithm_seed_and_class_stratified_test_source_cluster"
+        ),
+        "confidence_level": float(confidence_level),
+        "family_size": len(contrast_ids),
+        "multiplicity_method": (
+            "joint_max_absolute_centered_deviation_"
+            "hierarchical_paired_bootstrap"
+        ),
+        "simultaneous_critical_value": simultaneous_critical_value,
+        "quantile_method": "numpy_linear",
+        "source_alignment_verified": True,
+        "full_source_count": int(len(all_source_indices)),
     }
 
 

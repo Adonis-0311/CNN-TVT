@@ -27,7 +27,14 @@ import numpy as np
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
+SRC_ROOT = PROJECT_ROOT / "src"
+if str(SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(SRC_ROOT))
 
+from vimd_amc.metrics import (  # noqa: E402
+    PredictionBundle,
+    ablation_family_paired_bootstrap,
+)
 from tvt_submission import validate_release  # noqa: E402
 
 
@@ -67,7 +74,88 @@ BASELINE_MODELS = (
     "iqformer_inspired",
     "cssl_amc_supervised_adaptation",
 )
-ABLATION_CONTROL_MODELS = ("a1_single_mask", "a6_dual_full")
+ABLATION_MODELS = (
+    "a0_backbone",
+    "a1_single_mask",
+    "a2_tri_no_teacher",
+    "a3_tri_teacher",
+    "a4_tri_teacher_mtl",
+    "a5_vimd_full",
+    "a6_dual_full",
+    "a7_vimd_no_residual",
+)
+ABLATION_FAMILY_ID = "hard_macro_f1_ablation_family_v1"
+ABLATION_CONFIDENCE_LEVEL = 0.95
+ABLATION_MULTIPLICITY_METHOD = (
+    "joint_max_absolute_centered_deviation_"
+    "hierarchical_paired_bootstrap"
+)
+ABLATION_GATE_THRESHOLD = 0.0
+ABLATION_CONTRASTS = (
+    {
+        "contrast_id": "teacher",
+        "reference": "a2_tri_no_teacher",
+        "candidate": "a3_tri_teacher",
+        "intervention": "fixed_physical_teacher",
+        "interpretation_scope": "incremental_fixed_protocol",
+        "macro_prefix": "AblationTeacher",
+    },
+    {
+        "contrast_id": "multitask",
+        "reference": "a3_tri_teacher",
+        "candidate": "a4_tri_teacher_mtl",
+        "intervention": "jammer_quality_orthogonality_bundle",
+        "interpretation_scope": "incremental_fixed_protocol_bundle",
+        "macro_prefix": "AblationMultitask",
+    },
+    {
+        "contrast_id": "exact_source_contrast",
+        "reference": "a4_tri_teacher_mtl",
+        "candidate": "a5_vimd_full",
+        "intervention": "exact_source_cross_condition_contrast",
+        "interpretation_scope": "incremental_fixed_protocol",
+        "macro_prefix": "AblationExactSourceContrast",
+    },
+    {
+        "contrast_id": "full_vs_single",
+        "reference": "a1_single_mask",
+        "candidate": "a5_vimd_full",
+        "intervention": "full_method_vs_single_mask",
+        "interpretation_scope": "composite_control",
+        "macro_prefix": "AblationFullVsSingle",
+    },
+    {
+        "contrast_id": "full_vs_dual",
+        "reference": "a6_dual_full",
+        "candidate": "a5_vimd_full",
+        "intervention": "tri_route_vs_dual_route_full_objective",
+        "interpretation_scope": (
+            "composite_control_no_route_count_attribution"
+        ),
+        "macro_prefix": "AblationFullVsDual",
+    },
+    {
+        "contrast_id": "bypass",
+        "reference": "a7_vimd_no_residual",
+        "candidate": "a5_vimd_full",
+        "intervention": "bounded_additive_bypass",
+        "interpretation_scope": "forward_path_intervention",
+        "macro_prefix": "AblationBypass",
+    },
+)
+ABLATION_MEAN_MACROS = {
+    "HeadlineHardAOneMacroFOne": "a1_single_mask",
+    "HeadlineHardATwoMacroFOne": "a2_tri_no_teacher",
+    "HeadlineHardAThreeMacroFOne": "a3_tri_teacher",
+    "HeadlineHardAFourMacroFOne": "a4_tri_teacher_mtl",
+    "HeadlineHardASixMacroFOne": "a6_dual_full",
+    "HeadlineHardASevenMacroFOne": "a7_vimd_no_residual",
+}
+ABLATION_CONTRAST_MACROS = tuple(
+    f"{record['macro_prefix']}{suffix}"
+    for record in ABLATION_CONTRASTS
+    for suffix in ("Gain", "CILow", "CIHigh")
+)
 FORMAL_HOLM_CANDIDATES = (
     "a0_backbone",
     "a1_single_mask",
@@ -78,8 +166,25 @@ FORMAL_HOLM_CANDIDATES = (
 OOD_GATE_REGIMES = ("unseen_jammer", "unseen_speed", "heldout_channel")
 SCIENTIFIC_RELEASE_THRESHOLDS = {
     "hard_macro_f1_min_gain_pp_each_baseline": 5.0,
-    "hard_ablation_controls": list(ABLATION_CONTROL_MODELS),
-    "hard_ablation_strictly_positive": True,
+    "hard_ablation_family": {
+        "family_id": ABLATION_FAMILY_ID,
+        "regime": HARD_REGIME,
+        "metric": "macro_f1",
+        "direction": "candidate_minus_reference",
+        "confidence_level": ABLATION_CONFIDENCE_LEVEL,
+        "multiplicity_method": ABLATION_MULTIPLICITY_METHOD,
+        "simultaneous_ci95_low_strictly_greater_than": (
+            ABLATION_GATE_THRESHOLD
+        ),
+        "contrasts": [
+            {
+                key: value
+                for key, value in record.items()
+                if key != "macro_prefix"
+            }
+            for record in ABLATION_CONTRASTS
+        ],
+    },
     "ood_macro_f1_min_gain_pp": 3.0,
     "ood_required_pass_count": 2,
     "ood_regimes": list(OOD_GATE_REGIMES),
@@ -130,6 +235,8 @@ PROVENANCE_MACROS = (
     "PrimaryReference",
     *HEADLINE_PROVENANCE_MACROS,
     *REGIME_PROVENANCE_MACROS,
+    *ABLATION_MEAN_MACROS,
+    *ABLATION_CONTRAST_MACROS,
     *MECHANISM_MACRO_FIELDS,
     "VIMDParameters",
     "VIMDLatencyPFifty",
@@ -175,6 +282,46 @@ HEADLINE_NUMERIC_COLUMNS = (
     "accuracy_algorithm_seed_only_ci95_high",
     "macro_f1_algorithm_seed_only_ci95_low",
     "macro_f1_algorithm_seed_only_ci95_high",
+)
+ABLATION_NUMERIC_COLUMNS = (
+    "reference_macro_f1_mean",
+    "candidate_macro_f1_mean",
+    "macro_f1_difference",
+    "macro_f1_marginal_ci95_low",
+    "macro_f1_marginal_ci95_high",
+    "macro_f1_simultaneous_ci95_low",
+    "macro_f1_simultaneous_ci95_high",
+    "simultaneous_critical_value",
+    "gate_threshold",
+)
+ABLATION_CSV_COLUMNS = (
+    "family_id",
+    "contrast_id",
+    "reference",
+    "candidate",
+    "intervention",
+    "interpretation_scope",
+    "regime",
+    "metric",
+    "direction",
+    "cache_digest",
+    *ABLATION_NUMERIC_COLUMNS[:7],
+    "bootstrap_draws",
+    "bootstrap_seed",
+    "algorithm_seed_count",
+    "algorithm_seed_ids",
+    "test_source_cluster_count",
+    "bootstrap_stratified_by_class",
+    "bootstrap_hierarchy",
+    "confidence_level",
+    "family_size",
+    "multiplicity_method",
+    "simultaneous_critical_value",
+    "quantile_method",
+    "source_alignment_verified",
+    "gate_threshold",
+    "gate_passed",
+    "family_gate_passed",
 )
 FLOAT_ABS_TOLERANCE = 1e-12
 FLOAT_REL_TOLERANCE = 1e-9
@@ -517,6 +664,8 @@ def _load_prediction_bundle(
         "labels": integer_labels,
         "source_ids": source_ids,
         "probabilities": probabilities,
+        "snr_db": snr_db,
+        "sir_db": sir_db,
         "target_profile_index": integer_profiles,
         "macro_f1": macro_f1,
         "accuracy": accuracy,
@@ -537,8 +686,7 @@ def _audit_required_predictions(
     models_by_regime = {
         HARD_REGIME: (
             set(BASELINE_MODELS)
-            | set(ABLATION_CONTROL_MODELS)
-            | {METHOD_MODEL}
+            | set(ABLATION_MODELS)
         ),
         "unseen_jammer": {reference_model, METHOD_MODEL},
         "unseen_speed": {reference_model, METHOD_MODEL},
@@ -952,6 +1100,314 @@ def _audit_headline_csv(
     return indexed
 
 
+def _audit_ablation_csv(
+    run_json: Path,
+    run_record: dict[str, Any],
+    bundles: dict[tuple[str, int, str], dict[str, Any]],
+) -> dict[str, dict[str, Any]]:
+    statistics = run_record.get("statistical_outputs")
+    if not isinstance(statistics, dict):
+        raise MacroGenerationError("run statistical_outputs is malformed")
+    if statistics.get("ablation_pairs") != (
+        "ablation_paired_statistics.csv"
+    ):
+        raise MacroGenerationError(
+            "run does not bind the formal ablation paired artifact"
+        )
+    summary = statistics.get("ablation_family")
+    expected_ids = [
+        str(record["contrast_id"]) for record in ABLATION_CONTRASTS
+    ]
+    expected_summary = {
+        "family_id": ABLATION_FAMILY_ID,
+        "artifact": "ablation_paired_statistics.csv",
+        "regime": HARD_REGIME,
+        "metric": "macro_f1",
+        "direction": "candidate_minus_reference",
+        "contrast_ids": expected_ids,
+        "family_size": len(expected_ids),
+        "confidence_level": ABLATION_CONFIDENCE_LEVEL,
+        "multiplicity_method": ABLATION_MULTIPLICITY_METHOD,
+        "simultaneous_ci95_low_strictly_greater_than": (
+            ABLATION_GATE_THRESHOLD
+        ),
+    }
+    if not isinstance(summary, dict):
+        raise MacroGenerationError("run ablation_family summary is malformed")
+    for key, expected in expected_summary.items():
+        if summary.get(key) != expected:
+            raise MacroGenerationError(
+                f"run ablation_family {key} drifted from the freeze"
+            )
+
+    path = run_json.parent / "ablation_paired_statistics.csv"
+    header, rows = _load_csv(
+        path,
+        required_columns=set(ABLATION_CSV_COLUMNS),
+    )
+    if tuple(header) != ABLATION_CSV_COLUMNS:
+        raise MacroGenerationError(
+            "ablation_paired_statistics.csv column order/schema mismatch"
+        )
+    observed_ids = [row["contrast_id"] for row in rows]
+    if observed_ids != expected_ids:
+        raise MacroGenerationError(
+            "ablation_paired_statistics.csv contrast order/matrix mismatch"
+        )
+
+    seeds = [int(seed) for seed in run_record["seeds"]]
+    comparison = run_record.get("comparison_protocol")
+    if not isinstance(comparison, dict):
+        raise MacroGenerationError("run comparison_protocol is malformed")
+    expected_draws = _integer(
+        comparison.get("bootstrap_draws"),
+        "run comparison bootstrap_draws",
+    )
+    expected_seed = _analysis_seed(
+        _integer(
+            comparison.get("bootstrap_seed_base"),
+            "run comparison bootstrap_seed_base",
+        ),
+        "ablation_family",
+        ABLATION_FAMILY_ID,
+        HARD_REGIME,
+    )
+    bundle_mapping = {
+        model: {
+            seed: PredictionBundle(
+                probabilities=bundles[
+                    (model, seed, HARD_REGIME)
+                ]["probabilities"],
+                labels=bundles[(model, seed, HARD_REGIME)]["labels"],
+                source_ids=bundles[
+                    (model, seed, HARD_REGIME)
+                ]["source_ids"],
+                snr_db=bundles[(model, seed, HARD_REGIME)]["snr_db"],
+                sir_db=bundles[(model, seed, HARD_REGIME)]["sir_db"],
+                target_profile_index=bundles[
+                    (model, seed, HARD_REGIME)
+                ]["target_profile_index"],
+            )
+            for seed in seeds
+        }
+        for model in ABLATION_MODELS
+        if model != "a0_backbone"
+    }
+    contrast_mapping = {
+        str(record["contrast_id"]): (
+            str(record["reference"]),
+            str(record["candidate"]),
+        )
+        for record in ABLATION_CONTRASTS
+    }
+    recomputed = ablation_family_paired_bootstrap(
+        bundle_mapping,
+        contrast_mapping,
+        draws=expected_draws,
+        seed=expected_seed,
+        confidence_level=ABLATION_CONFIDENCE_LEVEL,
+    )
+    if recomputed["multiplicity_method"] != ABLATION_MULTIPLICITY_METHOD:
+        raise MacroGenerationError(
+            "recomputed ablation multiplicity method drifted"
+        )
+    recomputed_critical_value = float(
+        recomputed["simultaneous_critical_value"]
+    )
+    if (
+        not math.isfinite(recomputed_critical_value)
+        or recomputed_critical_value <= 0.0
+    ):
+        raise MacroGenerationError(
+            "formal ablation family bootstrap is degenerate: "
+            "simultaneous_critical_value must be finite and strictly positive"
+        )
+
+    expected_seed_ids = [str(seed) for seed in seeds]
+    indexed: dict[str, dict[str, Any]] = {}
+    by_id = {
+        str(record["contrast_id"]): record
+        for record in ABLATION_CONTRASTS
+    }
+    gate_values: list[bool] = []
+    for row in rows:
+        contrast_id = row["contrast_id"]
+        specification = by_id[contrast_id]
+        exact_fields = {
+            "family_id": ABLATION_FAMILY_ID,
+            "reference": specification["reference"],
+            "candidate": specification["candidate"],
+            "intervention": specification["intervention"],
+            "interpretation_scope": specification["interpretation_scope"],
+            "regime": HARD_REGIME,
+            "metric": "macro_f1",
+            "direction": "candidate_minus_reference",
+            "cache_digest": run_record["cache_digest"],
+            "bootstrap_hierarchy": (
+                "algorithm_seed_and_class_stratified_test_source_cluster"
+            ),
+            "multiplicity_method": ABLATION_MULTIPLICITY_METHOD,
+            "quantile_method": "numpy_linear",
+        }
+        drift = {
+            field: {"actual": row[field], "expected": expected}
+            for field, expected in exact_fields.items()
+            if row[field] != expected
+        }
+        if drift:
+            raise MacroGenerationError(
+                f"ablation row {contrast_id} metadata drifted: {drift}"
+            )
+        values = {
+            column: _finite_number(
+                row[column],
+                f"ablation row {contrast_id} column {column}",
+            )
+            for column in ABLATION_NUMERIC_COLUMNS
+        }
+        if not (
+            values["macro_f1_marginal_ci95_low"]
+            <= values["macro_f1_difference"]
+            <= values["macro_f1_marginal_ci95_high"]
+            and values["macro_f1_simultaneous_ci95_low"]
+            <= values["macro_f1_difference"]
+            <= values["macro_f1_simultaneous_ci95_high"]
+        ):
+            raise MacroGenerationError(
+                f"ablation row {contrast_id} has a point outside its CI"
+            )
+        if _integer(
+            row["bootstrap_draws"],
+            f"ablation row {contrast_id} bootstrap_draws",
+        ) != expected_draws:
+            raise MacroGenerationError(
+                f"ablation row {contrast_id} has wrong draw count"
+            )
+        if _integer(
+            row["bootstrap_seed"],
+            f"ablation row {contrast_id} bootstrap_seed",
+        ) != expected_seed:
+            raise MacroGenerationError(
+                f"ablation row {contrast_id} has wrong bootstrap seed"
+            )
+        if _integer(
+            row["algorithm_seed_count"],
+            f"ablation row {contrast_id} algorithm_seed_count",
+        ) != len(seeds):
+            raise MacroGenerationError(
+                f"ablation row {contrast_id} has wrong seed count"
+            )
+        if _seed_ids(
+            row["algorithm_seed_ids"],
+            f"ablation row {contrast_id} algorithm_seed_ids",
+        ) != expected_seed_ids:
+            raise MacroGenerationError(
+                f"ablation row {contrast_id} has wrong seed ids"
+            )
+        for field, expected in (
+            ("test_source_cluster_count", recomputed[
+                "test_source_cluster_count"
+            ]),
+            ("family_size", len(expected_ids)),
+        ):
+            if _integer(
+                row[field],
+                f"ablation row {contrast_id} {field}",
+            ) != int(expected):
+                raise MacroGenerationError(
+                    f"ablation row {contrast_id} has wrong {field}"
+                )
+        if not _same_number(
+            _finite_number(
+                row["confidence_level"],
+                f"ablation row {contrast_id} confidence_level",
+            ),
+            ABLATION_CONFIDENCE_LEVEL,
+        ):
+            raise MacroGenerationError(
+                f"ablation row {contrast_id} has wrong confidence level"
+            )
+        if not _csv_boolean(
+            row["bootstrap_stratified_by_class"],
+            f"ablation row {contrast_id} stratification",
+        ):
+            raise MacroGenerationError(
+                f"ablation row {contrast_id} is not class-stratified"
+            )
+        if not _csv_boolean(
+            row["source_alignment_verified"],
+            f"ablation row {contrast_id} source alignment",
+        ):
+            raise MacroGenerationError(
+                f"ablation row {contrast_id} lacks source alignment"
+            )
+
+        expected_values = recomputed["contrasts"][contrast_id]
+        for field in (
+            "reference_macro_f1_mean",
+            "candidate_macro_f1_mean",
+            "macro_f1_difference",
+            "macro_f1_marginal_ci95_low",
+            "macro_f1_marginal_ci95_high",
+            "macro_f1_simultaneous_ci95_low",
+            "macro_f1_simultaneous_ci95_high",
+        ):
+            if not _same_number(values[field], float(expected_values[field])):
+                raise MacroGenerationError(
+                    f"ablation row {contrast_id} {field} disagrees with "
+                    "deterministic prediction re-derivation"
+                )
+        if not _same_number(
+            values["simultaneous_critical_value"],
+            recomputed_critical_value,
+        ):
+            raise MacroGenerationError(
+                f"ablation row {contrast_id} has wrong simultaneous critical "
+                "value"
+            )
+        if not _same_number(
+            values["gate_threshold"],
+            ABLATION_GATE_THRESHOLD,
+        ):
+            raise MacroGenerationError(
+                f"ablation row {contrast_id} has wrong gate threshold"
+            )
+        expected_gate = (
+            float(
+                expected_values["macro_f1_simultaneous_ci95_low"]
+            )
+            > ABLATION_GATE_THRESHOLD
+        )
+        gate = _csv_boolean(
+            row["gate_passed"],
+            f"ablation row {contrast_id} gate_passed",
+        )
+        if gate != expected_gate:
+            raise MacroGenerationError(
+                f"ablation row {contrast_id} gate result is inconsistent"
+            )
+        gate_values.append(gate)
+        indexed[contrast_id] = {
+            **values,
+            "gate_passed": gate,
+        }
+
+    family_gate = all(gate_values)
+    for row in rows:
+        if _csv_boolean(
+            row["family_gate_passed"],
+            f"ablation row {row['contrast_id']} family_gate_passed",
+        ) != family_gate:
+            raise MacroGenerationError(
+                "ablation family gate is inconsistent across rows"
+            )
+    if summary.get("family_gate_passed") is not family_gate:
+        raise MacroGenerationError(
+            "run ablation_family gate disagrees with paired artifact"
+        )
+    return indexed
+
+
 def _method_summary(
     run_record: dict[str, Any],
     results: dict[tuple[str, int], dict[str, Any]],
@@ -1196,12 +1652,23 @@ def _validate_comparison_protocol(run_record: dict[str, Any]) -> str:
     return str(reference_model)
 
 
+def _strictly_positive_at_public_precision(value_pp: float) -> bool:
+    """Require a strict gain to remain visible in the two-decimal paper cell."""
+
+    return (
+        math.isfinite(value_pp)
+        and value_pp > 0.0
+        and float(f"{value_pp:+.2f}") > 0.0
+    )
+
+
 def _scientific_release_gate(
     *,
     run_record: dict[str, Any],
     metrics: dict[tuple[str, int, str], dict[str, float]],
     bundles: dict[tuple[str, int, str], dict[str, Any]],
     headline: dict[tuple[str, str], dict[str, float]],
+    ablation: dict[str, dict[str, Any]],
     method_summary: dict[str, float | int | str],
 ) -> dict[str, Any]:
     seeds = [int(seed) for seed in run_record["seeds"]]
@@ -1253,28 +1720,62 @@ def _scientific_release_gate(
             f"failed={failed_hard}"
         )
 
-    hard_ablation_gains_pp: dict[str, float] = {}
-    for control in ABLATION_CONTROL_MODELS:
-        gain = float(
-            np.mean(
-                [
-                    bundles[(METHOD_MODEL, seed, HARD_REGIME)]["macro_f1"]
-                    - bundles[(control, seed, HARD_REGIME)]["macro_f1"]
-                    for seed in seeds
-                ]
-            )
-        )
-        hard_ablation_gains_pp[control] = gain * 100.0
-    failed_ablation = {
-        model: gain
-        for model, gain in hard_ablation_gains_pp.items()
-        if gain <= 0.0
+    hard_ablation_contrasts: dict[str, dict[str, Any]] = {}
+    failed_ablation: dict[str, float] = {}
+    by_id = {
+        str(record["contrast_id"]): record
+        for record in ABLATION_CONTRASTS
     }
+    for contrast_id, specification in by_id.items():
+        row = ablation[contrast_id]
+        simultaneous_low_pp = (
+            float(row["macro_f1_simultaneous_ci95_low"]) * 100.0
+        )
+        record = {
+            "reference": str(specification["reference"]),
+            "candidate": str(specification["candidate"]),
+            "gain_pp": float(row["macro_f1_difference"]) * 100.0,
+            "marginal_ci95_low_pp": (
+                float(row["macro_f1_marginal_ci95_low"]) * 100.0
+            ),
+            "marginal_ci95_high_pp": (
+                float(row["macro_f1_marginal_ci95_high"]) * 100.0
+            ),
+            "simultaneous_ci95_low_pp": simultaneous_low_pp,
+            "simultaneous_ci95_high_pp": (
+                float(row["macro_f1_simultaneous_ci95_high"]) * 100.0
+            ),
+            "passed": (
+                simultaneous_low_pp > ABLATION_GATE_THRESHOLD
+                and _strictly_positive_at_public_precision(
+                    simultaneous_low_pp
+                )
+            ),
+        }
+        hard_ablation_contrasts[contrast_id] = record
+        if not record["passed"]:
+            failed_ablation[contrast_id] = simultaneous_low_pp
     if failed_ablation:
         raise MacroGenerationError(
-            "scientific release gate failed: A5 hard macro-F1 must be "
-            f"strictly greater than A1 and A6; failed={failed_ablation}"
+            "scientific release gate failed: every predeclared hard-regime "
+            "ablation contrast requires a family-wise simultaneous macro-F1 "
+            "CI lower bound strictly greater than zero percentage points both "
+            "before and after two-decimal public rendering; "
+            f"failed={failed_ablation}"
         )
+    hard_ablation_family = {
+        "passed": True,
+        "family_id": ABLATION_FAMILY_ID,
+        "regime": HARD_REGIME,
+        "metric": "macro_f1",
+        "direction": "candidate_minus_reference",
+        "confidence_level": ABLATION_CONFIDENCE_LEVEL,
+        "multiplicity_method": ABLATION_MULTIPLICITY_METHOD,
+        "simultaneous_ci95_low_strictly_greater_than_pp": (
+            ABLATION_GATE_THRESHOLD
+        ),
+        "contrasts": hard_ablation_contrasts,
+    }
 
     ood_gains_pp = {
         regime: headline[(METHOD_MODEL, regime)]["macro_f1_difference"] * 100.0
@@ -1334,7 +1835,7 @@ def _scientific_release_gate(
     return {
         "passed": True,
         "hard_gain_pp_each_nonoracle_baseline": hard_gains_pp,
-        "hard_ablation_gain_pp": hard_ablation_gains_pp,
+        "hard_ablation_family": hard_ablation_family,
         "ood_gain_pp": ood_gains_pp,
         "ood_pass_count": ood_pass_count,
         "clean_noninferiority": clean_gates,
@@ -1368,8 +1869,7 @@ def _derive_manifest(
     seeds = [int(seed) for seed in seed_values]
     required_models = (
         set(BASELINE_MODELS)
-        | set(ABLATION_CONTROL_MODELS)
-        | {METHOD_MODEL}
+        | set(ABLATION_MODELS)
     )
     missing_models = sorted(required_models.difference(models))
     if missing_models:
@@ -1407,12 +1907,18 @@ def _derive_manifest(
         sample_counts,
         reference_model,
     )
+    ablation = _audit_ablation_csv(
+        resolved,
+        run_record,
+        bundles,
+    )
     method_summary = _method_summary(run_record, results)
     scientific_gate = _scientific_release_gate(
         run_record=run_record,
         metrics=metrics,
         bundles=bundles,
         headline=headline,
+        ablation=ablation,
         method_summary=method_summary,
     )
 
@@ -1449,6 +1955,47 @@ def _derive_manifest(
                     "on hard_interference; accuracy, macro-F1, and worst-class "
                     "recall are scaled to percent while NLL and ECE retain "
                     "their recorded units"
+                ),
+            }
+
+    for macro_name, model in ABLATION_MEAN_MACROS.items():
+        mean_value = _mean_metric(
+            metrics,
+            seeds=seeds,
+            model=model,
+            regime=HARD_REGIME,
+            metric="macro_f1",
+        )
+        macros[macro_name] = {
+            "value": f"{mean_value * 100.0:.2f}",
+            "source_artifact": "metrics.csv",
+            "derivation": (
+                f"Arithmetic mean across the five formal seeds of "
+                f"{model}/macro_f1 on hard_interference, scaled to percent "
+                "for the A0--A7 Table III"
+            ),
+        }
+
+    for specification in ABLATION_CONTRASTS:
+        contrast_id = str(specification["contrast_id"])
+        prefix = str(specification["macro_prefix"])
+        row = ablation[contrast_id]
+        for suffix, field in (
+            ("Gain", "macro_f1_difference"),
+            ("CILow", "macro_f1_simultaneous_ci95_low"),
+            ("CIHigh", "macro_f1_simultaneous_ci95_high"),
+        ):
+            macros[f"{prefix}{suffix}"] = {
+                "value": _format_pp(float(row[field])),
+                "source_artifact": "ablation_paired_statistics.csv",
+                "derivation": (
+                    f"100 times {field} for the predeclared "
+                    f"{contrast_id} candidate-minus-reference contrast on "
+                    "hard_interference; CI values are the family-wise "
+                    "simultaneous bounds from one joint non-studentized "
+                    "max-absolute-centered-deviation hierarchical paired "
+                    "bootstrap over algorithm seed and class-stratified "
+                    "test-source cluster"
                 ),
             }
 

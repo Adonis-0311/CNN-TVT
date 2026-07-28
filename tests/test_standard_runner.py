@@ -11,6 +11,7 @@ import sys
 import tempfile
 import unittest
 
+import numpy as np
 import torch
 
 
@@ -129,6 +130,149 @@ class StandardRunnerContractTest(unittest.TestCase):
                     }
                 )
         return training, results, support
+
+    def test_formal_ablation_rows_use_one_joint_six_contrast_family(
+        self,
+    ) -> None:
+        from vimd_amc.metrics import PredictionBundle
+
+        labels = np.repeat(np.arange(3, dtype=np.int64), 20)
+        sources = np.arange(2_000, 2_060, dtype=np.int64)
+
+        def bundle(errors_per_class: int) -> PredictionBundle:
+            predictions = labels.copy()
+            for class_index in range(3):
+                selected = np.flatnonzero(labels == class_index)
+                predictions[selected[:errors_per_class]] = (
+                    class_index + 1
+                ) % 3
+            probabilities = np.full((len(labels), 3), 0.05)
+            probabilities[np.arange(len(labels)), predictions] = 0.90
+            return PredictionBundle(
+                probabilities=probabilities,
+                labels=labels,
+                source_ids=sources,
+                snr_db=np.full(len(labels), 5.0),
+                sir_db=np.full(len(labels), -5.0),
+            )
+
+        errors = {
+            "a1_single_mask": 15,
+            "a2_tri_no_teacher": 18,
+            "a3_tri_teacher": 12,
+            "a4_tri_teacher_mtl": 6,
+            "a5_vimd_full": 0,
+            "a6_dual_full": 15,
+            "a7_vimd_no_residual": 15,
+        }
+        seeds = [17, 29, 43, 71, 101]
+        prediction_bundles = {
+            (model, seed, self.runner.FORMAL_ABLATION_REGIME): bundle(count)
+            for model, count in errors.items()
+            for seed in seeds
+        }
+        rows, summary = self.runner.build_ablation_paired_rows(
+            prediction_bundles=prediction_bundles,
+            seeds=seeds,
+            cache_digest="b" * 64,
+            bootstrap_draws=200,
+            bootstrap_seed_base=20260727,
+        )
+        self.assertEqual(len(rows), 6)
+        self.assertEqual(
+            [row["contrast_id"] for row in rows],
+            [
+                "teacher",
+                "multitask",
+                "exact_source_contrast",
+                "full_vs_single",
+                "full_vs_dual",
+                "bypass",
+            ],
+        )
+        self.assertEqual(
+            set(rows[0]),
+            set(self.runner.ABLATION_PAIRED_COLUMNS),
+        )
+        self.assertEqual(
+            {row["bootstrap_seed"] for row in rows},
+            {rows[0]["bootstrap_seed"]},
+        )
+        self.assertEqual(
+            {row["simultaneous_critical_value"] for row in rows},
+            {rows[0]["simultaneous_critical_value"]},
+        )
+        self.assertTrue(summary["family_gate_passed"])
+        self.assertTrue(all(row["gate_passed"] for row in rows))
+        self.assertEqual(
+            rows[0]["algorithm_seed_ids"],
+            ["17", "29", "43", "71", "101"],
+        )
+
+    def test_formal_ablation_rows_reject_seed_or_cache_identity_drift(
+        self,
+    ) -> None:
+        with self.assertRaisesRegex(ValueError, "exact ordered algorithm seeds"):
+            self.runner.build_ablation_paired_rows(
+                prediction_bundles={},
+                seeds=[17, 29, 43, 71],
+                cache_digest="b" * 64,
+                bootstrap_draws=20,
+                bootstrap_seed_base=20260727,
+            )
+        with self.assertRaisesRegex(ValueError, "lowercase 64-hex"):
+            self.runner.build_ablation_paired_rows(
+                prediction_bundles={},
+                seeds=[17, 29, 43, 71, 101],
+                cache_digest="B" * 64,
+                bootstrap_draws=20,
+                bootstrap_seed_base=20260727,
+            )
+
+    def test_formal_ablation_rows_reject_degenerate_family(self) -> None:
+        from vimd_amc.metrics import PredictionBundle
+
+        labels = np.asarray([0, 0, 1, 1])
+        probabilities = np.asarray(
+            [
+                [0.9, 0.1],
+                [0.9, 0.1],
+                [0.1, 0.9],
+                [0.1, 0.9],
+            ]
+        )
+        models = {
+            model
+            for contrast in self.runner.FORMAL_ABLATION_CONTRASTS
+            for model in (contrast["reference"], contrast["candidate"])
+        }
+        seeds = list(self.runner.FORMAL_ABLATION_ALGORITHM_SEEDS)
+        prediction_bundles = {
+            (
+                model,
+                seed,
+                self.runner.FORMAL_ABLATION_REGIME,
+            ): PredictionBundle(
+                probabilities=probabilities,
+                labels=labels,
+                source_ids=np.arange(len(labels)),
+                snr_db=np.zeros(len(labels)),
+                sir_db=np.full(len(labels), -5.0),
+            )
+            for model in models
+            for seed in seeds
+        }
+        with self.assertRaisesRegex(
+            RuntimeError,
+            "simultaneous_critical_value must be finite and strictly positive",
+        ):
+            self.runner.build_ablation_paired_rows(
+                prediction_bundles=prediction_bundles,
+                seeds=seeds,
+                cache_digest="b" * 64,
+                bootstrap_draws=20,
+                bootstrap_seed_base=20260727,
+            )
 
     def test_cache_contract_and_required_models_are_compatible(self) -> None:
         contract = self.runner.inspect_cache_contract(CACHE_ROOT)

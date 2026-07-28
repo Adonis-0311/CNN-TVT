@@ -35,6 +35,9 @@ $MinimumFreeDiskGiB = 20
   `cssl_amc_supervised_adaptation`。它只能称为
   “CSSL-AMC official-architecture supervised adaptation”，不是完整 CSSL
   复现、官方数值复现或结构化干扰专用方法。
+- A0--A7 消融复用上述拟合，不增加训练任务；六个直接对比共享精确五种子和
+  class-stratified source-cluster 重采样，形成一个非 studentized
+  max-absolute-centered-deviation family-wise 95% 区间家族。
 
 当前应观察到：
 
@@ -176,6 +179,7 @@ metrics.csv
 seed_aggregates.csv
 paired_statistics.csv
 headline_paired_statistics.csv
+ablation_paired_statistics.csv
 manifests/cache_reference.json
 models/<model>_seed<seed>/model.pt
 models/<model>_seed<seed>/predictions_<split>.npz
@@ -192,6 +196,11 @@ models/<model>_seed<seed>/predictions_<split>.npz
 - `fallback_used=false`；
 - 可执行源树的起止 fingerprint 完全相同；
 - checksum、component、split、类别、辅助标签支持和统计产物门全部通过；
+- `ablation_paired_statistics.csv` 恰有六个预注册方向、33 列冻结 schema，
+  且记录 exact five seeds、lowercase 64-hex cache digest、class
+  stratification、verified source alignment 与有限且严格为正的
+  simultaneous critical value；底层 NPZ 确定性重推导还必须验证
+  source/label/SNR/SIR/profile 对齐；
 - 所有结果单元有限且不是占位值。
 
 任一项失败，即保持内部评审状态。不要从失败目录挑选“最好 seed”，也不要
@@ -216,11 +225,21 @@ source-aligned prediction NPZ 交叉推导宏，并把 CSSL 适配器纳入本�
 确认旧文件应被替换后，才可显式使用 `--replace-existing`，并保留旧版本及
 原因记录。
 
-当前唯一宏合同为：artifact-derived manifest 含 73 个 provenance 宏；
-内部评审 `results_auto.tex` 含 `ResultSource` 加这 73 个宏，共 74 个
-non-sentinel 命令；正式锁定后再增加 `EligibleLockedResults`，共 75 个。
+当前唯一宏合同为：artifact-derived manifest 含 97 个 provenance 宏；
+内部评审 `results_auto.tex` 含 `ResultSource` 加这 97 个宏，共 98 个
+non-sentinel 命令；正式锁定后再增加 `EligibleLockedResults`，共 99 个。
 宏名只允许 ASCII 字母，百分位名称必须使用 `PFifty` 和
-`PNinetyFive`；`P50`/`P95` 必须被 parser 拒绝。
+`PNinetyFive`；runner/CSV 中的普通 p50/p95 统计标签保留，但数字宏名
+`P50`/`P95` 必须被 parser 拒绝。
+
+新增 24 个 provenance 宏由六个 A1/A2/A3/A4/A6/A7 hard macro-F1
+绝对均值和六个直接对比各自的 `Gain`、`CILow`、`CIHigh` 组成。对比区间是
+共同 family-wise simultaneous 95% bounds，不是把两个“相对 CSSL”的区间
+相减。`run.json.statistical_outputs.ablation_family` 只绑定家族和产物摘要；
+完整 cache digest、种子、class stratification、critical value 与
+source/SNR/SIR/profile alignment 由 33 列
+`ablation_paired_statistics.csv` 和 source-aligned prediction NPZ 经
+generator/release deterministic rebuild 绑定，不能仅相信摘要。
 
 ## 7. 阶段 4：release 预检、写锁与复核
 
@@ -305,8 +324,18 @@ SHA-256、`results_auto.tex` SHA-256 和 sentinel 绑定在一起。随后只读
   至少两个达到不低于 3 个百分点的 macro-F1 增益；
 - clean retention 需分别报告 seen A/C/D 与 held B/E；非劣性要求点估计
   不低于 -1 个百分点，配对 95% 区间下界不低于 -2 个百分点；
+- A0--A7 的六个直接对比构成一个 family：
+  A3-A2（teacher）、A4-A3（jammer/quality/orthogonality bundle）、
+  A5-A4（exact-source cross-condition contrast）、A5-A1
+  （full versus single-mask）、A5-A6（full versus dual-route composite
+  control）以及 A5-A7（bounded additive bypass）。共同的非 studentized
+  `joint_max_absolute_centered_deviation_hierarchical_paired_bootstrap`
+  必须给出六个都严格大于 0 的 simultaneous 95% lower bounds；
 - 机制指标、消融方向、置信区间与 multiplicity 结果不得与论文因果叙述
   冲突。
+
+A4-A3 是捆绑干预，A5-A6 是复合对照而非纯 route-count 因果识别。该消融
+家族复用已冻结的 A0--A7 模型/种子结果，不增加拟合，正式总数仍为 55。
 
 manifest v3 已序列化 `scientific_release_gate`；generator 必须从正式产物
 推导它，release validator 必须独立重推导并锁绑定，paper gate 再动态消费。

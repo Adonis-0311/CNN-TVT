@@ -243,8 +243,14 @@ class PaperBuildGateTest(unittest.TestCase):
         extra_lines: list[str] | None = None,
     ) -> None:
         review_token = "true" if internal_review else "false"
+        ablation_macros = set(gate.ABLATION_TABLE_NUMERIC_MACROS)
         public_macro_references = " ".join(
-            rf"\{name}{{}}" for name in gate.RESULT_MACROS
+            rf"\{name}{{}}"
+            for name in gate.RESULT_MACROS
+            if name not in ablation_macros
+        )
+        ablation_macro_references = " ".join(
+            rf"\{name}{{}}" for name in gate.ABLATION_TABLE_NUMERIC_MACROS
         )
         lines = [
             r"\documentclass{article}",
@@ -256,6 +262,10 @@ class PaperBuildGateTest(unittest.TestCase):
             "Fixture",
             r"\ifinternalreview\else",
             public_macro_references,
+            r"\begin{table*}",
+            r"\label{tab:ablations}",
+            ablation_macro_references,
+            r"\end{table*}",
             r"\fi",
             r"\end{document}",
         ]
@@ -891,6 +901,135 @@ class PaperBuildGateTest(unittest.TestCase):
                 self._checks(report)["release_lock_results_digest"]["passed"]
             )
 
+    def test_release_rejects_invalid_ablation_contrast_intervals(self) -> None:
+        scenarios = (
+            {
+                "name": "point_outside",
+                "values": {
+                    "Gain": "+9.00",
+                    "CILow": "+2.00",
+                    "CIHigh": "+8.00",
+                },
+                "message": "point Gain lies outside",
+            },
+            {
+                "name": "reversed_ci",
+                "values": {
+                    "Gain": "+8.50",
+                    "CILow": "+9.00",
+                    "CIHigh": "+8.00",
+                },
+                "message": "CI lower exceeds CI upper",
+            },
+        )
+        prefix = gate.ABLATION_CONTRAST_PREFIXES[0]
+        for scenario in scenarios:
+            with self.subTest(
+                name=scenario["name"]
+            ), tempfile.TemporaryDirectory(
+                prefix=f"vimd_paper_ablation_{scenario['name']}_"
+            ) as temporary:
+                paper_root = self._fixture(
+                    Path(temporary),
+                    internal_review=False,
+                    placeholders=False,
+                    release_sentinel=True,
+                    release_lock=True,
+                )
+                results_path = paper_root / "results_auto.tex"
+                text = results_path.read_text(encoding="utf-8")
+                for suffix, value in scenario["values"].items():
+                    original = (
+                        rf"\newcommand{{\{prefix}{suffix}}}{{1.00}}"
+                    )
+                    replacement = (
+                        rf"\newcommand{{\{prefix}{suffix}}}{{{value}}}"
+                    )
+                    self.assertIn(original, text)
+                    text = text.replace(original, replacement, 1)
+                results_path.write_text(text, encoding="utf-8")
+                self._write_lock(paper_root)
+                base = time.time() - 1_000
+                self._set_fixture_times(
+                    paper_root,
+                    source_time=base,
+                    build_time=base + 10,
+                )
+
+                report = gate.audit_paper_build(
+                    paper_root=paper_root,
+                    mode="release",
+                )
+                checks = self._checks(report)
+                self.assertFalse(report["ok"])
+                self.assertTrue(
+                    checks["release_results_contract"]["passed"],
+                    report["issues"],
+                )
+                self.assertFalse(
+                    checks["release_numeric_contract"]["passed"]
+                )
+                self.assertTrue(
+                    any(
+                        prefix in issue
+                        and scenario["message"] in issue
+                        for issue in report["issues"]
+                    ),
+                    report["issues"],
+                )
+
+    def test_release_rejects_ablation_macro_moved_to_decoy_prose(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory(
+            prefix="vimd_paper_ablation_decoy_"
+        ) as temporary:
+            paper_root = self._fixture(
+                Path(temporary),
+                internal_review=False,
+                placeholders=False,
+                release_sentinel=True,
+                release_lock=True,
+            )
+            name = gate.ABLATION_TABLE_NUMERIC_MACROS[0]
+            reference = rf"\{name}{{}}"
+            main_path = paper_root / "main.tex"
+            main_text = main_path.read_text(encoding="utf-8")
+            self.assertEqual(main_text.count(reference), 1)
+            tampered = main_text.replace(reference, "1.00", 1).replace(
+                r"\end{table*}",
+                (
+                    r"\end{table*}"
+                    + "\n"
+                    + rf"Decoy prose outside Table III: \{name}{{}}."
+                ),
+                1,
+            )
+            self.assertEqual(tampered.count(reference), 1)
+            main_path.write_text(tampered, encoding="utf-8")
+            base = time.time() - 1_000
+            self._set_fixture_times(
+                paper_root,
+                source_time=base,
+                build_time=base + 10,
+            )
+
+            report = gate.audit_paper_build(
+                paper_root=paper_root,
+                mode="release",
+            )
+            checks = self._checks(report)
+            self.assertFalse(report["ok"])
+            self.assertFalse(checks["public_table_macro_wiring"]["passed"])
+            joined = "\n".join(report["result_contract_errors"])
+            self.assertIn(r"\label{tab:ablations}", joined)
+            self.assertIn(f"{name}=0", joined)
+            self.assertNotIn(
+                "main.tex does not reference required public-table macros: "
+                + name,
+                joined,
+            )
+
     def test_validate_release_writer_output_passes_paper_gate(self) -> None:
         from tests.test_macro_generator import MacroGeneratorTest
         from tvt_submission import generate_macro_values
@@ -914,6 +1053,7 @@ class PaperBuildGateTest(unittest.TestCase):
                 generated["macro_count"],
                 len(gate.release_contract.RESULT_MACROS),
             )
+            self.assertEqual(generated["macro_count"], 97)
             manifest = gate.release_contract.load_strict_json(macro_manifest)
             self.assertTrue(manifest["scientific_release_gate"]["passed"])
             self.assertEqual(
@@ -961,6 +1101,13 @@ class PaperBuildGateTest(unittest.TestCase):
                 set(parsed),
                 set(gate.release_contract.ALL_MACROS),
             )
+            self.assertEqual(len(parsed), 99)
+            self.assertTrue(
+                set(gate.ABLATION_MEAN_NUMERIC_MACROS).issubset(parsed)
+            )
+            self.assertTrue(
+                set(gate.ABLATION_CONTRAST_NUMERIC_MACROS).issubset(parsed)
+            )
             self.assertFalse(
                 any(
                     any(character.isdigit() for character in name)
@@ -976,7 +1123,10 @@ class PaperBuildGateTest(unittest.TestCase):
                 len(lock["macro_provenance"]),
                 len(gate.release_contract.RESULT_MACROS),
             )
+            self.assertEqual(len(lock["macro_provenance"]), 97)
             self.assertTrue(checks["release_results_contract"]["passed"])
+            self.assertTrue(checks["release_numeric_contract"]["passed"])
+            self.assertEqual(len(report["numeric_result_values"]), 95)
             self.assertTrue(checks["release_lock_state"]["passed"])
             self.assertTrue(
                 checks["release_lock_results_digest"]["passed"]

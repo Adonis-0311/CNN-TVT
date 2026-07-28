@@ -43,11 +43,11 @@ Official pages:
 | G0 Scope | Vehicular system model, mobility/channel factors, receiver use case | Drafted |
 | G1 Data integrity | Source-disjoint splits, exact realized SNR/SIR, immutable manifests/checksums | Passed for the immutable 1024-sample screening cache: nine splits, 4,700 globally unique sources, 9,400 paired views, 189 declared arrays, and cache digest `241b3aec6e74c79bac2d3ac22295098f0efe5cc79ff07acabf3593cbc32c49e3`. Its designation is screening-only; the formal headline cache remains pending |
 | G2 Algorithm effectiveness | Full model exceeds every frozen non-oracle baseline by at least 5 percentage points in hard-region macro-F1 | Not established; all existing learned-model outcomes are diagnostic or invalidated and are excluded from the manuscript |
-| G3 Mechanism | Required fields finite, required third-route correlations nonnegative, oracle-conditioned spectral component ratio positive, and A5 strictly exceeds A1/A6 on the hard endpoint | Not established; oracle probes show that the target route retains some class information, but student routing has not produced robust AMC gains |
+| G3 Mechanism/ablation | Required mechanism fields finite, required third-route correlations nonnegative, oracle-conditioned spectral component ratio positive, and all six predeclared direct A0--A7 contrasts have family-wise simultaneous 95% lower bounds strictly above zero at full precision and after two-decimal public rendering | Not established; the formal cache/run and six-row ablation artifact do not exist, so no ablation result may be promoted |
 | G4 Generalization | At least two of unseen jammer, unseen speed, and held-out channel gain at least +3 pp macro-F1 versus the predeclared CSSL reference; clean A/C/D and held B/E satisfy the frozen noninferiority floors | Not measured |
 | G5 Engineering | Reproducible parameter/operator-count and frozen-device latency evidence, with its exclusions stated exactly | Not measured; no SDR or deployment gate is claimed in this simulation-only manuscript |
-| G6 Reproducibility | Five locked seeds, paired accuracy/macro-F1 CI, seed/source uncertainty, preregistered McNemar/Holm family, frozen configuration | Formal configuration, checkpoint-eligibility serialization, no-fallback rule, jammer-support masking, source fingerprints, and fail-closed macro release are implemented; final full regression after the latest release-chain integration and the formal run both remain pending |
-| G7 Manuscript | No unsupported novelty, artifact-generated figures/tables only, primary-source citation audit, 14 pages or fewer | The latest internal compile-check PDF is 8 pages with simulation-only scope and placeholder results; the 7-page `paper/build/main.pdf` predates the latest sources and is stale. No release PDF exists. Upload is prohibited until formal release, a fresh validated build, and human citation/authorship review |
+| G6 Reproducibility | Five locked seeds, paired accuracy/macro-F1 CI, seed/source uncertainty, preregistered McNemar/Holm family, one joint six-contrast ablation family, frozen configuration | Formal configuration, checkpoint-eligibility serialization, no-fallback rule, jammer-support masking, source fingerprints, and fail-closed macro release are implemented; the final non-training regression passed 199 main and 10 standards tests. The formal run remains pending |
+| G7 Manuscript | No unsupported novelty, artifact-generated figures/tables only, primary-source citation audit, 14 pages or fewer | Canonical `paper/build/main.pdf` is a fresh 8-page internal evidence-lock build (420,895 bytes; SHA-256 `e99d21895ef31fc8c4291777ae8f34d53842571ca649ee986e483409385dc636`), with internal gate 36/36 and visual QA 8/8. No release PDF exists. Upload is prohibited until formal release and human citation/authorship review |
 
 ## Automatic rejection of evidence
 
@@ -93,6 +93,13 @@ A run is ineligible for the manuscript if any of these is true:
   1,024-sample supervised adaptation in the formal comparator family. It is a
   recent auditable AMC comparator only: no complete CSSL reproduction,
   official result, or structured-interference-specific claim is permitted.
+- The A0--A7 family fixes A3-A2, A4-A3, A5-A4, A5-A1, A5-A6, and A5-A7 in
+  candidate-minus-reference direction. They share the exact ordered five seeds
+  and class-stratified source clusters under the non-studentized
+  `joint_max_absolute_centered_deviation_hierarchical_paired_bootstrap`.
+  Every simultaneous 95% lower bound must be strictly positive; A4-A3 remains
+  a bundled intervention and A5-A6 a composite control. The family reuses the
+  frozen jobs, so the total remains 55 fits.
 - A verified recent structured-interference-specific comparator and
   architecture-specific baseline tuning sensitivity remain open.
   `PrimaryReference` is prospectively fixed to the CSSL-AMC supervised

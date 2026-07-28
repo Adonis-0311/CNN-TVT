@@ -64,6 +64,23 @@ class FormalFreezeValidationTests(unittest.TestCase):
             ):
                 validator.validate_formal_freeze(config_path)
 
+    def _assert_runner_rejected(
+        self,
+        source: str,
+        message_pattern: str,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            runner_copy = Path(temporary) / "runner.py"
+            runner_copy.write_text(source, encoding="utf-8")
+            with self.assertRaisesRegex(
+                validator.FormalFreezeValidationError,
+                message_pattern,
+            ):
+                validator.validate_formal_freeze(
+                    CONFIG_PATH,
+                    runner_path=runner_copy,
+                )
+
     def _copy_minimal_project(self, destination: Path) -> dict[str, Path]:
         sources = {
             "config": CONFIG_PATH,
@@ -354,6 +371,12 @@ class FormalFreezeValidationTests(unittest.TestCase):
         too_few_seeds = copy.deepcopy(self.freeze)
         too_few_seeds["experiment"]["seeds"] = [17, 29, 43, 71]
 
+        too_many_seeds = copy.deepcopy(self.freeze)
+        too_many_seeds["experiment"]["seeds"] = [17, 29, 43, 71, 101, 131]
+
+        reordered_seeds = copy.deepcopy(self.freeze)
+        reordered_seeds["experiment"]["seeds"] = [29, 17, 43, 71, 101]
+
         unknown_reference = copy.deepcopy(self.freeze)
         unknown_reference["experiment"]["reference_model"] = "absent"
 
@@ -373,6 +396,8 @@ class FormalFreezeValidationTests(unittest.TestCase):
         for candidate, expected in (
             (duplicate_seed, "seeds contains duplicates"),
             (too_few_seeds, "at least five"),
+            (too_many_seeds, "exactly match the locked ordered"),
+            (reordered_seeds, "exactly match the locked ordered"),
             (unknown_reference, "selected in models"),
             (duplicate_holm, "duplicates"),
             (unknown_holm, "subset of models"),
@@ -380,6 +405,155 @@ class FormalFreezeValidationTests(unittest.TestCase):
         ):
             with self.subTest(expected=expected):
                 self._assert_rejected(candidate, expected)
+
+    def test_each_runner_ablation_constant_is_bound_to_the_contract(
+        self,
+    ) -> None:
+        source = RUNNER_PATH.read_text(encoding="utf-8")
+        mutations = (
+            (
+                "FORMAL_ABLATION_FAMILY_ID",
+                (
+                    'FORMAL_ABLATION_FAMILY_ID = '
+                    '"hard_macro_f1_ablation_family_v1"'
+                ),
+                (
+                    'FORMAL_ABLATION_FAMILY_ID = '
+                    '"hard_macro_f1_ablation_family_drift"'
+                ),
+            ),
+            (
+                "FORMAL_ABLATION_REGIME",
+                'FORMAL_ABLATION_REGIME = "hard_interference"',
+                'FORMAL_ABLATION_REGIME = "combined_ood"',
+            ),
+            (
+                "FORMAL_ABLATION_METRIC",
+                'FORMAL_ABLATION_METRIC = "macro_f1"',
+                'FORMAL_ABLATION_METRIC = "accuracy"',
+            ),
+            (
+                "FORMAL_ABLATION_DIRECTION",
+                (
+                    'FORMAL_ABLATION_DIRECTION = '
+                    '"candidate_minus_reference"'
+                ),
+                (
+                    'FORMAL_ABLATION_DIRECTION = '
+                    '"reference_minus_candidate"'
+                ),
+            ),
+            (
+                "FORMAL_ABLATION_CONFIDENCE_LEVEL",
+                "FORMAL_ABLATION_CONFIDENCE_LEVEL = 0.95",
+                "FORMAL_ABLATION_CONFIDENCE_LEVEL = 0.90",
+            ),
+            (
+                "FORMAL_ABLATION_MULTIPLICITY_METHOD",
+                (
+                    "FORMAL_ABLATION_MULTIPLICITY_METHOD = (\n"
+                    '    "joint_max_absolute_centered_deviation_"\n'
+                    '    "hierarchical_paired_bootstrap"\n'
+                    ")"
+                ),
+                (
+                    "FORMAL_ABLATION_MULTIPLICITY_METHOD = (\n"
+                    '    "pointwise_"\n'
+                    '    "hierarchical_paired_bootstrap"\n'
+                    ")"
+                ),
+            ),
+            (
+                "FORMAL_ABLATION_CONTRASTS",
+                (
+                    "FORMAL_ABLATION_CONTRASTS = (\n"
+                    "    {\n"
+                    '        "contrast_id": "teacher",'
+                ),
+                (
+                    "FORMAL_ABLATION_CONTRASTS = (\n"
+                    "    {\n"
+                    '        "contrast_id": "teacher_drift",'
+                ),
+            ),
+            (
+                "FORMAL_ABLATION_GATE_THRESHOLD",
+                "FORMAL_ABLATION_GATE_THRESHOLD = 0.0",
+                "FORMAL_ABLATION_GATE_THRESHOLD = -0.01",
+            ),
+            (
+                "FORMAL_ABLATION_ALGORITHM_SEEDS",
+                (
+                    "FORMAL_ABLATION_ALGORITHM_SEEDS = "
+                    "(17, 29, 43, 71, 101)"
+                ),
+                (
+                    "FORMAL_ABLATION_ALGORITHM_SEEDS = "
+                    "(17, 29, 43, 71, 103)"
+                ),
+            ),
+        )
+        for constant_name, old, new in mutations:
+            with self.subTest(constant_name=constant_name):
+                candidate = source.replace(old, new, 1)
+                self.assertNotEqual(candidate, source)
+                self._assert_runner_rejected(candidate, constant_name)
+
+    def test_ablation_direction_constant_is_used_without_shadowing(self) -> None:
+        source = RUNNER_PATH.read_text(encoding="utf-8")
+        constant_field = '"direction": FORMAL_ABLATION_DIRECTION,'
+        literal_field = '"direction": "candidate_minus_reference",'
+        self.assertEqual(source.count(constant_field), 2)
+
+        row_literal = source.replace(constant_field, literal_field, 1)
+        self._assert_runner_rejected(
+            row_literal,
+            "formal ablation row.direction",
+        )
+
+        constant_unused = source.replace(constant_field, literal_field)
+        self._assert_runner_rejected(
+            constant_unused,
+            "direction must load FORMAL_ABLATION_DIRECTION",
+        )
+
+        local_shadow = source.replace(
+            "    if tuple(seeds) != FORMAL_ABLATION_ALGORITHM_SEEDS:\n",
+            (
+                "    FORMAL_ABLATION_DIRECTION = "
+                '"candidate_minus_reference"\n'
+                "    if tuple(seeds) != "
+                "FORMAL_ABLATION_ALGORITHM_SEEDS:\n"
+            ),
+            1,
+        )
+        self.assertNotEqual(local_shadow, source)
+        self._assert_runner_rejected(
+            local_shadow,
+            "must not shadow audited constant FORMAL_ABLATION_DIRECTION",
+        )
+
+        module_redefinition = (
+            source
+            + "\nFORMAL_ABLATION_DIRECTION = "
+            + '"candidate_minus_reference"\n'
+        )
+        self._assert_runner_rejected(
+            module_redefinition,
+            "exactly one module-level binding for "
+            "FORMAL_ABLATION_DIRECTION",
+        )
+
+        seed_redefinition = (
+            source
+            + "\nFORMAL_ABLATION_ALGORITHM_SEEDS = "
+            + "(17, 29, 43, 71, 101)\n"
+        )
+        self._assert_runner_rejected(
+            seed_redefinition,
+            "exactly one module-level binding for "
+            "FORMAL_ABLATION_ALGORITHM_SEEDS",
+        )
 
     def test_training_statistics_and_promotion_values_are_gated(self) -> None:
         no_checkpoint = copy.deepcopy(self.freeze)
@@ -412,6 +586,107 @@ class FormalFreezeValidationTests(unittest.TestCase):
         ):
             with self.subTest(expected=expected):
                 self._assert_rejected(candidate, expected)
+
+    def test_simultaneous_ci_promotion_key_is_exactly_locked(self) -> None:
+        key = "hard_ablation_simultaneous_ci_gate_artifact_derived"
+
+        old_name = copy.deepcopy(self.freeze)
+        old_name["promotion_requirements"][
+            "hard_ablation_direction_gate_artifact_derived"
+        ] = old_name["promotion_requirements"].pop(key)
+
+        missing = copy.deepcopy(self.freeze)
+        missing["promotion_requirements"].pop(key)
+
+        extra = copy.deepcopy(self.freeze)
+        extra["promotion_requirements"]["unexpected_ablation_gate"] = True
+
+        for name, candidate in (
+            ("old_name", old_name),
+            ("missing", missing),
+            ("extra", extra),
+        ):
+            with self.subTest(name=name):
+                self._assert_rejected(
+                    candidate,
+                    "promotion_requirements keys drifted",
+                )
+
+    def test_hard_ablation_family_is_exactly_locked(self) -> None:
+        def mutate(
+            name: str,
+            operation,
+        ) -> tuple[str, dict[str, object]]:
+            candidate = copy.deepcopy(self.freeze)
+            family = candidate["experiment"]["scientific_release_gates"][
+                "hard_ablation_family"
+            ]
+            operation(family)
+            return name, candidate
+
+        mutations = (
+            mutate("missing_family_key", lambda family: family.pop("metric")),
+            mutate(
+                "extra_family_key",
+                lambda family: family.__setitem__("unexpected", "value"),
+            ),
+            mutate(
+                "missing_contrast_key",
+                lambda family: family["contrasts"][0].pop(
+                    "interpretation_scope"
+                ),
+            ),
+            mutate(
+                "extra_contrast_key",
+                lambda family: family["contrasts"][0].__setitem__(
+                    "unexpected", "value"
+                ),
+            ),
+            mutate(
+                "contrast_reordered",
+                lambda family: family["contrasts"].__setitem__(
+                    slice(0, 2),
+                    [
+                        family["contrasts"][1],
+                        family["contrasts"][0],
+                    ],
+                ),
+            ),
+            mutate(
+                "pair_drift",
+                lambda family: family["contrasts"][0].__setitem__(
+                    "reference", "a0_backbone"
+                ),
+            ),
+            mutate(
+                "intervention_drift",
+                lambda family: family["contrasts"][1].__setitem__(
+                    "intervention", "single_auxiliary"
+                ),
+            ),
+            mutate(
+                "scope_drift",
+                lambda family: family["contrasts"][4].__setitem__(
+                    "interpretation_scope", "route_count_attribution"
+                ),
+            ),
+            mutate(
+                "multiplicity_method_drift",
+                lambda family: family.__setitem__(
+                    "multiplicity_method", "uncorrected_marginal_bootstrap"
+                ),
+            ),
+            mutate(
+                "threshold_drift",
+                lambda family: family.__setitem__(
+                    "simultaneous_ci95_low_strictly_greater_than",
+                    -0.01,
+                ),
+            ),
+        )
+        for name, candidate in mutations:
+            with self.subTest(name=name):
+                self._assert_rejected(candidate, "hard_ablation_family")
 
     def test_recent_comparator_contract_is_frozen(self) -> None:
         unsafe_lock = copy.deepcopy(self.freeze)

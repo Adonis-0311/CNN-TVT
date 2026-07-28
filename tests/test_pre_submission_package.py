@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path, PurePosixPath
 import tempfile
 import unittest
+from unittest import mock
 import zipfile
 
 from tvt_submission import build_pre_submission_package as packager
@@ -16,6 +18,7 @@ class PreSubmissionPackageTest(unittest.TestCase):
     def test_collection_is_whitelisted_and_excludes_evidence_outputs(self) -> None:
         files = packager._collect()
         relative = [packager._safe_relative(path) for path in files]
+        self.assertIn("HANDOFF.md", relative)
         self.assertIn("paper/main.tex", relative)
         self.assertIn("paper/IEEEtran.cls", relative)
         self.assertIn("tvt_submission/run_local.ps1", relative)
@@ -31,6 +34,10 @@ class PreSubmissionPackageTest(unittest.TestCase):
     def test_manifest_is_explicitly_not_upload_ready(self) -> None:
         manifest = packager.build_manifest(packager._collect())
         self.assertEqual(manifest["schema_version"], packager.SCHEMA)
+        self.assertEqual(
+            manifest["source_snapshot_utc"],
+            packager.SOURCE_SNAPSHOT_UTC,
+        )
         self.assertFalse(manifest["upload_ready"])
         self.assertTrue(manifest["reason_not_upload_ready"])
         self.assertFalse(manifest["long_running_work_started_by_packager"])
@@ -46,6 +53,25 @@ class PreSubmissionPackageTest(unittest.TestCase):
         for record in records:
             self.assertRegex(record["sha256"], r"^[0-9a-f]{64}$")
             self.assertGreater(record["bytes"], 0)
+
+    def test_manifest_snapshot_does_not_consult_file_mtimes(self) -> None:
+        files = packager._collect()
+        baseline = packager.build_manifest(files)
+        original_stat = Path.stat
+
+        def shifted_stat(path: Path, *args, **kwargs):
+            observed = original_stat(path, *args, **kwargs)
+            fields = list(observed)
+            fields[8] = float(fields[8]) + 86_400.0
+            return os.stat_result(fields)
+
+        with mock.patch.object(
+            Path,
+            "stat",
+            new=shifted_stat,
+        ):
+            shifted = packager.build_manifest(files)
+        self.assertEqual(baseline, shifted)
 
     def test_archive_is_repeatable_and_paths_are_safe(self) -> None:
         files = packager._collect()
@@ -76,6 +102,7 @@ class PreSubmissionPackageTest(unittest.TestCase):
             with zipfile.ZipFile(output) as archive:
                 names = archive.namelist()
                 self.assertEqual(len(names), len(set(names)))
+                self.assertIn("TVT_VIMD_Net/HANDOFF.md", names)
                 for name in names:
                     token = PurePosixPath(name)
                     self.assertFalse(token.is_absolute())
