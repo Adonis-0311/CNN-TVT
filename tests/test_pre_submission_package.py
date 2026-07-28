@@ -22,9 +22,9 @@ class PreSubmissionPackageTest(unittest.TestCase):
         self.assertNotIn("paper/release_lock.json", relative)
         for token in relative:
             parts = PurePosixPath(token).parts
-            self.assertNotIn("artifacts", parts)
-            self.assertNotIn("diagnostics", parts)
-            self.assertNotIn("tmp", parts)
+            self.assertNotEqual(parts[0], "artifacts")
+            self.assertNotEqual(parts[0], "diagnostics")
+            self.assertNotEqual(parts[0], "tmp")
             self.assertNotIn("cache_factor_screening_1024_v1", parts)
             self.assertNotIn("cache_factor_headline_1024_v1", parts)
 

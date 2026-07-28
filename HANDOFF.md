@@ -151,6 +151,9 @@ Failure is a result, not permission to lower thresholds after test access.
 Full formal handoff:
 `tvt_submission/LOCAL_FORMAL_RUN_HANDOFF.md`
 
+Complete idle-machine queue and safety interlock:
+`tvt_submission/LOCAL_EXECUTION_QUEUE.md`
+
 Dry preflight only:
 
 ```powershell
@@ -209,4 +212,3 @@ and disclose the final text; this engineering draft must not be uploaded
 unchanged. Human authors must also verify every primary citation, authorship,
 affiliations, funding/conflicts, patent-publication timing, and the policy in
 force on the actual submission date.
-
