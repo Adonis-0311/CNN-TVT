@@ -1,0 +1,247 @@
+{
+  "schema": "vimd_amc.a17_final_s2_audits.v1",
+  "evidence_class": "exploratory_zero_compute_reanalysis_of_sealed_predictions",
+  "sources": {
+    "cells": "analysis_zero_compute/outputs/csv/a14_envelope_cells.csv",
+    "predictions": "artifacts/tvt_v4r_headline_composite/models",
+    "overlap": "standards/cache_factor_headline_1024_v2/<split>/overlap.npy",
+    "training_histories": "artifacts/tvt_v4r_headline_composite/models/*/result.json"
+  },
+  "covariate_ladder": {
+    "fit_cells": 32,
+    "held_cells": 80,
+    "references": {
+      "IQFormer": {
+        "rows": [
+          {
+            "reference": "IQFormer",
+            "model": "M0_constant",
+            "covariates": "intercept",
+            "held_rmse_pp": 8.368064220308472,
+            "r_squared_skill": 2.220446049250313e-16,
+            "fit_domain_constant_rmse_pp": 8.368064220308474
+          },
+          {
+            "reference": "IQFormer",
+            "model": "M1_sir_only",
+            "covariates": "sir_db",
+            "held_rmse_pp": 6.83893711674267,
+            "r_squared_skill": 0.33207574932386386,
+            "fit_domain_constant_rmse_pp": 8.368064220308474
+          },
+          {
+            "reference": "IQFormer",
+            "model": "M2_overlap_only",
+            "covariates": "occupancy_mean",
+            "held_rmse_pp": 7.461898267934167,
+            "r_squared_skill": 0.20485077767082616,
+            "fit_domain_constant_rmse_pp": 8.368064220308474
+          },
+          {
+            "reference": "IQFormer",
+            "model": "M3_overlap_sir",
+            "covariates": "occupancy_mean+sir_db",
+            "held_rmse_pp": 6.230341912558914,
+            "r_squared_skill": 0.44566314625239034,
+            "fit_domain_constant_rmse_pp": 8.368064220308474
+          },
+          {
+            "reference": "IQFormer",
+            "model": "M4_overlap_sir_snr",
+            "covariates": "occupancy_mean+sir_db+snr_db_mean",
+            "held_rmse_pp": 6.153186480539117,
+            "r_squared_skill": 0.45930774920618256,
+            "fit_domain_constant_rmse_pp": 8.368064220308474
+          }
+        ],
+        "incremental_rmse_reduction_pp": {
+          "overlap_given_sir": 0.6085952041837563,
+          "sir_given_overlap": 1.231556355375253,
+          "snr_given_overlap_sir": 0.07715543201979713
+        }
+      },
+      "MCLDNN": {
+        "rows": [
+          {
+            "reference": "MCLDNN",
+            "model": "M0_constant",
+            "covariates": "intercept",
+            "held_rmse_pp": 9.634736423162217,
+            "r_squared_skill": 2.220446049250313e-16,
+            "fit_domain_constant_rmse_pp": 9.634736423162218
+          },
+          {
+            "reference": "MCLDNN",
+            "model": "M1_sir_only",
+            "covariates": "sir_db",
+            "held_rmse_pp": 8.707243546295679,
+            "r_squared_skill": 0.18326398309838898,
+            "fit_domain_constant_rmse_pp": 9.634736423162218
+          },
+          {
+            "reference": "MCLDNN",
+            "model": "M2_overlap_only",
+            "covariates": "occupancy_mean",
+            "held_rmse_pp": 8.67829329823085,
+            "r_squared_skill": 0.18868599814858644,
+            "fit_domain_constant_rmse_pp": 9.634736423162218
+          },
+          {
+            "reference": "MCLDNN",
+            "model": "M3_overlap_sir",
+            "covariates": "occupancy_mean+sir_db",
+            "held_rmse_pp": 8.101174991763637,
+            "r_squared_skill": 0.29300498701219857,
+            "fit_domain_constant_rmse_pp": 9.634736423162218
+          },
+          {
+            "reference": "MCLDNN",
+            "model": "M4_overlap_sir_snr",
+            "covariates": "occupancy_mean+sir_db+snr_db_mean",
+            "held_rmse_pp": 8.050365324201715,
+            "r_squared_skill": 0.30184556425009723,
+            "fit_domain_constant_rmse_pp": 9.634736423162218
+          }
+        ],
+        "incremental_rmse_reduction_pp": {
+          "overlap_given_sir": 0.6060685545320421,
+          "sir_given_overlap": 0.577118306467213,
+          "snr_given_overlap_sir": 0.0508096675619214
+        }
+      }
+    }
+  },
+  "held_cell_reconstruction": {
+    "held_cells": 80
+  },
+  "selector_evaluation": {
+    "held_cells": 80,
+    "macs_million": {
+      "A5": 41.8,
+      "IQFormer": 355.6
+    },
+    "oracle_cell_mean_macro_f1": 0.590749641485139,
+    "note": "sign selectors use envelope coefficients fitted only on the 32 fitting cells; the oracle is hindsight and not achievable"
+  },
+  "convergence_audit": {
+    "epoch_budget": 30,
+    "seeds": [
+      17,
+      29,
+      43,
+      71,
+      101,
+      131,
+      173,
+      211,
+      257,
+      307
+    ],
+    "per_model": {
+      "MCLDNN": {
+        "selected_epochs": [
+          11,
+          14,
+          12,
+          13,
+          16,
+          11,
+          13,
+          13,
+          12,
+          15
+        ],
+        "epochs_completed": [
+          19,
+          22,
+          20,
+          21,
+          24,
+          19,
+          21,
+          21,
+          20,
+          23
+        ]
+      },
+      "IQFormer": {
+        "selected_epochs": [
+          24,
+          24,
+          28,
+          29,
+          30,
+          27,
+          27,
+          27,
+          27,
+          29
+        ],
+        "epochs_completed": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ]
+      },
+      "CSSL": {
+        "selected_epochs": [
+          26,
+          26,
+          29,
+          29,
+          29,
+          26,
+          29,
+          26,
+          30,
+          29
+        ],
+        "epochs_completed": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ]
+      },
+      "A5-VIMD": {
+        "selected_epochs": [
+          27,
+          30,
+          30,
+          30,
+          29,
+          30,
+          30,
+          28,
+          29,
+          28
+        ],
+        "epochs_completed": [
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30,
+          30
+        ]
+      }
+    }
+  }
+}

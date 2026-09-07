@@ -1,0 +1,2 @@
+tp,fp,fn,tn,recall,precision,specificity,positive_cells,selected_cells
+3,2,0,75,1.0,0.6,0.974025974025974,3,5

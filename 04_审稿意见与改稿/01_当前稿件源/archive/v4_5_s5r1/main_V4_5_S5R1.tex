@@ -1,0 +1,986 @@
+% =====================================================================
+% TVT submission candidate, manuscript version V4.5 S5R1 (2026-08-20).
+% Self-contained: this manuscript relies on no supplementary document for its
+% claims; it points to the optional standalone supplement for audit-level
+% tables (covariate ladder, selector, convergence, sidecar structure).
+% =====================================================================
+\documentclass[letterpaper,journal]{IEEEtran}
+
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{cite}
+\usepackage[hidelinks]{hyperref}
+
+\newif\ifinternalreview
+\internalreviewtrue
+
+\input{results_auto.tex}
+
+\ifinternalreview\else
+  \ifdefined\EligibleLockedResults\else
+    \PackageError{VIMD-Net evidence lock}
+      {Public build requires \string\EligibleLockedResults\space from an eligible locked run}
+      {Regenerate results_auto.tex from the frozen evidence pipeline before submission.}
+  \fi
+\fi
+
+% All empirical values are generated from artifact-backed CSV/JSON files.
+\input{../paper_data_layer/outputs/paper_macros.tex}
+% Audit-verified constants (envelope skill scores, sidecar complexity, etc.).
+\input{v1_audit_macros.tex}
+\input{v41_envelope_macros.tex}
+
+\newcommand{\method}{VIMD-Net}
+\newcommand{\pp}{percentage points}
+\newcommand{\STFT}{\operatorname{STFT}}
+\newcommand{\softmax}{\operatorname{softmax}}
+
+\definecolor{statusred}{RGB}{168,35,35}
+
+\title{A Condition-Indexed Operating Envelope and Representation-Repair Study
+for Automatic Modulation Classification under Structured Interference}
+
+\author{Anonymous Author(s)}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Uniform model rankings hide a central design question in automatic modulation
+classification (AMC): under structured interference, the ranking of a compact
+spectral representation and a much larger I/Q-domain classifier can itself
+depend on physical conditions. We study this rank exchange in source-disjoint
+3GPP TR~38.901 TDL-profile simulations, comparing \method, a
+\ParamsAFive-parameter spectral network, with strong I/Q-domain comparators
+across the complete SNR--SIR plane. The sealed confirmatory family resolves a
+positive whole-configuration contrast of \MethodEffectDiff\ \pp\
+($[\MethodEffectSimLow,\MethodEffectSimHigh]$ \pp) over its shared spectral
+backbone, while the two component-level
+interventions are bounded rather than individually resolved. Marginally over
+the hard-interference split the compact model trails both I/Q comparators
+(macro-F1 \AbsAFiveHard\ versus \AbsMCLDNNHard\ and \AbsIQFormerHard), but the
+ranking reverses in the campaign's severe corner, where A5 gains
+\SevereGainMcldnn\ \pp\ over MCLDNN and \SevereGainIqformer\ \pp\ over
+IQFormer-inspired; an independently generated severe held set reproduces
+neither this advantage nor the envelope's transport. A two-variable overlap--SIR envelope, fitted on
+in-distribution and hard-interference cells only, predicts the held-regime
+gain against IQFormer-inspired with RMSE \EnvelopeIqformerHoldoutRmse\ \pp\
+versus \EnvelopeConstantRmseIQ\ \pp\ for a fit-domain constant
+($R^2_{\mathrm{skill}}=\EnvelopeSkillRTwoIQ$). A failed clean-retention gate
+is localized by frozen probes and narrowed by a received-I/Q sidecar that
+raises clean macro-F1 by \SidecarCleanVsAFiveDiff\ \pp\ and lifts the same
+independent severe held set by \SevereRepairDiff\ \pp; these Tier-2 and
+post-campaign results are exploratory and outside the sealed family. The
+paper reports a simulation-only operating envelope and a representation-
+repair path, not uniform superiority.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Automatic modulation classification, structured interference, interference
+overlap, vehicular Doppler, operating envelope, condition-dependent model
+comparison, representation repair, compact neural networks.
+\end{IEEEkeywords}
+
+\begin{center}
+\fcolorbox{statusred}{red!4}{%
+\parbox{0.94\columnwidth}{\footnotesize\textbf{Evidence status.}
+The original sealed family resolves one positive whole-configuration contrast
+(A5 vs A0), while two component contrasts and the clean-retention gate do not
+pass. Severe-interference, envelope, and Tier-2 repair results are
+exploratory or post-hoc; all conclusions are restricted to source-disjoint
+simulation.}}
+\end{center}
+
+\section{Introduction}
+\IEEEPARstart{A}{utomatic} modulation classification supports spectrum
+monitoring and blind receiver configuration by inferring a waveform's
+modulation from received samples. Deep AMC has progressed from convolutional
+I/Q classifiers \cite{oshea2016cnn,meng2018amc} to complex-valued,
+multi-stream, recurrent, and Transformer-like representations
+\cite{tu2020complex,zhang2020dual,xu2020mcldnn,cai2022transformer,
+shao2025iqformer}. Compact architectures remain attractive when inference cost
+matters \cite{wang2020lightamc,efficientamc2026tgcn}, but average accuracy
+alone does not say where a compact representation is preferable.
+
+This omission is consequential in mobile and vehicular receivers. A
+high-mobility terminal facing structured interference must decide on a limited
+compute budget whether to run a compact spectral front end or a high-capacity
+I/Q path; the same model can trail the high-capacity I/Q classifier in weak or
+narrowband interference yet lead it in a severe corner where the interference
+overlaps the target's own time--frequency support. Averaging these regimes
+produces a ranking but erases the design rule.
+
+This paper asks a narrower question: \emph{can the sign and size of the
+compact-model advantage be indexed by physical condition variables, and can the
+boundary revealed by that index be repaired?} We answer using a frozen
+source-disjoint simulation campaign, artifact-only post-hoc analysis, and
+prospective Tier-2 experiments. The base model, \method, maps a complex STFT to
+target-dominant, jammer-dominant, and unexplained-or-ambiguous routes; its
+supervision is physics-informed in the sense that a simulation-component
+teacher, available only during training, is derived from independently tracked
+target, jammer, and residual components. We do not claim that a specific
+routing or teacher component is individually confirmed (Section~V-A); the
+contribution is the boundary and its repair, not the architecture itself.
+
+The contributions are:
+\begin{itemize}
+  \item a condition-indexed rank exchange, exposed over the complete
+  structured-interference SNR--SIR plane, between a compact spectral model and
+  stronger I/Q-domain classifiers, instead of a single marginal ranking;
+  \item a low-dimensional target-support-overlap--SIR empirical envelope whose cross-regime
+  gain-transport skill is evaluated on regime cells excluded from fitting,
+  against an explicit fit-domain constant baseline and with a bounded,
+  non-causal interpretation;
+  \item a separation of the original sealed whole-configuration contrast from
+  post-hoc severe-interference evidence, using paired statistics, multiplicity
+  control, and full-region visualization so a favorable corner is not read as
+  uniform superiority; and
+  \item a prospective diagnosis-and-repair chain that turns a failed
+  clean-retention gate into a representation-information finding: a
+  received-I/Q sidecar substantially narrows the clean failure while a
+  spectral capacity ladder shows that width alone does not remove the
+  boundary.
+\end{itemize}
+
+The claim is deliberately not that \method\ is uniformly best. It is that the
+compact and high-capacity representations exchange rank in a reproducible,
+condition-dependent way, that physical covariates can describe this boundary,
+and that, for its principal clean boundary, the evidence is more consistent
+with a repairable representation-information gap than with insufficient clean
+exposure alone.
+
+\section{Related Work and Claim Boundary}
+\subsection{Strong and Efficient AMC Representations}
+CNN and recurrent AMC systems learn directly from I/Q sequences
+\cite{oshea2016cnn,meng2018amc,xu2020mcldnn}; later work preserves complex
+structure, fuses temporal and spatial streams, or applies attention
+\cite{tu2020complex,zhang2020dual,cai2022transformer,shao2025iqformer}.
+Vehicular and mobile receivers have motivated reparameterized causal
+convolutions, cross-scale kernel selection with IQ-imbalance and
+carrier-offset compensation, and channel-robust cumulant
+features \cite{tang2024repccnet,ren2024crosssknet,huang2024csqcc}. Compact and
+efficient AMC has received sustained attention for cost-sensitive deployment
+\cite{wang2020lightamc,efficientamc2026tgcn}. These lines of work
+motivate strong I/Q-domain comparators and prevent us from presenting a
+lightweight architecture or a fusion scheme as the primary novelty.
+
+\subsection{Robust, Cross-Domain, and Interference-Aware AMC}
+Channel adaptation, masked or contrastive learning, and interference-tolerant
+features address different nuisance sources
+\cite{wang2024sigda,xiao2024mclhn,du2025contrastive,sun2025mfenet}, while
+overlapped-signal classification, denoising masked autoencoding, and
+cross-domain prototypical adaptation populate the 2024--2026 frontier
+\cite{jajoo2024overlapped,faysal2026denomae,li2026cgpcda}. Interference-tolerant
+recognition \cite{sun2025mfenet} and tensor-based malicious-interference
+recognition for MIMO \cite{zhang2026malicious} address structured interference
+directly. Our setting differs: we neither reconstruct sources nor seek universal
+interference robustness; we study how the \emph{ranking} of compact spectral versus
+high-capacity I/Q models changes with the interference condition itself.
+
+\subsection{Distinction: Condition-Indexed Ranking and Repair}
+Knowledge-guided and multimodal preprints continue these directions
+\cite{dkdnet2026preprint,moeformer2026preprint,zoomspec2026preprint,
+rismae2025preprint}. Our contribution is not another average-dominance claim:
+we model the condition dependence of the ranking itself, fit a
+low-dimensional boundary to that rank exchange, expose the negative regions,
+and prospectively intervene on the revealed boundary---a positioning claim,
+not an exhaustive systematic review.
+
+\section{System Model and VIMD Configuration}
+\subsection{Mobile Received Signal and Paired Views}
+We model a receiver-side AMC front end under terrestrial high-mobility
+conditions. For source sequence $s[n]$ and jammer $u[n]$, one received window is
+\begin{equation}
+x[n]=\mathcal{R}\!\left(\mathcal{H}_s(s)[n]
++\kappa\mathcal{H}_u(u)[n]+w[n]\right),
+\label{eq:rx}
+\end{equation}
+where $\mathcal{H}_s$ and $\mathcal{H}_u$ are independently drawn fading and
+mobility operators (parameterized by carrier frequency, terminal speed, and
+3GPP TR~38.901 \cite{3gpp38901} TDL-A/C/D profiles during training, with
+TDL-B/E held out for channel evaluation), $\kappa$ scales the jammer
+contribution so that the realized SIR, defined as
+$10\log_{10}\!\left(E[|\mathcal{H}_s(s)|^2]/E[|\kappa\mathcal{H}_u(u)|^2]\right)$
+on the simulator's tracked powers, matches the target value, $w$ is
+receiver noise, and $\mathcal{R}$ applies the frozen receiver chain. The
+carrier frequency is $f_c=\CarrierGHz$ GHz, representative of
+intelligent-transport-system (ITS) and vehicle-to-everything (V2X) operation
+\cite{3gpp37885}, and the complex baseband
+sampling rate is \SampleRateMHz\ MHz. Terminal speeds seen during training are
+\SeenSpeeds\ km/h, giving a maximum nominal Doppler shift of about
+\MaxDopplerSeenHz\ Hz; the held-speed split uses \HeldSpeeds\ km/h, i.e.\ up to
+about \MaxDopplerHeldHz\ Hz, so speed and TDL profile are held out along
+separate axes. The held-speed split probes deeper intra-window
+non-stationarity: $T_c\approx0.423/f_D$ falls to about 0.31 ms at 250 km/h,
+below the \WindowMicroseconds\,$\mu$s decision window.
+
+Training pairs two
+independently impaired observations of the same immutable source; inference
+uses one view, so pairing is a training and statistical-alignment device,
+not additional test-time information.
+
+Unanchored in-taxonomy cochannel collisions are excluded: without a physical
+target anchor, swapping two admissible emitters can preserve the mixture
+while changing the requested label.
+
+\subsection{Three-Route Spectral Allocation}
+Let $Z=\STFT(x)\in\mathbb{C}^{F\times T}$. The front end receives real,
+imaginary, and log-magnitude planes and produces logits $A_s,A_j,A_o$ on the
+same lattice. The allocation masks are
+\begin{equation}
+\begin{aligned}
+\relax[M_s,M_j,M_o]&=\softmax([A_s,A_j,A_o]),\\
+M_s+M_j+M_o&=1.
+\end{aligned}
+\end{equation}
+An environment encoder produces a scalar ambiguous-route gate $\lambda$ and a
+bounded bypass $\rho$. The modulation and jammer routes are
+\begin{align}
+Z_m&=(M_s+\lambda M_o+\rho)\odot Z,\\
+Z_j&=(M_j+(1-\lambda)M_o)\odot Z.
+\end{align}
+Because these weights are real and nonnegative, every retained coefficient
+keeps the mixture STFT phase. The bounded bypass $\rho$ is a per-window scalar
+in the frozen range $[0.05,0.35]$. It is added only to the modulation route;
+therefore the retained route weights remain nonnegative but sum to $1+\rho$
+rather than one, and the allocation is no longer an exact partition of the
+mixture power, i.e.\ $Z_m+Z_j\neq Z$ in general. This is the ratio-masking
+construction familiar
+from supervised source separation \cite{narayanan2013irm,wang2014targets,
+erdogan2015psm,williamson2016cirm}; the elementary phase-preservation
+property does not imply source identifiability.
+
+\subsection{Simulation-Component Teacher}
+During training only, independently tracked post-channel target, jammer, and
+residual components define powers $P_s,P_j,P_u$ on the student's lattice. With
+$q_k=P_k/(P_s+P_j+P_u)$, the fixed teacher is
+\begin{align}
+M_s^\star&=[q_s-q_j]_+, & M_j^\star&=[q_j-q_s]_+,\\
+M_o^\star&=q_u+2\min(q_s,q_j).
+\label{eq:teacher}
+\end{align}
+The routes are nonnegative and sum to one; negligible-energy cells are assigned
+to the uncertainty route by the finite-precision implementation. We call this
+construction \emph{physics-informed} because the supervision uses
+simulator-tracked components; it does not imply that the margin teacher or the
+three-route allocation is individually confirmed (Section~V-A). The teacher is
+not needed at inference.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/physical_teacher_example.pdf}
+\caption{A deterministic cache record and the fixed simulation-component
+teacher of Eqs.~(5)--(6). Top row: received mixture, tracked target,
+tracked jammer, and noise-plus-artifact spectrograms; bottom row: the
+target-dominant, jammer-dominant, and uncertainty route masks. The teacher is
+a training-only construction from simulator-tracked components; it is
+unavailable at inference and is not performance evidence.}
+\label{fig:teacher}
+\end{figure*}
+
+\subsection{Training Objective}
+The total loss is
+\begin{equation}
+\begin{split}
+\mathcal{L}&=\mathcal{L}_{\mathrm{mod}}+\alpha\mathcal{L}_{\mathrm{teacher}}
++\beta\mathcal{L}_{\mathrm{jammer}}+\gamma\mathcal{L}_{\mathrm{link}}\\
+&\quad+\eta\mathcal{L}_{\mathrm{contrast}}+\theta\mathcal{L}_{\mathrm{orth}},
+\end{split}
+\end{equation}
+where $\mathcal{L}_{\mathrm{mod}}$ is the modulation classification loss,
+$\mathcal{L}_{\mathrm{teacher}}$ is a Jensen--Shannon \cite{lin1991js}
+alignment between student and teacher masks, $\mathcal{L}_{\mathrm{jammer}}$ and $\mathcal{L}_{\mathrm{link}}$
+constrain the jammer-family and link-quality auxiliary objectives,
+$\mathcal{L}_{\mathrm{contrast}}$ is a supervised-contrastive loss
+\cite{khosla2020supcon} over exact-source positives that encourages condition
+invariance, $\mathcal{L}_{\mathrm{orth}}$ is a route-orthogonality regularizer,
+and $\alpha,\beta,\gamma,\eta,\theta$ are
+nonnegative weights. The exact-source contrastive loss is an auxiliary
+training objective, not a headline contribution.
+
+\subsection{Information Contract and Complexity}
+At inference every model receives only the mixture; simulator-tracked target,
+jammer, and SIR quantities are training-only or post-hoc audit variables.
+\method\ uses \ParamsAFive\ parameters and \MacsAFive\ million reported MACs.
+
+\subsection{Implementation Details}
+\label{sec:impl}
+Unless otherwise stated, all models share the same source-disjoint cache, data
+budget, optimization budget, stopping rule, and validation-only selection
+criterion; model-specific components follow each variant's predefined
+configuration.
+
+\emph{Input and front end.} One example is a complex baseband window of
+\WindowSamples\ samples ($\WindowMicroseconds$ $\mu$s at \SampleRateMHz\ MHz,
+\SamplesPerSymbol\ samples per symbol, root-raised-cosine roll-off
+\RrcRolloff), power-normalized by the frozen receiver automatic gain control. The spectral
+front end
+applies a two-sided STFT with $N_{\mathrm{FFT}}=\NFft$, hop \HopLength, a
+periodic Hann window of length \NFft, and no centering or zero padding, giving
+a \StftBins$\times$\StftFrames\ time--frequency lattice at \StftBinHz\ kHz per
+bin. The student and the fixed teacher share this lattice exactly.
+
+\emph{Architecture width.} The sealed configuration uses \SpectralChannels\
+spectral channels, embedding dimension \EmbeddingDim, environment dimension
+\EnvironmentDim, and dropout \DropoutRate, for \ParamsAFive\ parameters. The
+prospective capacity ladder widens only these three numbers: the M tier uses
+(\CapacityMSpectral, \CapacityMEmbedding, $48$) and the L tier
+(\CapacityLSpectral, \CapacityLEmbedding, $64$).
+
+\emph{Optimization and model selection.} All fits use AdamW with an initial
+learning rate of $\TrainLR$, weight decay $\TrainWeightDecay$, batch size
+\TrainBatch, mixed precision, gradient-norm clipping at \GradClip, and a shared
+\TrainEpochs-epoch budget. Auxiliary losses follow a fixed staged schedule, and
+the learning rate decays on a cosine to a floor of $0.05$ times its initial
+value once the staged schedule is complete. The reported checkpoint is chosen solely by validation
+modulation cross-entropy under a common eligibility window and
+\TrainPatience-epoch early-stopping rule. Optimizer settings, schedule, and
+selection rule are identical for every model; no comparator received an
+architecture-specific sweep, and validation data are never used for evaluation.
+
+\emph{Loss weights.} In~(7), $\alpha=\LossAlpha$, $\beta=\LossBeta$,
+$\gamma=\LossGamma$, $\eta=\LossEta$, and $\theta=\LossOrtho$, with label
+smoothing \LabelSmoothing\ and contrastive temperature \ContrastTemp. The
+route-orthogonality regularizer is part of the A5 bundle but not isolated.
+
+\emph{Seeds.} The sealed campaign uses \ProtocolSeedCount\ algorithm seeds
+shared across all models, with seed-aligned initialization; matched-subset
+displays use the first five. Exact schedules, seed identifiers, teacher construction,
+and cache provenance are recorded in the reproduction package.
+Fig.~\ref{fig:teacher} is a method illustration, not performance evidence.
+
+\section{Evidence Protocol}
+\subsection{Frozen Source-Disjoint Campaign}
+The artifact-locked campaign contains \ProtocolModelCount\ model variants,
+\ProtocolSeedCount\ algorithm seeds, \ProtocolFitCount\ fits,
+\ProtocolSplitCount\ evaluation splits, and \ProtocolTrainSources\ training
+source sequences. Target classes are BPSK, PI/2-BPSK, QPSK, 8PSK, 16QAM, 64QAM, 256QAM, GMSK,
+CPFSK, and 4FSK, covering PSK, QAM, continuous-phase, and FSK families.
+Structured jammer families span tone, multitone, chirp, sweep, partial-band,
+pulse, comb, and out-of-taxonomy (cochannel and OFDM-like) modulated sources. TDL-A/C/D
+profiles are seen during training, while TDL-B/E profiles support held-channel
+evaluation. The evaluation grid spans \SnrGridCount\ SNR levels from
+$\SnrGridLow$ to $\SnrGridHigh$ dB. The in-distribution split uses SIR levels
+$-10$ to $10$ dB in $5$ dB steps, whereas the hard-interference split spans
+SIR $\in\{-15,-10,-5,0\}$ dB, so SIR $=-15$ dB occurs only in the
+hard-interference split and SIR $=+5$ and $+10$ dB only in the in-distribution
+split. Each hard-interference SNR--SIR evaluation cell of
+Fig.~\ref{fig:operating-map} contains 131--181 source-disjoint test windows
+(mean 156; all ten classes, 5--26 per class), read from the frozen prediction
+cache. The envelope aggregates of Section~V-C use a coarser partition of the
+same predictions (216--279 source-disjoint windows per held cell, mean 250). The fit-domain division
+(in-distribution plus hard-interference cells) is fixed in the exploratory
+analysis protocol before any envelope is fitted. Jammer family, speed, channel, combined OOD, receiver stress, and
+clean-retention splits share source identities across model comparisons. The
+receiver-stress split (ADC quantization and per-emitter synchronization) is
+retained in the artifact package but does not enter any sealed, envelope, or
+reported model-selection claim.
+
+\subsection{Comparator Fairness}
+Table~\ref{tab:baselines} summarizes the comparators. All models are retrained
+under the same source-disjoint protocol; ``IQFormer-inspired'' and
+``MCLDNN'' denote architecture-faithful unified-retraining references, not
+exact reproductions of every original training recipe. Comparator fairness is
+enforced at the budget rather than at the tuning level: every model sees the
+same training source count, the same epoch budget, the same early-stopping
+patience and checkpoint criterion, and the same validation protocol. CSSL is
+retained as an adaptation-oriented reference rather than a tuned upper bound;
+its 8.63 million parameters but only 155.3 million MACs reflect aggressive
+encoder downsampling and a large projection head, so parameter count alone is
+a poor cost proxy for this comparator. Figures label this comparator
+``IQFormer-insp.''; ``A5''
+and ``\method'' denote the same sealed configuration, and ``CSSL'' abbreviates
+the contrastive self-supervised learning reference of
+\cite{du2025contrastive}, whose released code snapshot \cite{du2025csslcode} we
+retrain under our protocol. Because this campaign retrains CSSL under the
+common supervised budget without executing the released self-supervised
+pretraining stage, it is reported as a supervised adaptation reference rather
+than a reproduction of the full released recipe.
+
+\begin{table}[t]
+\centering
+\caption{Comparator and Complexity Summary (Hard-Interference Setting).}
+\label{tab:baselines}
+\footnotesize
+\setlength{\tabcolsep}{2.6pt}
+\begin{tabular}{lcccc}
+\toprule
+Model & Domain & Params & MACs & Seeds\\
+\midrule
+A0 & spectral & \ParamsAZero & \MacsAZero\,M & 10\\
+A5 / \method & spectral allocation & \ParamsAFive & \MacsAFive\,M & 10\\
+sidecar & spectral + received I/Q & \SidecarParameters & \SidecarMacsTotal\,M & 10\\
+MCLDNN & I/Q & \ParamsMCLDNN & \MacsMCLDNN\,M & 10\\
+IQFormer-inspired & multimodal I/Q & \ParamsIQFormer & \MacsIQFormer\,M & 10\\
+CSSL & I/Q (adaptation) & \ParamsCSSL & \MacsCSSL\,M & 10\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% E1 numbers from artifacts/rml2016_10a_fidelity_v3/metrics.csv (three seeds,
+% 17/29/43; per-stratum 80/20 then 75/25 train_test_split(random_state=233) =
+% 600/200/200; all-SNR test accuracy over the 20-SNR grid). Published
+% reference: official IQFormer benchmark result table testA.xlsx
+% (paper_data_layer/outputs/e1_reference.json; MCLDNN 62.05%, IQFormer 64.19%).
+As a public-benchmark comparator-fidelity check, the MCLDNN and IQFormer
+implementations were additionally evaluated on the public RML2016.10a benchmark
+\cite{oshea2016cnn} under the protocol of the official benchmark result table
+of the IQFormer release \cite{shao2025iqformercode}: the 11-class set, the
+full $-20$ to $18$ dB SNR grid, per-stratum $600/200/200$ splits seeded at
+$233$, no augmentation or input-length change. Over three algorithm seeds,
+all-SNR test accuracy is $58.55\%$ for MCLDNN (seed range
+$58.1$--$59.4\%$) and $65.23\%$ for IQFormer-inspired ($64.8$--$65.8\%$;
+seed ranges, not confidence intervals); the reference-release values,
+averaged over the same twenty SNR bins, are $62.05\%$ and $64.19\%$.
+IQFormer-inspired therefore closely matches the
+reference-release all-SNR accuracy ($+1.04$~pp), whereas MCLDNN remains
+moderately lower ($-3.50$~pp) while staying in the same
+broad all-SNR range. Per-SNR deviations of up to about $8$~pp remain, so E1 is
+range-level comparator-implementation fidelity, not pointwise reproduction nor
+evidence for the simulator-domain envelope.
+
+\subsection{Original Sealed Confirmatory Family}
+The sealed family contains three hard-interference contrasts: the complete
+configuration versus A0, the margin teacher versus a proportional-power
+teacher, and the tri-route model versus a dual-route control. A5 differs from
+A0 in allocation, teacher, auxiliary objectives, residual bypass, and capacity
+(about $4.7\times$ parameters), so A5--A0 is a whole-configuration effect.
+
+\subsection{Exploratory and Tier-2 Evidence Classes}
+All SIR-cell, overlap, fusion, condition-transfer, probe, repair, and
+capacity analyses are exploratory. In particular, the severe SIR
+stratification is post hoc. Tier-2 experiments were designed after inspecting
+the frozen evidence and are outside the frozen confirmatory family; they cannot
+retroactively change a sealed conclusion. The clean-retention gate was
+preregistered separately and did not pass; clean behavior is therefore treated
+as a boundary to explain and repair, not as a preserved property of the sealed
+model.
+
+\subsection{Statistical Procedures}
+The sealed family uses a joint non-studentized max-absolute-deviation
+hierarchical paired bootstrap with \ProtocolBootstrapDraws\ draws, resampling
+class-stratified source clusters while keeping algorithm seeds as fixed
+blocks, so pairing is preserved at the source level. The design resolution of
+\DesignResolution\ \pp\ is the simultaneous minimum detectable effect at 80\%
+power under this joint interval, an exploratory calibration rather than a
+sealed significance threshold. Because seeds are fixed blocks, the reported
+intervals are conditional on the realized seed set; a seed-randomization
+variant resampling the ten realized seeds with replacement keeps the A5--A0
+contrast positive (95\% percentile interval
+$[\SeedRandomEffectLow,\SeedRandomEffectHigh]$ \pp) while the teacher-form and
+route-count contrasts span zero
+($[\SeedRandomTeacherLow,\SeedRandomTeacherHigh]$ and
+$[\SeedRandomRouteLow,\SeedRandomRouteHigh]$ \pp). In the severe corner, all
+\SevereGainIqformerPositiveSeeds\ seeds share the same sign; the sign-flip
+permutation probability \SevereGainIqformerSignFlipP\ is a permutation test
+over the source-paired samples. The SIR $=-15$ dB aggregate is computed from
+source-paired predictions pooled across the eight SNR conditions before
+macro-F1 aggregation; it is therefore not the arithmetic mean of the eight
+displayed cell-level differences in Fig.~\ref{fig:operating-map}.
+
+\section{Results}
+\subsection{Positive Sealed Whole-Configuration Contrast and Bounded
+Component Effects}
+Table~\ref{tab:confirmatory} reports the complete sealed family. The complete
+configuration improves over its shared A0 backbone by \MethodEffectDiff\ \pp,
+with a simultaneous interval of
+$[\MethodEffectSimLow,\MethodEffectSimHigh]$ \pp, about 3.5 times
+the design resolution of \DesignResolution\ \pp. The teacher-form and
+route-count interventions do not clear zero individually; under the same joint
+interval their simultaneous upper bounds are $\TeacherFormSimHigh$ and
+$\TriRouteSimHigh$ \pp, respectively.
+Thus the configuration-level effect is resolved but cannot be assigned to
+either isolated component at this resolution, and because the family rule
+required all three contrasts, the family gate did not pass. Because the
+A5--A0 interval is part of the same simultaneous family-wise band, its
+positive whole-configuration contrast remains a valid family-wise-controlled
+result even though the prespecified joint family gate does not pass. At the same
+parameter tier, the residual-free A7 variant is nominally above A5 by
+\ASevenVsAFiveHardDiff\ \pp\ in the marginal hard-interference aggregate
+(Fig.~\ref{fig:pareto}); treating the ten realized seeds as a random effect
+gives a 95\% percentile interval of
+$[\ASevenVsAFiveSeedLow,\ASevenVsAFiveSeedHigh]$ \pp, so the difference is not
+resolved at this design's power; we therefore attribute the compact frontier
+position to the VIMD family at this budget, not uniquely to any single
+component.
+
+\begin{table}[t]
+\centering
+\caption{Sealed Confirmatory Hard-Interference Family. Differences Are
+Candidate Minus Reference in Macro-F1 Percentage Points.}
+\label{tab:confirmatory}
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\begin{tabular}{lrrr}
+\toprule
+Contrast & Diff. & Sim. low & Sim. high\\
+\midrule
+Full configuration vs A0 & $\MethodEffectDiff$ & $\MethodEffectSimLow$ & $\MethodEffectSimHigh$\\
+Margin vs proportional teacher & $\TeacherFormDiff$ & $\TeacherFormSimLow$ & $\TeacherFormSimHigh$\\
+Tri-route vs dual-route & $\TriRouteDiff$ & $\TriRouteSimLow$ & $\TriRouteSimHigh$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Rank Exchange across the SNR--SIR Plane}
+Marginal hard-interference macro-F1 is \AbsAFiveHard\ for A5,
+\AbsMCLDNNHard\ for MCLDNN, and \AbsIQFormerHard\ for IQFormer-inspired. Those
+averages favor the larger models, but Fig.~\ref{fig:operating-map} shows why no
+single ranking is adequate: rank changes with SNR and SIR, with A5 reversing
+the marginal ranking under severe interference; the overlap analysis in
+Section~V-C further shows that the required overlap decreases as interference
+becomes more severe.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{../paper_figures/outputs/fig2_operating_map.pdf}
+\caption{Post-hoc operating map over all hard-interference SNR--SIR cells;
+each entry is A5 minus the named strong baseline in macro-F1 percentage
+points. A star marks a positive unadjusted paired lower interval; Holm-
+surviving cells are reported in the text. Displaying the full map prevents
+the severe corner from being read as a uniform ranking.}
+\label{fig:operating-map}
+\end{figure*}
+
+At SIR $=-15$ dB, in a post-hoc analysis, A5 gains \SevereGainMcldnn\ \pp\ over
+MCLDNN ($[\SevereGainMcldnnLow,\SevereGainMcldnnHigh]$) and
+\SevereGainIqformer\ \pp\ over IQFormer-inspired
+($[\SevereGainIqformerLow,\SevereGainIqformerHigh]$); these two headline
+intervals are marginal stratified-bootstrap intervals and are not
+multiplicity-adjusted. All
+\SevereGainIqformerPositiveSeeds\ seeds have the same sign, and the sign-flip
+permutation probability is \SevereGainIqformerSignFlipP. Of
+\SevereCellsInspected\ inspected cells, \SevereCellsSurvivingHolm\ survive Holm
+correction; all are on the severe SIR row. These checks reinforce the corner
+result within the campaign without converting the post-hoc analysis into
+confirmation; an independently generated severe held set later fails to
+reproduce the corner advantage (Section~V-F).
+
+\subsection{Empirical Overlap--SIR Operating Envelope}
+The rank exchange motivates an empirical envelope fit rather than another
+marginal average. For reference $b$, we fit
+\begin{equation}
+\Delta_b=\beta_{0,b}+\beta_{1,b}o+\beta_{2,b}\,\mathrm{SIR},
+\label{eq:envelope}
+\end{equation}
+where $\Delta_b$ is A5 minus the reference macro-F1 and $o$ is the
+\emph{target-support jammer overlap}. We avoid the more common ``spectral
+occupancy'' because $o$ is not an occupied-bin or occupied-bandwidth fraction.
+The covariate is defined from the simulator-tracked target and jammer
+components rather than from the mixture. For each window we compute the STFT
+power of the tracked target and of the tracked jammer separately, order the
+time--frequency cells by descending target power, and take the target's
+99\%-energy support $\mathcal{S}$ as the smallest set of cells whose cumulative
+target power reaches 99\% of the total. The overlap is then the fraction of the
+jammer's total STFT power that falls inside $\mathcal{S}$:
+\begin{equation}
+o=\frac{\sum_{(f,t)\in\mathcal{S}}P_j(f,t)}{\sum_{(f,t)}P_j(f,t)}.
+\label{eq:overlap}
+\end{equation}
+Thus $o=0.8$ means that 80\% of the jammer's energy lies within the target's
+dominant support, not that the jammer fills 80\% of the plane. The cell-level
+covariate is the mean of $o$ over the windows of that cell.
+
+Equation~\eqref{eq:overlap} is evaluated on a fixed analysis lattice, a
+Hann-windowed 128-point STFT with hop 32, deliberately independent of the
+\NFft-point VIMD front-end lattice of Section~III-F: the front-end lattice is
+what the model sees, whereas the analysis lattice is a measurement instrument
+for the physical audit. The overlap is computed once per window when the cache
+is built, before any model is trained; it is stored in the sealed cache,
+checksummed in the cache manifest, and read unchanged by every model, split,
+and comparison in this paper. It is never an
+input feature of VIMD-Net or of any comparator, and it is not tuned against any
+model's predictions.
+
+The fit uses \EnvelopeFitCells\ aggregates, reconstructible from the protocol
+rather than asserted. A cell is one (split, SIR stratum,
+overlap quartile) triple that retains at least $150$ windows and all ten
+classes. The \texttt{hard\_interference} split contributes
+$4\ \text{SIR strata}\ (-15,-10,-5,0\ \text{dB})\times4\ \text{overlap
+quartiles}=16$ cells, and \texttt{id\_test} contributes $16$ further cells
+over its five SIR strata; its lowest-overlap quartile is dominated by
+jammer-free windows ($o=0$, SIR $=0$ dB cache sentinel) and clears the window
+floor only at $0$ dB, which fixes the per-stratum counts. The primary held set is the
+\EnvelopeHoldoutCells\ finite-SIR interfered cells formed the same way from
+unseen jammer, unseen speed, held-out channel, and combined OOD
+($4\times5\ \text{SIR strata}\times4\ \text{quartiles}=80$). Clean retention is
+deliberately outside this primary envelope because a jammer-free window has no
+physical finite SIR.
+Overlap and SIR are nearly orthogonal across the fitting cells
+(Pearson $r=\EnvelopeOccSirPearsonFit$; $\EnvelopeOccSirPearson$ over all
+\EnvelopeCellCount\ cells), so strong linear collinearity between the two
+fitted covariates is not evident. We nevertheless interpret
+Eq.~\eqref{eq:envelope} as descriptive rather than causal; low pooled
+correlation bounds collinearity, not confounding.
+
+Against IQFormer-inspired, the fitted overlap coefficient is
+\EnvelopeIqformerOccupancySlope\ \pp\ per unit overlap and the SIR
+coefficient is $\EnvelopeIqformerSirSlope$ \pp\ per dB. Magnitude skill is
+scored against an explicitly defined trivial baseline: the constant predictor
+outputs the mean gain over the \EnvelopeFitCells\ fitting cells
+($\EnvelopeFitMeanIQ$ \pp\ for IQFormer-inspired, $\EnvelopeFitMeanMC$ \pp\
+for MCLDNN) and is evaluated unchanged on the \EnvelopeHoldoutCells\ held-regime
+cells, with
+$R^2_{\mathrm{skill}}=1-\mathrm{MSE}_{\mathrm{envelope}}/\mathrm{MSE}_{\mathrm{const}}$.
+On that basis the envelope attains RMSE \EnvelopeIqformerHoldoutRmse\ \pp\
+against \EnvelopeConstantRmseIQ\ \pp\ for the constant predictor, for
+$R^2_{\mathrm{skill}}=\EnvelopeSkillRTwoIQ$ (Fig.~\ref{fig:envelope}); the
+MCLDNN envelope gives \EnvelopeMcldnnHoldoutRmse\ \pp\ against
+\EnvelopeConstantRmseMC\ \pp\ ($R^2_{\mathrm{skill}}=\EnvelopeSkillRTwoMC$).
+Adding the cell-level mean SNR as a third covariate lowers the held-regime
+RMSE only modestly (to \EnvelopeThreeVarRmseIQ\ and \EnvelopeThreeVarRmseMC\ \pp),
+so the two-variable model remains primary.
+A covariate ladder on the same cells (full table in the Supporting Material)
+isolates each predictor: SIR-only and overlap-only envelopes attain held RMSE
+\LadderSirOnlyRmseIQ\ and \LadderOverlapOnlyRmseIQ\ \pp\ against
+IQFormer-inspired (\LadderSirOnlyRmseMC\ and \LadderOverlapOnlyRmseMC\ \pp
+against MCLDNN), versus \EnvelopeIqformerHoldoutRmse\
+(\EnvelopeMcldnnHoldoutRmse) \pp\ for the two-variable model. Adding overlap
+to SIR reduces held-regime RMSE by \LadderOverlapIncrementPp\ \pp\ against
+both references, with $P(\Delta\mathrm{MSE}>0)=\BootProbPosIQ$ and
+$\BootProbPosMC$ under a block-paired bootstrap, but both paired intervals
+include zero, so overlap remains an exploratory refinement beyond SIR. As a
+model-selection rule, the envelope localizes the region where the compact
+model becomes competitive: the sign rule selects A5 in
+\SelectorOverlapSirCells\ of the 80 held cells, identifying all
+\SelectorOracleCells\ hindsight-optimal cells (recall $3/3$, precision $3/5$)
+at \SelectorRegretPp\ \pp\ oracle regret, trading
+\SelectorRealizedFTradePp\ \pp\ realized macro-F1 for a
+\SelectorMacSavingPct\% expected-MAC reduction versus always using
+IQFormer-inspired. The 80 held cells span
+SIR from $-10$ to $+10$~dB; the $-15$-dB stratum occurs only in the
+hard-interference fitting split, so the held-regime transport metrics do not
+independently validate the break-even thresholds reported at $-15$~dB,
+although three held cells at SIR $\geq-10$~dB still favor A5 in hindsight; a
+subsequent preregistered check on an independently generated severe held set
+moreover does not support the $-15$-dB transport (Section~V-F).
+Regime-wise results are heterogeneous (regime table in the Supporting
+Material): the envelope substantially outperforms the regime-specific
+constant on the unseen-speed and held-channel shifts, but not on the
+unseen-jammer and combined-OOD shifts.
+A hindsight oracle constant equal to the held-domain mean attains
+\EnvelopeOracleConstRmseIQ\ and \EnvelopeOracleConstRmseMC\ \pp; because it
+uses the held-domain mean, this pooled gap does not indicate missing
+within-regime structure.
+Sign agreement is
+\EnvelopeIqformerHoldoutSign\ (\EnvelopeMcldnnHoldoutSign\ for MCLDNN); with
+\EnvelopeHoldoutNegShareIQ\ (\EnvelopeHoldoutNegShareMC) of held-regime gains
+negative, it is a secondary diagnostic only.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{../paper_figures/outputs/fig1_envelope_law.pdf}
+\caption{Exploratory overlap--SIR operating envelope. The abscissa of
+panel~(a) is the target-support jammer overlap of Eq.~\eqref{eq:overlap}, not
+an occupied-bandwidth fraction. Filled blue markers are the cells that fit
+Eq.~\eqref{eq:envelope}; open markers are held-regime cells, coloured by which
+side of the campaign is held out, orange for the channel-side splits (unseen
+speed, held-out channel) and green for the interference-side splits (unseen
+jammer, combined OOD). Panel~(b) compares
+predicted and observed held-regime gains. RMSE is
+\EnvelopeIqformerHoldoutRmse\ \pp\ versus \EnvelopeConstantRmseIQ\ \pp\ for a
+constant predictor estimated from the fitting cells
+($R^2_{\mathrm{skill}}=\EnvelopeSkillRTwoIQ$); an oracle constant equal to the
+held-regime mean would attain \EnvelopeOracleConstRmseIQ\ \pp.}
+\label{fig:envelope}
+\end{figure*}
+
+Solving Eq.~\eqref{eq:envelope} for zero gain gives break-even overlaps of
+\BreakEvenIqformerSirFifteen\ (vs.\ IQFormer-inspired) and
+\BreakEvenMcldnnSirFifteen\ (vs.\ MCLDNN) at SIR $=-15$ dB, rising to
+\BreakEvenIqformerSirTen\ and \BreakEvenMcldnnSirTen\ at SIR $=-10$ dB. The
+required overlap rises as interference becomes less severe, and these values
+are simulator-domain reference thresholds conditional on an overlap estimate,
+not deployment-ready control thresholds.
+
+The preregistered mechanism expectation was non-increasing gain with
+overlap; the sealed directional test rejected that sign. Exploratory
+quintiles instead show monotonically increasing A5--CSSL gain, from a negative
+low-overlap region to a strongly positive high-overlap region; we return to
+this reversal in Section~VI-C. The positive overlap direction is not specific
+to this adaptation reference: the fitted overlap coefficients against
+IQFormer-inspired and MCLDNN are also positive, at
+$+\EnvelopeIqformerOccupancySlope$ and $+\EnvelopeMcldnnOccupancySlope$ \pp\
+per unit overlap, respectively.
+
+\subsection{Complexity and Complementarity}
+A5 remains useful outside its winning region because its errors differ from
+those of the I/Q models: late probability fusion improves over the stronger
+constituent by \FusionIqformerGain\ \pp\ with IQFormer-inspired and
+\FusionMcldnnGain\ \pp\ with MCLDNN. The corresponding same-model
+seed-ensemble controls improve by only \FusionIqformerControl\ and
+\FusionMcldnnControl\ \pp, so the cross-model fusion gains exceed the
+ensemble controls by \FusionIqformerExcess\ and \FusionMcldnnExcess\ \pp.
+This is supporting evidence of complementary decisions, not marginal
+superiority.
+
+Table~\ref{tab:baselines} gives the corresponding parameter and MAC budgets;
+compactness is stated as a parameter and MACs property rather than an
+end-to-end inference-cost claim.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{../paper_figures/outputs/fig4_pareto.pdf}
+\caption{Hard-interference macro-F1 versus parameter count on the matched
+five-seed subset; bars are $\pm1$ standard deviation over those seeds. Filled
+circles are sealed models (blue: the A0--A7 spectral family, of which only A0
+and A5 are labelled; gray: the I/Q comparators); the open orange square is the
+prospective Tier-2 received-I/Q sidecar, which is exploratory and outside the
+sealed family. The Pareto reading is descriptive and regime-specific.}
+\label{fig:pareto}
+\end{figure}
+
+\subsection{Clean-Boundary Diagnosis}
+The clean-retention split contains all ten modulations, but the two training
+views expose jammer-free windows for only \TrainClassesWithCleanWindows\
+classes (PI/2-BPSK, 8PSK, 256QAM, and CPFSK); the remaining
+\TrainClassesWithoutCleanWindows\ classes (BPSK, QPSK, 16QAM, 64QAM, GMSK, and
+4FSK) are a condition-transfer test. The four covered classes are marked
+without a star in Fig.~\ref{fig:transfer}, where a star denotes a class whose
+jammer-free condition was not seen during training. Transfer failure occurs
+in $27/27$ uncovered compact-spectral class--model cells
+(\TransferFailShareCompact\%) versus $1/9$ I/Q-reference cells
+(\TransferFailShareHighCapacity\%). The
+clean-retention gate did not pass. Figure~\ref{fig:transfer} localizes the
+failure rather than hiding it in an aggregate.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{../paper_figures/outputs/fig6_condition_transfer.pdf}
+\caption{Clean condition-transfer taxonomy for the compact spectral family
+and I/Q-domain baselines. A star marks a modulation class whose jammer-free
+condition was not observed during training; the four covered classes are
+unstarred. The plot localizes the clean boundary rather than aggregating it.}
+\label{fig:transfer}
+\end{figure}
+
+We then followed a prospective decision chain.
+Frozen-checkpoint linear and MLP probes used a correctly reconstructed
+jammer-free counterfactual and source-disjoint clean cross-validation; probe
+performance is the unweighted mean F1 over QPSK, 16QAM, and 64QAM (chance
+$\approx0.1$ on ten classes). The preregistered decision rule declares a representation
+\emph{information-present, head-limited} when this mean exceeds
+\ProbeThreshold\ and \emph{representation-limited} otherwise, requiring
+\emph{all} design--seed cells to exceed the threshold. For A5,
+five of the six design--seed cells (three algorithm
+seeds $\times$ the reconstructed jammer-free counterfactual and clean
+cross-validation probes) lie below the \ProbeThreshold\ threshold; the sole
+cell above it is borderline at $0.256$, so we record the representation-limited
+side. The decision is unchanged at a threshold of $0.30$ but flips at $0.20$.
+The strong I/Q baselines exceed the threshold in
+\ProbeStrongAboveThreshold\ of \ProbeStrongCells\ cells. The evidence
+therefore leans toward missing constellation information in the compact
+spectral representation rather than a classification head that fails to use
+available information.
+
+Adding clean windows for every class tests the simpler coverage explanation.
+It changes clean macro-F1 by only $\CoverageCleanDiff$\ \pp\
+($[\CoverageCleanLow,\CoverageCleanHigh]$) and hard macro-F1 by
+$\CoverageHardDiff$\ \pp\ ($[\CoverageHardLow,\CoverageHardHigh]$). Coverage
+alone is therefore insufficient. A preregistered negative control gates the
+modulation route using predicted interference presence. Relative to A5, it
+changes clean macro-F1 by $\PresenceGateCleanVsAFiveDiff$\ \pp\
+($[\PresenceGateCleanVsAFiveLow,\PresenceGateCleanVsAFiveHigh]$) and hard
+macro-F1 by $\PresenceGateHardVsAFiveDiff$\ \pp\
+($[\PresenceGateHardVsAFiveLow,\PresenceGateHardVsAFiveHigh]$). The learned
+gate averages \PresenceGateCleanMean\% on clean windows and
+\PresenceGateHardMean\% under hard interference, saturating near the modulated
+route; this arm is a negative control, not stand-alone evidence
+that a functional mask fallback was learned.
+
+\subsection{Prospective I/Q Repair and Capacity Controls}
+The next intervention adds a received-I/Q sidecar while retaining the spectral
+routes and the same source mixture. It increases the \emph{total} model size from \ParamsAFive\ to
+\SidecarParameters\ parameters (+\SidecarParamsPct\%) and the MAC count to
+\SidecarMacsTotal\ million (about +3\%). It raises clean macro-F1 by \SidecarCleanVsAFiveDiff\ \pp\
+($[\SidecarCleanVsAFiveLow,\SidecarCleanVsAFiveHigh]$) and hard macro-F1 by
+\SidecarHardVsAFiveDiff\ \pp\
+($[\SidecarHardVsAFiveLow,\SidecarHardVsAFiveHigh]$). Its overall hard score is
+statistically near IQFormer-inspired
+($\Delta=\SidecarHardVsIqformerDiff$ \pp,
+$[\SidecarHardVsIqformerLow,\SidecarHardVsIqformerHigh]$), while at severe SIR
+($-15$ dB) it remains ahead of IQFormer-inspired by \SidecarSevereVsIqformerDiff\ \pp\
+($[\SidecarSevereVsIqformerLow,\SidecarSevereVsIqformerHigh]$). The sidecar was
+designed prospectively after the clean-boundary diagnosis; it is interpreted
+as an intervention on the hypothesized information bottleneck, not as
+retroactive evidence for the original A5 architecture and not as a new
+multimodal fusion architecture. This substantially narrows the clean-condition
+failure; whether the campaign-internal structured-interference advantage
+survives beyond the campaign is examined at the end of this subsection.
+
+The sidecar is a two-channel depthwise-separable 1-D I/Q branch (2$\to$12$\to$12
+depthwise$\to$24$\to$24 depthwise channels) with group normalization and SiLU
+activations, whose per-window temporal mean/std/max pooling is projected to a
+24-dimensional embedding and fused residually with the spectral embedding
+(layer-level detail in the Supporting Material). The fused embedding drives a
+10-class linear head whose logits are added residually to the spectral
+classifier logits under the shared training objective; the side head has no
+separate auxiliary supervision. It consumes only the received mixture and
+requires no component bookkeeping at inference.
+
+Widening the spectral model without changing its representation domain
+separates capacity from representation. On the matched five-seed subset,
+hard-interference macro-F1 rises monotonically across the ladder, from
+\CapacitySFiveSeedAbs\ at the sealed S width to \CapacityMFiveSeedAbs\ at M
+($+\CapacityMHardVsSDiff$ \pp) and \CapacityLFiveSeedAbs\ at L
+($+\CapacityLHardVsSDiff$ \pp\ over S). The widest tier
+nonetheless stays below IQFormer-inspired on the marginal hard split
+($\CapacityLFiveSeedAbs$ versus $\CapacityIQFormerFiveSeedAbs$;
+$\CapacityLHardVsIqformerDiff$ \pp,
+$[\CapacityLHardVsIqformerLow,\CapacityLHardVsIqformerHigh]$), while at
+SIR $=-15$ dB it retains the compact-model advantage
+($+\CapacityLSevereVsIqformerDiff$ \pp,
+$[\CapacityLSevereVsIqformerLow,\CapacityLSevereVsIqformerHigh]$) and on clean
+retention it is still \CapacityLCleanVsIqformerGap\ \pp\ behind that comparator.
+Width
+therefore raises the average and leaves the condition-dependent boundary in
+place; it does not substitute for the representation change made by the
+sidecar.
+
+An independently generated severe held set, preregistered before inference,
+tests transfer beyond the frozen campaign: fresh sources disjoint from the
+campaign source pool, simulated at the two severe regimes, with all frozen
+checkpoints evaluated unchanged. The corner advantage does not transfer:
+pooled A5 gains are \SevereTransferGainIqformer\ \pp\ against
+IQFormer-inspired and \SevereTransferGainMcldnn\ \pp\ against MCLDNN,
+envelope sign accuracy falls to \SevereTransferSignAccIqformer\ and
+\SevereTransferSignAccMcldnn, and a SIR-only or constant predictor beats the
+full envelope (Supporting Material), so the envelope does not transport the
+$-15$-dB advantage. The sidecar, in contrast, repairs the compact
+representation on the same held set: pooled macro-F1 rises by
+\SevereRepairDiff\ \pp\ ($[\SevereRepairCiLow,\SevereRepairCiHigh]$) over
+A5, positive in \SevereRepairPositiveSeeds\ of \ProtocolSeedCount\ seeds and
+\SevereRepairPositiveSnrStrata\ of eight SNR strata, from
+\SevereRepairLevelAFive\% to \SevereRepairLevelSidecar\%, overtaking
+IQFormer-inspired (\SevereRepairLevelIqformer\%, gap-recovery ratio
+\SevereRepairGapRecoveryIqformer) while recovering only
+\SevereRepairGapRecoveryMcldnn\ of the gap to MCLDNN
+(\SevereRepairLevelMcldnn\%). The validation is exploratory and post-hoc
+relative to the sealed family; full tables are in the Supporting Material.
+
+\section{Discussion}
+\subsection{What the Operating Envelope Establishes}
+The evidence supports a practical model-selection statement within the
+simulator domain: the compact spectral configuration becomes relatively most
+competitive when interference is severe and jammer energy strongly overlaps
+the target-dominant time--frequency support, without confirming any specific
+routing or allocation mechanism (no sealed contrast isolates the teacher or
+route component; Section~V-A). A larger I/Q model is preferable in weak,
+clean, or low-overlap conditions unless the compact system includes an I/Q
+side channel.
+
+\subsection{What It Does Not Establish}
+Eq.~\eqref{eq:envelope} is empirical and descriptive, not a causal structural
+equation. The target-support overlap is simulator-derived because it requires
+separately tracked target and jammer components, and it is not directly
+observable at an uncooperative receiver; the break-even overlaps are
+therefore simulator-domain reference values conditional on an overlap
+estimate. The severe SIR corner is an in-sample stratification, and the
+held-out evaluation covers regimes within the same frozen simulator campaign,
+not real-world out-of-distribution conditions. A future prospective campaign
+should randomize overlap and SIR more independently and test the envelope
+against a receiver-observable overlap proxy; over-the-air or public-recording
+validation \cite{oshea2018ota} is a separate external-validity step, since
+public benchmarks do not expose the tracked target and jammer components the
+overlap covariate requires.
+
+\subsection{Meaning of the Failed Directional Hypothesis}
+The preregistered directional mechanism hypothesis was not supported: the
+compact model's relative gain does not decrease with increasing overlap. The
+surviving result is therefore empirical rather than mechanistic:
+target-support jammer overlap organizes the observed rank exchange, but its
+direction does not confirm the originally hypothesized masking mechanism.
+
+\subsection{Representation Repair and Practical Model Selection}
+The sequence of interventions narrows the cause (frozen probe), rejects a
+cheap explanation (coverage arm), recovers a substantial part of the
+predicted missing-information deficit (I/Q sidecar), and separates width
+from representation (capacity ladder). The Tier-2 evidence is more
+consistent with a representation-information gap than with insufficient
+clean exposure alone; the sidecar is a prospective intervention on that
+hypothesis, not the new main classifier and not a multimodal-fusion novelty.
+
+\subsection{Vehicular Relevance of the Operating Boundary}
+At $f_c=\CarrierGHz$ GHz and the held-speed conditions (Section~III-A), the
+envelope can be read as a receiver-side model-selection reference for
+compute-constrained ITS/V2X receivers: high overlap marks structured
+interference concentrated on the target-dominant support, where the compact
+front end is relatively most competitive. At the \HeldSpeeds\ km/h held speeds, the nominal coherence time is about
+$42\%$ and $30\%$ of the $\WindowMicroseconds$-$\mu$s decision window, a
+substantially more intra-window nonstationary condition than the lower-speed
+training cases.
+
+\section{Limitations and Reproducibility}
+The evidence has the following explicit limits. First, all results are from
+source-disjoint TR~38.901 TDL-profile simulations, not a complete vehicular
+geometry or a MAC-/network-layer V2X evaluation. Second, the teacher uses
+simulation-component bookkeeping and cannot supervise unreferenced recordings.
+Third, the target-support overlap covariate is simulator-derived because it
+requires separately tracked target and jammer components, and is not directly
+available at a receiver. Fourth, the original confirmatory family gate did not
+pass: only the complete A5--A0 contrast is a positive sealed result, and the
+clean-retention gate likewise did not pass. Fifth, the severe-interference,
+operating-envelope, fusion, condition-transfer, probe, sidecar, capacity,
+and independent severe-held validation
+analyses are exploratory or post-hoc, with post-hoc status stated where
+applicable. Sixth, the public-benchmark check validates comparator
+implementation only; external validation of the envelope is not yet
+established, and both I/Q comparators are unified-retraining references rather
+than exact recipe reproductions. Seventh, all models share one
+\TrainEpochs-epoch budget with a common early-stopping rule, and the budget
+binds asymmetrically: IQFormer-inspired and CSSL run to the limit in all ten
+seeds, so comparisons against them retain a possible budget-sufficiency
+caveat, while MCLDNN early-stops in every seed well inside the budget (median
+best epoch 13, range 11--16), making an immediately binding epoch cap an
+unlikely explanation for the campaign-internal severe-region A5--MCLDNN
+advantage (\SevereGainMcldnn\ \pp), which the independent severe-held
+validation of Section~V-F nevertheless fails to reproduce. A5 itself also runs to the budget in all ten
+seeds, so the concern is not one-sided. Eighth, the strongest compact-model
+advantage occurs at SIR $=-15$~dB, a stratum absent from the 80 held-regime
+cells; in a leave-one-SIR-stratum-out refit the severe rank reversal is
+preserved against MCLDNN but not against IQFormer-inspired (Supporting
+Material), and an independent severe held set fails to reproduce the corner
+advantage at all (Section~V-F), so the corresponding break-even
+overlaps are conditional extrapolations of the fitted envelope rather than
+independently held-regime-validated thresholds.
+
+Reproducibility is enforced at the artifact boundary: each manuscript macro
+stores the source path, row selector, evidence class, precision, and source
+SHA-256; every figure is rendered from a CSV with its own provenance
+manifest; and the resolved macros, figure-source CSVs, per-seed aggregates,
+configurations, and the full provenance manifest are released upon
+acceptance. The frozen run stores cache identity, checkpoints,
+source-aligned predictions, paired statistics, and execution records,
+preventing a favorable Tier-2 result from overwriting an unfavorable sealed
+gate.
+
+\section{Conclusion}
+Compact spectral and high-capacity I/Q representations exchange rank across
+the structured-interference plane. A low-dimensional overlap--SIR envelope
+transports the gain level across regime cells excluded from fitting with
+skill relative to a fit-domain constant baseline, while a post-hoc
+severe-interference analysis identifies a compact-model advantage in one
+campaign-internal corner of the plane that an independently generated severe
+held set does not reproduce; on that independent set, the received-I/Q
+sidecar instead repairs the compact representation by \SevereRepairDiff\ \pp. The original
+sealed family resolves a positive whole-configuration A5--A0 contrast but not
+the isolated teacher or route-count effects. A prospective
+probe--coverage--sidecar chain further indicates that the clean-condition
+failure is repairable by restoring a small amount of received-I/Q information,
+while spectral capacity alone does not remove the boundary. The result is
+therefore a simulation-domain operating envelope and representation-repair
+study, not a claim of uniform superiority or a deployment-ready selector.
+
+\section*{Acknowledgment}
+The authors used AI tools solely to assist with English-language editing and
+improving textual clarity. All technical content, mathematical derivations,
+data, code, figures, interpretations, and conclusions were produced and
+verified by the authors, who take full responsibility for the manuscript.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

@@ -1,0 +1,3938 @@
+[
+ {
+  "file": "main.tex",
+  "line": 227,
+  "literal": "1.29",
+  "macro": null,
+  "kind": "literal",
+  "text": "and Doppler spread: $T_c\\approx0.423/f_D$ falls from about 1.29 ms at 60 km/h",
+  "bucket": 2,
+  "provenance": "T_c ~ 0.423/f_D at 60 km/h, fc=5.9 GHz (protocol constants)"
+ },
+ {
+  "file": "main.tex",
+  "line": 228,
+  "literal": "0.31",
+  "macro": null,
+  "kind": "literal",
+  "text": "to 0.31 ms at 250 km/h, below the \\WindowMicroseconds\\,$\\mu$s decision window.",
+  "bucket": 1
+ },
+ {
+  "file": "main.tex",
+  "line": 459,
+  "literal": "3.50",
+  "macro": null,
+  "kind": "literal",
+  "text": "moderately lower ($-3.50$~pp, i.e.\\ $3.5$~pp lower) while staying in the same",
+  "bucket": 2,
+  "provenance": "100*(0.6205-0.585454): e1_reference.json MCLDNN overall minus metrics.csv seed mean"
+ },
+ {
+  "file": "main.tex",
+  "line": 459,
+  "literal": "3.5",
+  "macro": null,
+  "kind": "literal",
+  "text": "moderately lower ($-3.50$~pp, i.e.\\ $3.5$~pp lower) while staying in the same",
+  "bucket": 2,
+  "provenance": "same difference quoted at one decimal"
+ },
+ {
+  "file": "main.tex",
+  "line": 470,
+  "literal": "4.7",
+  "macro": null,
+  "kind": "literal",
+  "text": "(about $4.7\\times$ parameters), so A5--A0 is a whole-configuration effect.",
+  "bucket": 2,
+  "provenance": "A5/A0 parameter ratio (39,500 / ~8,400 params, model configs)"
+ },
+ {
+  "file": "main.tex",
+  "line": 500,
+  "literal": "0020",
+  "macro": null,
+  "kind": "literal",
+  "text": "give $2/1024\\approx0.0020$). The SIR $=-15$ dB aggregate is computed from",
+  "bucket": 1
+ },
+ {
+  "file": "main.tex",
+  "line": 511,
+  "literal": "3.5",
+  "macro": null,
+  "kind": "literal",
+  "text": "$[\\MethodEffectSimLow,\\MethodEffectSimHigh]$ \\pp, about 3.5 times",
+  "bucket": 2,
+  "provenance": "same difference quoted at one decimal"
+ },
+ {
+  "file": "main.tex",
+  "line": 600,
+  "literal": "0.8",
+  "macro": null,
+  "kind": "literal",
+  "text": "Thus $o=0.8$ means that 80\\% of the jammer's energy lies within the target's",
+  "bucket": 5,
+  "provenance": "illustrative example defining the overlap scale (Eq. discussion), not an evidence value"
+ },
+ {
+  "file": "main.tex",
+  "line": 684,
+  "literal": "12.4",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & unseen speed & 20 & $-12.4$ & 3.94 & 7.87 & 0.75\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 684,
+  "literal": "3.94",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & unseen speed & 20 & $-12.4$ & 3.94 & 7.87 & 0.75\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 684,
+  "literal": "7.87",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & unseen speed & 20 & $-12.4$ & 3.94 & 7.87 & 0.75\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 684,
+  "literal": "0.75",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & unseen speed & 20 & $-12.4$ & 3.94 & 7.87 & 0.75\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 685,
+  "literal": "11.3",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & held channel & 20 & $-11.3$ & 4.86 & 7.59 & 0.59\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 685,
+  "literal": "4.86",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & held channel & 20 & $-11.3$ & 4.86 & 7.59 & 0.59\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 685,
+  "literal": "7.59",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & held channel & 20 & $-11.3$ & 4.86 & 7.59 & 0.59\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 685,
+  "literal": "0.59",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & held channel & 20 & $-11.3$ & 4.86 & 7.59 & 0.59\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 686,
+  "literal": "16.5",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & combined OOD & 20 & $-16.5$ & 7.50 & 9.23 & 0.34\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 686,
+  "literal": "7.50",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & combined OOD & 20 & $-16.5$ & 7.50 & 9.23 & 0.34\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 686,
+  "literal": "9.23",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & combined OOD & 20 & $-16.5$ & 7.50 & 9.23 & 0.34\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 686,
+  "literal": "0.34",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & combined OOD & 20 & $-16.5$ & 7.50 & 9.23 & 0.34\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 687,
+  "literal": "16.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & unseen jammer & 20 & $-16.1$ & 7.74 & 8.67 & 0.20\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 687,
+  "literal": "7.74",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & unseen jammer & 20 & $-16.1$ & 7.74 & 8.67 & 0.20\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 687,
+  "literal": "8.67",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & unseen jammer & 20 & $-16.1$ & 7.74 & 8.67 & 0.20\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 687,
+  "literal": "0.20",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & unseen jammer & 20 & $-16.1$ & 7.74 & 8.67 & 0.20\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 688,
+  "literal": "14.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & pooled & 80 & $-14.1$ & 6.23 & 8.37 & 0.45\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 688,
+  "literal": "6.23",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & pooled & 80 & $-14.1$ & 6.23 & 8.37 & 0.45\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "main.tex",
+  "line": 688,
+  "literal": "8.37",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & pooled & 80 & $-14.1$ & 6.23 & 8.37 & 0.45\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 688,
+  "literal": "0.45",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & pooled & 80 & $-14.1$ & 6.23 & 8.37 & 0.45\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 690,
+  "literal": "8.9",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & unseen speed & 20 & $-8.9$ & 4.66 & 8.88 & 0.72\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 690,
+  "literal": "4.66",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & unseen speed & 20 & $-8.9$ & 4.66 & 8.88 & 0.72\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "main.tex",
+  "line": 690,
+  "literal": "8.88",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & unseen speed & 20 & $-8.9$ & 4.66 & 8.88 & 0.72\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 690,
+  "literal": "0.72",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & unseen speed & 20 & $-8.9$ & 4.66 & 8.88 & 0.72\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "main.tex",
+  "line": 691,
+  "literal": "8.0",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & held channel & 20 & $-8.0$ & 5.41 & 9.06 & 0.64\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "main.tex",
+  "line": 691,
+  "literal": "5.41",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & held channel & 20 & $-8.0$ & 5.41 & 9.06 & 0.64\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 691,
+  "literal": "9.06",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & held channel & 20 & $-8.0$ & 5.41 & 9.06 & 0.64\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 691,
+  "literal": "0.64",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & held channel & 20 & $-8.0$ & 5.41 & 9.06 & 0.64\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 692,
+  "literal": "14.6",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & combined OOD & 20 & $-14.6$ & 10.23 & 10.28 & 0.01\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 692,
+  "literal": "10.23",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & combined OOD & 20 & $-14.6$ & 10.23 & 10.28 & 0.01\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 692,
+  "literal": "10.28",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & combined OOD & 20 & $-14.6$ & 10.23 & 10.28 & 0.01\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 693,
+  "literal": "14.4",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & unseen jammer & 20 & $-14.4$ & 10.34 & 10.24 & $-0.02$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 693,
+  "literal": "10.34",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & unseen jammer & 20 & $-14.4$ & 10.34 & 10.24 & $-0.02$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 693,
+  "literal": "10.24",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & unseen jammer & 20 & $-14.4$ & 10.34 & 10.24 & $-0.02$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 693,
+  "literal": "0.02",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & unseen jammer & 20 & $-14.4$ & 10.34 & 10.24 & $-0.02$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 694,
+  "literal": "11.5",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & pooled & 80 & $-11.5$ & 8.10 & 9.63 & 0.29\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 694,
+  "literal": "8.10",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & pooled & 80 & $-11.5$ & 8.10 & 9.63 & 0.29\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "main.tex",
+  "line": 694,
+  "literal": "9.63",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & pooled & 80 & $-11.5$ & 8.10 & 9.63 & 0.29\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "main.tex",
+  "line": 694,
+  "literal": "0.29",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & pooled & 80 & $-11.5$ & 8.10 & 9.63 & 0.29\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "main.tex",
+  "line": 792,
+  "literal": "0.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "classes (QPSK, 16QAM, 64QAM), close to $0.1$ for chance on this ten-class",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 799,
+  "literal": "0.256",
+  "macro": null,
+  "kind": "literal",
+  "text": "cross-validation probes, with one cell borderline at $0.256$) lie below it,",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 835,
+  "literal": "0.6182",
+  "macro": null,
+  "kind": "literal",
+  "text": "rises from \\AbsAFiveClean\\ to 0.6182 and hard-interference macro-F1 from",
+  "bucket": 2
+ },
+ {
+  "file": "main.tex",
+  "line": 836,
+  "literal": "0.4843",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\AbsAFiveHard\\ to 0.4843. Its overall hard score is",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 98,
+  "literal": "1053",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\texttt{id\\_test} & fit & $-$10, $-$5, 0, $+$5, $+$10 & 16 & 230--1053\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 104,
+  "literal": "5000",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\texttt{clean\\_retention} & excluded & $0$ & 1 & 5000\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 141,
+  "literal": "3.94",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & unseen speed & 20 & 3.94 & 7.87 & 0.75 & 6.71 & 1.000\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 141,
+  "literal": "7.87",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & unseen speed & 20 & 3.94 & 7.87 & 0.75 & 6.71 & 1.000\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 141,
+  "literal": "0.75",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & unseen speed & 20 & 3.94 & 7.87 & 0.75 & 6.71 & 1.000\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 141,
+  "literal": "6.71",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & unseen speed & 20 & 3.94 & 7.87 & 0.75 & 6.71 & 1.000\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 141,
+  "literal": "1.000",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & unseen speed & 20 & 3.94 & 7.87 & 0.75 & 6.71 & 1.000\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 142,
+  "literal": "4.86",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & held-out channel & 20 & 4.86 & 7.59 & 0.59 & 6.95 & 1.000\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 142,
+  "literal": "7.59",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & held-out channel & 20 & 4.86 & 7.59 & 0.59 & 6.95 & 1.000\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 142,
+  "literal": "0.59",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & held-out channel & 20 & 4.86 & 7.59 & 0.59 & 6.95 & 1.000\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 142,
+  "literal": "6.95",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & held-out channel & 20 & 4.86 & 7.59 & 0.59 & 6.95 & 1.000\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 142,
+  "literal": "1.000",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & held-out channel & 20 & 4.86 & 7.59 & 0.59 & 6.95 & 1.000\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 143,
+  "literal": "7.50",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & combined OOD & 20 & 7.50 & 9.23 & 0.34 & 4.24 & 0.950\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 143,
+  "literal": "9.23",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & combined OOD & 20 & 7.50 & 9.23 & 0.34 & 4.24 & 0.950\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 143,
+  "literal": "0.34",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & combined OOD & 20 & 7.50 & 9.23 & 0.34 & 4.24 & 0.950\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 143,
+  "literal": "4.24",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & combined OOD & 20 & 7.50 & 9.23 & 0.34 & 4.24 & 0.950\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 143,
+  "literal": "0.950",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & combined OOD & 20 & 7.50 & 9.23 & 0.34 & 4.24 & 0.950\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 144,
+  "literal": "7.74",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & unseen jammer & 20 & 7.74 & 8.67 & 0.20 & 3.83 & 0.950\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 144,
+  "literal": "8.67",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & unseen jammer & 20 & 7.74 & 8.67 & 0.20 & 3.83 & 0.950\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 144,
+  "literal": "0.20",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & unseen jammer & 20 & 7.74 & 8.67 & 0.20 & 3.83 & 0.950\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 144,
+  "literal": "3.83",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & unseen jammer & 20 & 7.74 & 8.67 & 0.20 & 3.83 & 0.950\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 144,
+  "literal": "0.950",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & unseen jammer & 20 & 7.74 & 8.67 & 0.20 & 3.83 & 0.950\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 145,
+  "literal": "6.23",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & pooled (80) & 80 & 6.23 & 8.37 & 0.45 & 6.04 & 0.975\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 145,
+  "literal": "8.37",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & pooled (80) & 80 & 6.23 & 8.37 & 0.45 & 6.04 & 0.975\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 145,
+  "literal": "0.45",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & pooled (80) & 80 & 6.23 & 8.37 & 0.45 & 6.04 & 0.975\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 145,
+  "literal": "6.04",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & pooled (80) & 80 & 6.23 & 8.37 & 0.45 & 6.04 & 0.975\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 145,
+  "literal": "0.975",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & pooled (80) & 80 & 6.23 & 8.37 & 0.45 & 6.04 & 0.975\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 147,
+  "literal": "4.66",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & unseen speed & 20 & 4.66 & 8.88 & 0.72 & 7.78 & 1.000\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 147,
+  "literal": "8.88",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & unseen speed & 20 & 4.66 & 8.88 & 0.72 & 7.78 & 1.000\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 147,
+  "literal": "0.72",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & unseen speed & 20 & 4.66 & 8.88 & 0.72 & 7.78 & 1.000\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 147,
+  "literal": "7.78",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & unseen speed & 20 & 4.66 & 8.88 & 0.72 & 7.78 & 1.000\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 147,
+  "literal": "1.000",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & unseen speed & 20 & 4.66 & 8.88 & 0.72 & 7.78 & 1.000\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 148,
+  "literal": "5.41",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & held-out channel & 20 & 5.41 & 9.06 & 0.64 & 8.41 & 1.000\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 148,
+  "literal": "9.06",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & held-out channel & 20 & 5.41 & 9.06 & 0.64 & 8.41 & 1.000\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 148,
+  "literal": "0.64",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & held-out channel & 20 & 5.41 & 9.06 & 0.64 & 8.41 & 1.000\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 148,
+  "literal": "8.41",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & held-out channel & 20 & 5.41 & 9.06 & 0.64 & 8.41 & 1.000\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 148,
+  "literal": "1.000",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & held-out channel & 20 & 5.41 & 9.06 & 0.64 & 8.41 & 1.000\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 149,
+  "literal": "10.23",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & combined OOD & 20 & 10.23 & 10.28 & 0.01 & 2.71 & 0.900\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 149,
+  "literal": "10.28",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & combined OOD & 20 & 10.23 & 10.28 & 0.01 & 2.71 & 0.900\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 149,
+  "literal": "2.71",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & combined OOD & 20 & 10.23 & 10.28 & 0.01 & 2.71 & 0.900\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 149,
+  "literal": "0.900",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & combined OOD & 20 & 10.23 & 10.28 & 0.01 & 2.71 & 0.900\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 150,
+  "literal": "10.34",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & unseen jammer & 20 & 10.34 & 10.24 & -0.02 & 3.23 & 0.900\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 150,
+  "literal": "10.24",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & unseen jammer & 20 & 10.34 & 10.24 & -0.02 & 3.23 & 0.900\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 150,
+  "literal": "0.02",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & unseen jammer & 20 & 10.34 & 10.24 & -0.02 & 3.23 & 0.900\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 150,
+  "literal": "3.23",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & unseen jammer & 20 & 10.34 & 10.24 & -0.02 & 3.23 & 0.900\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 150,
+  "literal": "0.900",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & unseen jammer & 20 & 10.34 & 10.24 & -0.02 & 3.23 & 0.900\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 151,
+  "literal": "8.10",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & pooled (80) & 80 & 8.10 & 9.63 & 0.29 & 6.81 & 0.950\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 151,
+  "literal": "9.63",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & pooled (80) & 80 & 8.10 & 9.63 & 0.29 & 6.81 & 0.950\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 151,
+  "literal": "0.29",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & pooled (80) & 80 & 8.10 & 9.63 & 0.29 & 6.81 & 0.950\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 151,
+  "literal": "6.81",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & pooled (80) & 80 & 8.10 & 9.63 & 0.29 & 6.81 & 0.950\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 151,
+  "literal": "0.950",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & pooled (80) & 80 & 8.10 & 9.63 & 0.29 & 6.81 & 0.950\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 158,
+  "literal": "0.75",
+  "macro": null,
+  "kind": "literal",
+  "text": "unseen-speed and held-out-channel regimes ($R^2_{\\mathrm{skill}}=0.75$ and",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 159,
+  "literal": "0.59",
+  "macro": null,
+  "kind": "literal",
+  "text": "$0.59$) and much less well into the unseen-jammer and combined-OOD regimes",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 160,
+  "literal": "0.20",
+  "macro": null,
+  "kind": "literal",
+  "text": "($0.20$ and $0.34$); against MCLDNN the unseen-jammer and combined-OOD regimes",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 160,
+  "literal": "0.34",
+  "macro": null,
+  "kind": "literal",
+  "text": "($0.20$ and $0.34$); against MCLDNN the unseen-jammer and combined-OOD regimes",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 171,
+  "literal": "1053",
+  "macro": null,
+  "kind": "literal",
+  "text": "$\\approx10^{-11}$, 1053 windows, SIR taken from the cache sentinel). To",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 192,
+  "literal": "6.23",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & 32 & 6.23 & 8.37 & 0.45 & 14.38 & $-1.036$ & 0.11 & 0.47\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 192,
+  "literal": "8.37",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & 32 & 6.23 & 8.37 & 0.45 & 14.38 & $-1.036$ & 0.11 & 0.47\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 192,
+  "literal": "0.45",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & 32 & 6.23 & 8.37 & 0.45 & 14.38 & $-1.036$ & 0.11 & 0.47\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 192,
+  "literal": "14.38",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & 32 & 6.23 & 8.37 & 0.45 & 14.38 & $-1.036$ & 0.11 & 0.47\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 192,
+  "literal": "1.036",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & 32 & 6.23 & 8.37 & 0.45 & 14.38 & $-1.036$ & 0.11 & 0.47\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 192,
+  "literal": "0.11",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & 32 & 6.23 & 8.37 & 0.45 & 14.38 & $-1.036$ & 0.11 & 0.47\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 192,
+  "literal": "0.47",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & 32 & 6.23 & 8.37 & 0.45 & 14.38 & $-1.036$ & 0.11 & 0.47\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 193,
+  "literal": "6.42",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & 31 & 6.42 & 8.28 & 0.40 & 15.90 & $-1.066$ & 0.14 & 0.47\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 193,
+  "literal": "8.28",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & 31 & 6.42 & 8.28 & 0.40 & 15.90 & $-1.066$ & 0.14 & 0.47\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 193,
+  "literal": "0.40",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & 31 & 6.42 & 8.28 & 0.40 & 15.90 & $-1.066$ & 0.14 & 0.47\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 193,
+  "literal": "15.90",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & 31 & 6.42 & 8.28 & 0.40 & 15.90 & $-1.066$ & 0.14 & 0.47\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 193,
+  "literal": "1.066",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & 31 & 6.42 & 8.28 & 0.40 & 15.90 & $-1.066$ & 0.14 & 0.47\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 193,
+  "literal": "0.14",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & 31 & 6.42 & 8.28 & 0.40 & 15.90 & $-1.066$ & 0.14 & 0.47\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 193,
+  "literal": "0.47",
+  "macro": null,
+  "kind": "literal",
+  "text": "IQFormer-insp. & 31 & 6.42 & 8.28 & 0.40 & 15.90 & $-1.066$ & 0.14 & 0.47\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 195,
+  "literal": "8.10",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & 32 & 8.10 & 9.63 & 0.29 & 19.16 & $-0.894$ & 0.06 & 0.29\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 195,
+  "literal": "9.63",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & 32 & 8.10 & 9.63 & 0.29 & 19.16 & $-0.894$ & 0.06 & 0.29\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 195,
+  "literal": "0.29",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & 32 & 8.10 & 9.63 & 0.29 & 19.16 & $-0.894$ & 0.06 & 0.29\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 195,
+  "literal": "19.16",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & 32 & 8.10 & 9.63 & 0.29 & 19.16 & $-0.894$ & 0.06 & 0.29\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 195,
+  "literal": "0.894",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & 32 & 8.10 & 9.63 & 0.29 & 19.16 & $-0.894$ & 0.06 & 0.29\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 195,
+  "literal": "0.06",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & 32 & 8.10 & 9.63 & 0.29 & 19.16 & $-0.894$ & 0.06 & 0.29\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 195,
+  "literal": "0.29",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & 32 & 8.10 & 9.63 & 0.29 & 19.16 & $-0.894$ & 0.06 & 0.29\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 196,
+  "literal": "8.20",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & 31 & 8.20 & 9.59 & 0.27 & 20.55 & $-0.922$ & 0.08 & 0.31\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 196,
+  "literal": "9.59",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & 31 & 8.20 & 9.59 & 0.27 & 20.55 & $-0.922$ & 0.08 & 0.31\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 196,
+  "literal": "0.27",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & 31 & 8.20 & 9.59 & 0.27 & 20.55 & $-0.922$ & 0.08 & 0.31\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 196,
+  "literal": "20.55",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & 31 & 8.20 & 9.59 & 0.27 & 20.55 & $-0.922$ & 0.08 & 0.31\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 196,
+  "literal": "0.922",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & 31 & 8.20 & 9.59 & 0.27 & 20.55 & $-0.922$ & 0.08 & 0.31\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 196,
+  "literal": "0.08",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & 31 & 8.20 & 9.59 & 0.27 & 20.55 & $-0.922$ & 0.08 & 0.31\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 196,
+  "literal": "0.31",
+  "macro": null,
+  "kind": "literal",
+  "text": "MCLDNN & 31 & 8.20 & 9.59 & 0.27 & 20.55 & $-0.922$ & 0.08 & 0.31\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 203,
+  "literal": "0.20",
+  "macro": null,
+  "kind": "literal",
+  "text": "by at most $0.20$~\\pp\\ and $R^2_{\\mathrm{skill}}$ by at most $0.05$, leaves",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 226,
+  "literal": "0.436",
+  "macro": null,
+  "kind": "literal",
+  "text": "hard interference & 0.436 & 0.455 & 0.468 & 0.496 & 0.454\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 226,
+  "literal": "0.455",
+  "macro": null,
+  "kind": "literal",
+  "text": "hard interference & 0.436 & 0.455 & 0.468 & 0.496 & 0.454\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 226,
+  "literal": "0.468",
+  "macro": null,
+  "kind": "literal",
+  "text": "hard interference & 0.436 & 0.455 & 0.468 & 0.496 & 0.454\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 226,
+  "literal": "0.496",
+  "macro": null,
+  "kind": "literal",
+  "text": "hard interference & 0.436 & 0.455 & 0.468 & 0.496 & 0.454\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 226,
+  "literal": "0.454",
+  "macro": null,
+  "kind": "literal",
+  "text": "hard interference & 0.436 & 0.455 & 0.468 & 0.496 & 0.454\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 227,
+  "literal": "0.353",
+  "macro": null,
+  "kind": "literal",
+  "text": "hard, SIR $=-15$ dB & 0.353 & 0.384 & 0.403 & 0.262 & 0.255\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 227,
+  "literal": "0.384",
+  "macro": null,
+  "kind": "literal",
+  "text": "hard, SIR $=-15$ dB & 0.353 & 0.384 & 0.403 & 0.262 & 0.255\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 227,
+  "literal": "0.403",
+  "macro": null,
+  "kind": "literal",
+  "text": "hard, SIR $=-15$ dB & 0.353 & 0.384 & 0.403 & 0.262 & 0.255\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 227,
+  "literal": "0.262",
+  "macro": null,
+  "kind": "literal",
+  "text": "hard, SIR $=-15$ dB & 0.353 & 0.384 & 0.403 & 0.262 & 0.255\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 227,
+  "literal": "0.255",
+  "macro": null,
+  "kind": "literal",
+  "text": "hard, SIR $=-15$ dB & 0.353 & 0.384 & 0.403 & 0.262 & 0.255\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 228,
+  "literal": "0.563",
+  "macro": null,
+  "kind": "literal",
+  "text": "in distribution & 0.563 & 0.584 & 0.588 & 0.696 & 0.636\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 228,
+  "literal": "0.584",
+  "macro": null,
+  "kind": "literal",
+  "text": "in distribution & 0.563 & 0.584 & 0.588 & 0.696 & 0.636\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 228,
+  "literal": "0.588",
+  "macro": null,
+  "kind": "literal",
+  "text": "in distribution & 0.563 & 0.584 & 0.588 & 0.696 & 0.636\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 228,
+  "literal": "0.696",
+  "macro": null,
+  "kind": "literal",
+  "text": "in distribution & 0.563 & 0.584 & 0.588 & 0.696 & 0.636\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 228,
+  "literal": "0.636",
+  "macro": null,
+  "kind": "literal",
+  "text": "in distribution & 0.563 & 0.584 & 0.588 & 0.696 & 0.636\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 229,
+  "literal": "0.456",
+  "macro": null,
+  "kind": "literal",
+  "text": "unseen jammer & 0.456 & 0.462 & 0.466 & 0.612 & 0.584\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 229,
+  "literal": "0.462",
+  "macro": null,
+  "kind": "literal",
+  "text": "unseen jammer & 0.456 & 0.462 & 0.466 & 0.612 & 0.584\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 229,
+  "literal": "0.466",
+  "macro": null,
+  "kind": "literal",
+  "text": "unseen jammer & 0.456 & 0.462 & 0.466 & 0.612 & 0.584\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 229,
+  "literal": "0.612",
+  "macro": null,
+  "kind": "literal",
+  "text": "unseen jammer & 0.456 & 0.462 & 0.466 & 0.612 & 0.584\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 229,
+  "literal": "0.584",
+  "macro": null,
+  "kind": "literal",
+  "text": "unseen jammer & 0.456 & 0.462 & 0.466 & 0.612 & 0.584\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 230,
+  "literal": "0.487",
+  "macro": null,
+  "kind": "literal",
+  "text": "unseen speed & 0.487 & 0.507 & 0.510 & 0.626 & 0.582\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 230,
+  "literal": "0.507",
+  "macro": null,
+  "kind": "literal",
+  "text": "unseen speed & 0.487 & 0.507 & 0.510 & 0.626 & 0.582\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 230,
+  "literal": "0.510",
+  "macro": null,
+  "kind": "literal",
+  "text": "unseen speed & 0.487 & 0.507 & 0.510 & 0.626 & 0.582\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 230,
+  "literal": "0.626",
+  "macro": null,
+  "kind": "literal",
+  "text": "unseen speed & 0.487 & 0.507 & 0.510 & 0.626 & 0.582\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 230,
+  "literal": "0.582",
+  "macro": null,
+  "kind": "literal",
+  "text": "unseen speed & 0.487 & 0.507 & 0.510 & 0.626 & 0.582\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 231,
+  "literal": "0.488",
+  "macro": null,
+  "kind": "literal",
+  "text": "held-out channel & 0.488 & 0.510 & 0.515 & 0.613 & 0.567\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 231,
+  "literal": "0.510",
+  "macro": null,
+  "kind": "literal",
+  "text": "held-out channel & 0.488 & 0.510 & 0.515 & 0.613 & 0.567\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 231,
+  "literal": "0.515",
+  "macro": null,
+  "kind": "literal",
+  "text": "held-out channel & 0.488 & 0.510 & 0.515 & 0.613 & 0.567\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 231,
+  "literal": "0.613",
+  "macro": null,
+  "kind": "literal",
+  "text": "held-out channel & 0.488 & 0.510 & 0.515 & 0.613 & 0.567\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 231,
+  "literal": "0.567",
+  "macro": null,
+  "kind": "literal",
+  "text": "held-out channel & 0.488 & 0.510 & 0.515 & 0.613 & 0.567\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 232,
+  "literal": "0.450",
+  "macro": null,
+  "kind": "literal",
+  "text": "combined OOD & 0.450 & 0.462 & 0.465 & 0.621 & 0.587\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 232,
+  "literal": "0.462",
+  "macro": null,
+  "kind": "literal",
+  "text": "combined OOD & 0.450 & 0.462 & 0.465 & 0.621 & 0.587\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 232,
+  "literal": "0.465",
+  "macro": null,
+  "kind": "literal",
+  "text": "combined OOD & 0.450 & 0.462 & 0.465 & 0.621 & 0.587\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 232,
+  "literal": "0.621",
+  "macro": null,
+  "kind": "literal",
+  "text": "combined OOD & 0.450 & 0.462 & 0.465 & 0.621 & 0.587\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 232,
+  "literal": "0.587",
+  "macro": null,
+  "kind": "literal",
+  "text": "combined OOD & 0.450 & 0.462 & 0.465 & 0.621 & 0.587\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 233,
+  "literal": "0.500",
+  "macro": null,
+  "kind": "literal",
+  "text": "clean retention & 0.500 & 0.511 & 0.512 & 0.693 & 0.643\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 233,
+  "literal": "0.511",
+  "macro": null,
+  "kind": "literal",
+  "text": "clean retention & 0.500 & 0.511 & 0.512 & 0.693 & 0.643\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 233,
+  "literal": "0.512",
+  "macro": null,
+  "kind": "literal",
+  "text": "clean retention & 0.500 & 0.511 & 0.512 & 0.693 & 0.643\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 233,
+  "literal": "0.693",
+  "macro": null,
+  "kind": "literal",
+  "text": "clean retention & 0.500 & 0.511 & 0.512 & 0.693 & 0.643\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 233,
+  "literal": "0.643",
+  "macro": null,
+  "kind": "literal",
+  "text": "clean retention & 0.500 & 0.511 & 0.512 & 0.693 & 0.643\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 249,
+  "literal": "1.94",
+  "macro": null,
+  "kind": "literal",
+  "text": "M minus S & $1.94$ & $1.07$ & $2.80$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 249,
+  "literal": "1.07",
+  "macro": null,
+  "kind": "literal",
+  "text": "M minus S & $1.94$ & $1.07$ & $2.80$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 249,
+  "literal": "2.80",
+  "macro": null,
+  "kind": "literal",
+  "text": "M minus S & $1.94$ & $1.07$ & $2.80$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 250,
+  "literal": "3.18",
+  "macro": null,
+  "kind": "literal",
+  "text": "L minus S & $3.18$ & $2.44$ & $3.96$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 250,
+  "literal": "2.44",
+  "macro": null,
+  "kind": "literal",
+  "text": "L minus S & $3.18$ & $2.44$ & $3.96$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 250,
+  "literal": "3.96",
+  "macro": null,
+  "kind": "literal",
+  "text": "L minus S & $3.18$ & $2.44$ & $3.96$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 251,
+  "literal": "2.84",
+  "macro": null,
+  "kind": "literal",
+  "text": "L minus IQFormer-insp. & $-2.84$ & $-4.30$ & $-1.31$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 251,
+  "literal": "4.30",
+  "macro": null,
+  "kind": "literal",
+  "text": "L minus IQFormer-insp. & $-2.84$ & $-4.30$ & $-1.31$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 251,
+  "literal": "1.31",
+  "macro": null,
+  "kind": "literal",
+  "text": "L minus IQFormer-insp. & $-2.84$ & $-4.30$ & $-1.31$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 252,
+  "literal": "1.37",
+  "macro": null,
+  "kind": "literal",
+  "text": "L minus MCLDNN & $1.37$ & $0.03$ & $2.72$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 252,
+  "literal": "0.03",
+  "macro": null,
+  "kind": "literal",
+  "text": "L minus MCLDNN & $1.37$ & $0.03$ & $2.72$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 252,
+  "literal": "2.72",
+  "macro": null,
+  "kind": "literal",
+  "text": "L minus MCLDNN & $1.37$ & $0.03$ & $2.72$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 253,
+  "literal": "4.96",
+  "macro": null,
+  "kind": "literal",
+  "text": "L minus S, SIR $=-15$ dB & $4.96$ & $3.48$ & $6.48$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 253,
+  "literal": "3.48",
+  "macro": null,
+  "kind": "literal",
+  "text": "L minus S, SIR $=-15$ dB & $4.96$ & $3.48$ & $6.48$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 253,
+  "literal": "6.48",
+  "macro": null,
+  "kind": "literal",
+  "text": "L minus S, SIR $=-15$ dB & $4.96$ & $3.48$ & $6.48$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 254,
+  "literal": "14.07",
+  "macro": null,
+  "kind": "literal",
+  "text": "L minus IQFormer-insp., SIR $=-15$ dB & $14.07$ & $9.55$ & $18.51$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 254,
+  "literal": "9.55",
+  "macro": null,
+  "kind": "literal",
+  "text": "L minus IQFormer-insp., SIR $=-15$ dB & $14.07$ & $9.55$ & $18.51$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 254,
+  "literal": "18.51",
+  "macro": null,
+  "kind": "literal",
+  "text": "L minus IQFormer-insp., SIR $=-15$ dB & $14.07$ & $9.55$ & $18.51$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 255,
+  "literal": "18.14",
+  "macro": null,
+  "kind": "literal",
+  "text": "L minus IQFormer-insp., clean retention & $-18.14$ & $-19.34$ & $-17.00$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 255,
+  "literal": "19.34",
+  "macro": null,
+  "kind": "literal",
+  "text": "L minus IQFormer-insp., clean retention & $-18.14$ & $-19.34$ & $-17.00$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 255,
+  "literal": "17.00",
+  "macro": null,
+  "kind": "literal",
+  "text": "L minus IQFormer-insp., clean retention & $-18.14$ & $-19.34$ & $-17.00$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 262,
+  "literal": "4.96",
+  "macro": null,
+  "kind": "literal",
+  "text": "competitive: at SIR $=-15$~dB the widest tier gains $4.96$~\\pp\\ over S and",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 263,
+  "literal": "14.07",
+  "macro": null,
+  "kind": "literal",
+  "text": "stays $14.07$~\\pp\\ ahead of IQFormer-inspired. It does not close the gap that",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 264,
+  "literal": "2.84",
+  "macro": null,
+  "kind": "literal",
+  "text": "matters for the boundary. On the marginal hard split L is still $2.84$~\\pp\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 265,
+  "literal": "18.14",
+  "macro": null,
+  "kind": "literal",
+  "text": "behind IQFormer-inspired, and on clean retention it is $18.14$~\\pp\\ behind,",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 267,
+  "literal": "0.10",
+  "macro": null,
+  "kind": "literal",
+  "text": "($0.10$~\\pp\\ of movement). This is the arithmetic behind the manuscript's",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 286,
+  "literal": "0.15",
+  "macro": null,
+  "kind": "literal",
+  "text": "Per-class clean coverage & 39.5k & $0.15$ $[-0.31,0.63]$ & $-0.30$ $[-0.91,0.27]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 286,
+  "literal": "0.31",
+  "macro": null,
+  "kind": "literal",
+  "text": "Per-class clean coverage & 39.5k & $0.15$ $[-0.31,0.63]$ & $-0.30$ $[-0.91,0.27]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 286,
+  "literal": "0.63",
+  "macro": null,
+  "kind": "literal",
+  "text": "Per-class clean coverage & 39.5k & $0.15$ $[-0.31,0.63]$ & $-0.30$ $[-0.91,0.27]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 286,
+  "literal": "0.30",
+  "macro": null,
+  "kind": "literal",
+  "text": "Per-class clean coverage & 39.5k & $0.15$ $[-0.31,0.63]$ & $-0.30$ $[-0.91,0.27]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 286,
+  "literal": "0.91",
+  "macro": null,
+  "kind": "literal",
+  "text": "Per-class clean coverage & 39.5k & $0.15$ $[-0.31,0.63]$ & $-0.30$ $[-0.91,0.27]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 286,
+  "literal": "0.27",
+  "macro": null,
+  "kind": "literal",
+  "text": "Per-class clean coverage & 39.5k & $0.15$ $[-0.31,0.63]$ & $-0.30$ $[-0.91,0.27]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 287,
+  "literal": "0.30",
+  "macro": null,
+  "kind": "literal",
+  "text": "Presence-gated route & 39.5k & $-0.30$ $[-0.66,0.08]$ & $-0.18$ $[-0.72,0.35]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 287,
+  "literal": "0.66",
+  "macro": null,
+  "kind": "literal",
+  "text": "Presence-gated route & 39.5k & $-0.30$ $[-0.66,0.08]$ & $-0.18$ $[-0.72,0.35]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 287,
+  "literal": "0.08",
+  "macro": null,
+  "kind": "literal",
+  "text": "Presence-gated route & 39.5k & $-0.30$ $[-0.66,0.08]$ & $-0.18$ $[-0.72,0.35]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 287,
+  "literal": "0.18",
+  "macro": null,
+  "kind": "literal",
+  "text": "Presence-gated route & 39.5k & $-0.30$ $[-0.66,0.08]$ & $-0.18$ $[-0.72,0.35]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 287,
+  "literal": "0.72",
+  "macro": null,
+  "kind": "literal",
+  "text": "Presence-gated route & 39.5k & $-0.30$ $[-0.66,0.08]$ & $-0.18$ $[-0.72,0.35]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 288,
+  "literal": "11.77",
+  "macro": null,
+  "kind": "literal",
+  "text": "Received-I/Q sidecar & 46.8k & $11.77$ $[11.06,12.49]$ & $4.37$ $[3.44,5.31]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 288,
+  "literal": "11.06",
+  "macro": null,
+  "kind": "literal",
+  "text": "Received-I/Q sidecar & 46.8k & $11.77$ $[11.06,12.49]$ & $4.37$ $[3.44,5.31]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 288,
+  "literal": "12.49",
+  "macro": null,
+  "kind": "literal",
+  "text": "Received-I/Q sidecar & 46.8k & $11.77$ $[11.06,12.49]$ & $4.37$ $[3.44,5.31]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 288,
+  "literal": "4.37",
+  "macro": null,
+  "kind": "literal",
+  "text": "Received-I/Q sidecar & 46.8k & $11.77$ $[11.06,12.49]$ & $4.37$ $[3.44,5.31]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 288,
+  "literal": "3.44",
+  "macro": null,
+  "kind": "literal",
+  "text": "Received-I/Q sidecar & 46.8k & $11.77$ $[11.06,12.49]$ & $4.37$ $[3.44,5.31]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 288,
+  "literal": "5.31",
+  "macro": null,
+  "kind": "literal",
+  "text": "Received-I/Q sidecar & 46.8k & $11.77$ $[11.06,12.49]$ & $4.37$ $[3.44,5.31]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 294,
+  "literal": "0.15",
+  "macro": null,
+  "kind": "literal",
+  "text": "moves clean macro-F1 by $0.15$~\\pp, so exposure alone is not the explanation.",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 297,
+  "literal": "99.994",
+  "macro": null,
+  "kind": "literal",
+  "text": "and hard conditions ($99.994\\%$ and $99.991\\%$), so it functions as a negative",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 297,
+  "literal": "99.991",
+  "macro": null,
+  "kind": "literal",
+  "text": "and hard conditions ($99.994\\%$ and $99.991\\%$), so it functions as a negative",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 305,
+  "literal": "4.02",
+  "macro": null,
+  "kind": "literal",
+  "text": "$[4.02,5.19]$~\\pp\\ for the A5--A0 whole-configuration contrast,",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 305,
+  "literal": "5.19",
+  "macro": null,
+  "kind": "literal",
+  "text": "$[4.02,5.19]$~\\pp\\ for the A5--A0 whole-configuration contrast,",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 306,
+  "literal": "0.15",
+  "macro": null,
+  "kind": "literal",
+  "text": "$[-0.15,0.42]$~\\pp\\ for the teacher-form contrast, $[-0.15,1.04]$~\\pp\\ for the",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 306,
+  "literal": "0.42",
+  "macro": null,
+  "kind": "literal",
+  "text": "$[-0.15,0.42]$~\\pp\\ for the teacher-form contrast, $[-0.15,1.04]$~\\pp\\ for the",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 306,
+  "literal": "0.15",
+  "macro": null,
+  "kind": "literal",
+  "text": "$[-0.15,0.42]$~\\pp\\ for the teacher-form contrast, $[-0.15,1.04]$~\\pp\\ for the",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 306,
+  "literal": "1.04",
+  "macro": null,
+  "kind": "literal",
+  "text": "$[-0.15,0.42]$~\\pp\\ for the teacher-form contrast, $[-0.15,1.04]$~\\pp\\ for the",
+  "bucket": 2,
+  "provenance": "100*(0.652258-0.6419): IQFormer seed mean minus e1_reference.json overall"
+ },
+ {
+  "file": "supplement.tex",
+  "line": 307,
+  "literal": "0.19",
+  "macro": null,
+  "kind": "literal",
+  "text": "route-count contrast, and $[-0.19,0.62]$~\\pp\\ for the residual-free A7 variant",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 307,
+  "literal": "0.62",
+  "macro": null,
+  "kind": "literal",
+  "text": "route-count contrast, and $[-0.19,0.62]$~\\pp\\ for the residual-free A7 variant",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 332,
+  "literal": "12.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-20$ & 12.1\\% & $[12.0,12.2]$ & 14.9\\% & $[14.5,15.2]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 332,
+  "literal": "12.0",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-20$ & 12.1\\% & $[12.0,12.2]$ & 14.9\\% & $[14.5,15.2]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 332,
+  "literal": "12.2",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-20$ & 12.1\\% & $[12.0,12.2]$ & 14.9\\% & $[14.5,15.2]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 332,
+  "literal": "14.9",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-20$ & 12.1\\% & $[12.0,12.2]$ & 14.9\\% & $[14.5,15.2]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 332,
+  "literal": "14.5",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-20$ & 12.1\\% & $[12.0,12.2]$ & 14.9\\% & $[14.5,15.2]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 332,
+  "literal": "15.2",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-20$ & 12.1\\% & $[12.0,12.2]$ & 14.9\\% & $[14.5,15.2]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 333,
+  "literal": "13.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-18$ & 13.1\\% & $[12.3,13.9]$ & 18.1\\% & $[16.8,19.0]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 333,
+  "literal": "12.3",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-18$ & 13.1\\% & $[12.3,13.9]$ & 18.1\\% & $[16.8,19.0]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 333,
+  "literal": "13.9",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-18$ & 13.1\\% & $[12.3,13.9]$ & 18.1\\% & $[16.8,19.0]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 333,
+  "literal": "18.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-18$ & 13.1\\% & $[12.3,13.9]$ & 18.1\\% & $[16.8,19.0]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 333,
+  "literal": "16.8",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-18$ & 13.1\\% & $[12.3,13.9]$ & 18.1\\% & $[16.8,19.0]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 333,
+  "literal": "19.0",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-18$ & 13.1\\% & $[12.3,13.9]$ & 18.1\\% & $[16.8,19.0]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 334,
+  "literal": "14.8",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-16$ & 14.8\\% & $[14.0,15.3]$ & 22.3\\% & $[21.7,23.0]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 334,
+  "literal": "14.0",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-16$ & 14.8\\% & $[14.0,15.3]$ & 22.3\\% & $[21.7,23.0]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 334,
+  "literal": "15.3",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-16$ & 14.8\\% & $[14.0,15.3]$ & 22.3\\% & $[21.7,23.0]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 334,
+  "literal": "22.3",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-16$ & 14.8\\% & $[14.0,15.3]$ & 22.3\\% & $[21.7,23.0]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 334,
+  "literal": "21.7",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-16$ & 14.8\\% & $[14.0,15.3]$ & 22.3\\% & $[21.7,23.0]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 334,
+  "literal": "23.0",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-16$ & 14.8\\% & $[14.0,15.3]$ & 22.3\\% & $[21.7,23.0]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 335,
+  "literal": "17.9",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-14$ & 17.9\\% & $[16.8,18.9]$ & 27.2\\% & $[26.6,28.3]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 335,
+  "literal": "16.8",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-14$ & 17.9\\% & $[16.8,18.9]$ & 27.2\\% & $[26.6,28.3]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 335,
+  "literal": "18.9",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-14$ & 17.9\\% & $[16.8,18.9]$ & 27.2\\% & $[26.6,28.3]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 335,
+  "literal": "27.2",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-14$ & 17.9\\% & $[16.8,18.9]$ & 27.2\\% & $[26.6,28.3]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 335,
+  "literal": "26.6",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-14$ & 17.9\\% & $[16.8,18.9]$ & 27.2\\% & $[26.6,28.3]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 335,
+  "literal": "28.3",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-14$ & 17.9\\% & $[16.8,18.9]$ & 27.2\\% & $[26.6,28.3]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 336,
+  "literal": "22.0",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-12$ & 22.0\\% & $[20.4,23.3]$ & 33.3\\% & $[31.5,34.6]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 336,
+  "literal": "20.4",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-12$ & 22.0\\% & $[20.4,23.3]$ & 33.3\\% & $[31.5,34.6]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 336,
+  "literal": "23.3",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-12$ & 22.0\\% & $[20.4,23.3]$ & 33.3\\% & $[31.5,34.6]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 336,
+  "literal": "33.3",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-12$ & 22.0\\% & $[20.4,23.3]$ & 33.3\\% & $[31.5,34.6]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 336,
+  "literal": "31.5",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-12$ & 22.0\\% & $[20.4,23.3]$ & 33.3\\% & $[31.5,34.6]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 336,
+  "literal": "34.6",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-12$ & 22.0\\% & $[20.4,23.3]$ & 33.3\\% & $[31.5,34.6]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 337,
+  "literal": "26.0",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-10$ & 26.0\\% & $[25.0,26.7]$ & 37.0\\% & $[36.5,37.8]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 337,
+  "literal": "25.0",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-10$ & 26.0\\% & $[25.0,26.7]$ & 37.0\\% & $[36.5,37.8]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 337,
+  "literal": "26.7",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-10$ & 26.0\\% & $[25.0,26.7]$ & 37.0\\% & $[36.5,37.8]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 337,
+  "literal": "37.0",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-10$ & 26.0\\% & $[25.0,26.7]$ & 37.0\\% & $[36.5,37.8]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 337,
+  "literal": "36.5",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-10$ & 26.0\\% & $[25.0,26.7]$ & 37.0\\% & $[36.5,37.8]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 337,
+  "literal": "37.8",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-10$ & 26.0\\% & $[25.0,26.7]$ & 37.0\\% & $[36.5,37.8]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 338,
+  "literal": "32.5",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-8$ & 32.5\\% & $[31.1,33.3]$ & 41.4\\% & $[41.1,41.5]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 338,
+  "literal": "31.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-8$ & 32.5\\% & $[31.1,33.3]$ & 41.4\\% & $[41.1,41.5]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 338,
+  "literal": "33.3",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-8$ & 32.5\\% & $[31.1,33.3]$ & 41.4\\% & $[41.1,41.5]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 338,
+  "literal": "41.4",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-8$ & 32.5\\% & $[31.1,33.3]$ & 41.4\\% & $[41.1,41.5]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 338,
+  "literal": "41.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-8$ & 32.5\\% & $[31.1,33.3]$ & 41.4\\% & $[41.1,41.5]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 338,
+  "literal": "41.5",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-8$ & 32.5\\% & $[31.1,33.3]$ & 41.4\\% & $[41.1,41.5]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 339,
+  "literal": "44.0",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-6$ & 44.0\\% & $[42.8,45.7]$ & 49.8\\% & $[49.5,50.3]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 339,
+  "literal": "42.8",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-6$ & 44.0\\% & $[42.8,45.7]$ & 49.8\\% & $[49.5,50.3]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 339,
+  "literal": "45.7",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-6$ & 44.0\\% & $[42.8,45.7]$ & 49.8\\% & $[49.5,50.3]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 339,
+  "literal": "49.8",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-6$ & 44.0\\% & $[42.8,45.7]$ & 49.8\\% & $[49.5,50.3]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 339,
+  "literal": "49.5",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-6$ & 44.0\\% & $[42.8,45.7]$ & 49.8\\% & $[49.5,50.3]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 339,
+  "literal": "50.3",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-6$ & 44.0\\% & $[42.8,45.7]$ & 49.8\\% & $[49.5,50.3]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 340,
+  "literal": "58.8",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-4$ & 58.8\\% & $[58.3,59.9]$ & 63.3\\% & $[63.0,63.5]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 340,
+  "literal": "58.3",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-4$ & 58.8\\% & $[58.3,59.9]$ & 63.3\\% & $[63.0,63.5]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 340,
+  "literal": "59.9",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-4$ & 58.8\\% & $[58.3,59.9]$ & 63.3\\% & $[63.0,63.5]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 340,
+  "literal": "63.3",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-4$ & 58.8\\% & $[58.3,59.9]$ & 63.3\\% & $[63.0,63.5]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 340,
+  "literal": "63.0",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-4$ & 58.8\\% & $[58.3,59.9]$ & 63.3\\% & $[63.0,63.5]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 340,
+  "literal": "63.5",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-4$ & 58.8\\% & $[58.3,59.9]$ & 63.3\\% & $[63.0,63.5]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 341,
+  "literal": "74.7",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-2$ & 74.7\\% & $[74.3,75.0]$ & 77.3\\% & $[76.1,77.9]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 341,
+  "literal": "74.3",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-2$ & 74.7\\% & $[74.3,75.0]$ & 77.3\\% & $[76.1,77.9]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 341,
+  "literal": "75.0",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-2$ & 74.7\\% & $[74.3,75.0]$ & 77.3\\% & $[76.1,77.9]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 341,
+  "literal": "77.3",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-2$ & 74.7\\% & $[74.3,75.0]$ & 77.3\\% & $[76.1,77.9]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 341,
+  "literal": "76.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-2$ & 74.7\\% & $[74.3,75.0]$ & 77.3\\% & $[76.1,77.9]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 341,
+  "literal": "77.9",
+  "macro": null,
+  "kind": "literal",
+  "text": "$-2$ & 74.7\\% & $[74.3,75.0]$ & 77.3\\% & $[76.1,77.9]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 342,
+  "literal": "83.4",
+  "macro": null,
+  "kind": "literal",
+  "text": "$0$ & 83.4\\% & $[82.9,84.1]$ & 86.1\\% & $[85.7,86.7]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 342,
+  "literal": "82.9",
+  "macro": null,
+  "kind": "literal",
+  "text": "$0$ & 83.4\\% & $[82.9,84.1]$ & 86.1\\% & $[85.7,86.7]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 342,
+  "literal": "84.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "$0$ & 83.4\\% & $[82.9,84.1]$ & 86.1\\% & $[85.7,86.7]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 342,
+  "literal": "86.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "$0$ & 83.4\\% & $[82.9,84.1]$ & 86.1\\% & $[85.7,86.7]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 342,
+  "literal": "85.7",
+  "macro": null,
+  "kind": "literal",
+  "text": "$0$ & 83.4\\% & $[82.9,84.1]$ & 86.1\\% & $[85.7,86.7]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 342,
+  "literal": "86.7",
+  "macro": null,
+  "kind": "literal",
+  "text": "$0$ & 83.4\\% & $[82.9,84.1]$ & 86.1\\% & $[85.7,86.7]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 343,
+  "literal": "85.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "$2$ & 85.1\\% & $[84.7,85.6]$ & 89.4\\% & $[88.6,90.5]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 343,
+  "literal": "84.7",
+  "macro": null,
+  "kind": "literal",
+  "text": "$2$ & 85.1\\% & $[84.7,85.6]$ & 89.4\\% & $[88.6,90.5]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 343,
+  "literal": "85.6",
+  "macro": null,
+  "kind": "literal",
+  "text": "$2$ & 85.1\\% & $[84.7,85.6]$ & 89.4\\% & $[88.6,90.5]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 343,
+  "literal": "89.4",
+  "macro": null,
+  "kind": "literal",
+  "text": "$2$ & 85.1\\% & $[84.7,85.6]$ & 89.4\\% & $[88.6,90.5]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 343,
+  "literal": "88.6",
+  "macro": null,
+  "kind": "literal",
+  "text": "$2$ & 85.1\\% & $[84.7,85.6]$ & 89.4\\% & $[88.6,90.5]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 343,
+  "literal": "90.5",
+  "macro": null,
+  "kind": "literal",
+  "text": "$2$ & 85.1\\% & $[84.7,85.6]$ & 89.4\\% & $[88.6,90.5]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 344,
+  "literal": "85.5",
+  "macro": null,
+  "kind": "literal",
+  "text": "$4$ & 85.5\\% & $[84.7,87.1]$ & 91.6\\% & $[90.6,93.0]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 344,
+  "literal": "84.7",
+  "macro": null,
+  "kind": "literal",
+  "text": "$4$ & 85.5\\% & $[84.7,87.1]$ & 91.6\\% & $[90.6,93.0]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 344,
+  "literal": "87.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "$4$ & 85.5\\% & $[84.7,87.1]$ & 91.6\\% & $[90.6,93.0]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 344,
+  "literal": "91.6",
+  "macro": null,
+  "kind": "literal",
+  "text": "$4$ & 85.5\\% & $[84.7,87.1]$ & 91.6\\% & $[90.6,93.0]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 344,
+  "literal": "90.6",
+  "macro": null,
+  "kind": "literal",
+  "text": "$4$ & 85.5\\% & $[84.7,87.1]$ & 91.6\\% & $[90.6,93.0]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 344,
+  "literal": "93.0",
+  "macro": null,
+  "kind": "literal",
+  "text": "$4$ & 85.5\\% & $[84.7,87.1]$ & 91.6\\% & $[90.6,93.0]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 345,
+  "literal": "86.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "$6$ & 86.1\\% & $[85.7,86.8]$ & 93.4\\% & $[93.0,94.1]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 345,
+  "literal": "85.7",
+  "macro": null,
+  "kind": "literal",
+  "text": "$6$ & 86.1\\% & $[85.7,86.8]$ & 93.4\\% & $[93.0,94.1]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 345,
+  "literal": "86.8",
+  "macro": null,
+  "kind": "literal",
+  "text": "$6$ & 86.1\\% & $[85.7,86.8]$ & 93.4\\% & $[93.0,94.1]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 345,
+  "literal": "93.4",
+  "macro": null,
+  "kind": "literal",
+  "text": "$6$ & 86.1\\% & $[85.7,86.8]$ & 93.4\\% & $[93.0,94.1]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 345,
+  "literal": "93.0",
+  "macro": null,
+  "kind": "literal",
+  "text": "$6$ & 86.1\\% & $[85.7,86.8]$ & 93.4\\% & $[93.0,94.1]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 345,
+  "literal": "94.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "$6$ & 86.1\\% & $[85.7,86.8]$ & 93.4\\% & $[93.0,94.1]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 346,
+  "literal": "86.4",
+  "macro": null,
+  "kind": "literal",
+  "text": "$8$ & 86.4\\% & $[84.9,88.6]$ & 93.3\\% & $[92.8,94.2]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 346,
+  "literal": "84.9",
+  "macro": null,
+  "kind": "literal",
+  "text": "$8$ & 86.4\\% & $[84.9,88.6]$ & 93.3\\% & $[92.8,94.2]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 346,
+  "literal": "88.6",
+  "macro": null,
+  "kind": "literal",
+  "text": "$8$ & 86.4\\% & $[84.9,88.6]$ & 93.3\\% & $[92.8,94.2]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 346,
+  "literal": "93.3",
+  "macro": null,
+  "kind": "literal",
+  "text": "$8$ & 86.4\\% & $[84.9,88.6]$ & 93.3\\% & $[92.8,94.2]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 346,
+  "literal": "92.8",
+  "macro": null,
+  "kind": "literal",
+  "text": "$8$ & 86.4\\% & $[84.9,88.6]$ & 93.3\\% & $[92.8,94.2]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 346,
+  "literal": "94.2",
+  "macro": null,
+  "kind": "literal",
+  "text": "$8$ & 86.4\\% & $[84.9,88.6]$ & 93.3\\% & $[92.8,94.2]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 347,
+  "literal": "85.3",
+  "macro": null,
+  "kind": "literal",
+  "text": "$10$ & 85.3\\% & $[84.0,87.1]$ & 93.0\\% & $[92.0,94.4]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 347,
+  "literal": "84.0",
+  "macro": null,
+  "kind": "literal",
+  "text": "$10$ & 85.3\\% & $[84.0,87.1]$ & 93.0\\% & $[92.0,94.4]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 347,
+  "literal": "87.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "$10$ & 85.3\\% & $[84.0,87.1]$ & 93.0\\% & $[92.0,94.4]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 347,
+  "literal": "93.0",
+  "macro": null,
+  "kind": "literal",
+  "text": "$10$ & 85.3\\% & $[84.0,87.1]$ & 93.0\\% & $[92.0,94.4]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 347,
+  "literal": "92.0",
+  "macro": null,
+  "kind": "literal",
+  "text": "$10$ & 85.3\\% & $[84.0,87.1]$ & 93.0\\% & $[92.0,94.4]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 347,
+  "literal": "94.4",
+  "macro": null,
+  "kind": "literal",
+  "text": "$10$ & 85.3\\% & $[84.0,87.1]$ & 93.0\\% & $[92.0,94.4]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 348,
+  "literal": "86.3",
+  "macro": null,
+  "kind": "literal",
+  "text": "$12$ & 86.3\\% & $[85.1,88.4]$ & 93.8\\% & $[93.1,94.7]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 348,
+  "literal": "85.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "$12$ & 86.3\\% & $[85.1,88.4]$ & 93.8\\% & $[93.1,94.7]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 348,
+  "literal": "88.4",
+  "macro": null,
+  "kind": "literal",
+  "text": "$12$ & 86.3\\% & $[85.1,88.4]$ & 93.8\\% & $[93.1,94.7]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 348,
+  "literal": "93.8",
+  "macro": null,
+  "kind": "literal",
+  "text": "$12$ & 86.3\\% & $[85.1,88.4]$ & 93.8\\% & $[93.1,94.7]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 348,
+  "literal": "93.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "$12$ & 86.3\\% & $[85.1,88.4]$ & 93.8\\% & $[93.1,94.7]$\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 348,
+  "literal": "94.7",
+  "macro": null,
+  "kind": "literal",
+  "text": "$12$ & 86.3\\% & $[85.1,88.4]$ & 93.8\\% & $[93.1,94.7]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 349,
+  "literal": "86.0",
+  "macro": null,
+  "kind": "literal",
+  "text": "$14$ & 86.0\\% & $[85.0,87.9]$ & 93.4\\% & $[92.9,93.9]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 349,
+  "literal": "85.0",
+  "macro": null,
+  "kind": "literal",
+  "text": "$14$ & 86.0\\% & $[85.0,87.9]$ & 93.4\\% & $[92.9,93.9]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 349,
+  "literal": "87.9",
+  "macro": null,
+  "kind": "literal",
+  "text": "$14$ & 86.0\\% & $[85.0,87.9]$ & 93.4\\% & $[92.9,93.9]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 349,
+  "literal": "93.4",
+  "macro": null,
+  "kind": "literal",
+  "text": "$14$ & 86.0\\% & $[85.0,87.9]$ & 93.4\\% & $[92.9,93.9]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 349,
+  "literal": "92.9",
+  "macro": null,
+  "kind": "literal",
+  "text": "$14$ & 86.0\\% & $[85.0,87.9]$ & 93.4\\% & $[92.9,93.9]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 349,
+  "literal": "93.9",
+  "macro": null,
+  "kind": "literal",
+  "text": "$14$ & 86.0\\% & $[85.0,87.9]$ & 93.4\\% & $[92.9,93.9]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 350,
+  "literal": "85.5",
+  "macro": null,
+  "kind": "literal",
+  "text": "$16$ & 85.5\\% & $[84.5,87.1]$ & 92.9\\% & $[92.1,93.7]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 350,
+  "literal": "84.5",
+  "macro": null,
+  "kind": "literal",
+  "text": "$16$ & 85.5\\% & $[84.5,87.1]$ & 92.9\\% & $[92.1,93.7]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 350,
+  "literal": "87.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "$16$ & 85.5\\% & $[84.5,87.1]$ & 92.9\\% & $[92.1,93.7]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 350,
+  "literal": "92.9",
+  "macro": null,
+  "kind": "literal",
+  "text": "$16$ & 85.5\\% & $[84.5,87.1]$ & 92.9\\% & $[92.1,93.7]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 350,
+  "literal": "92.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "$16$ & 85.5\\% & $[84.5,87.1]$ & 92.9\\% & $[92.1,93.7]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 350,
+  "literal": "93.7",
+  "macro": null,
+  "kind": "literal",
+  "text": "$16$ & 85.5\\% & $[84.5,87.1]$ & 92.9\\% & $[92.1,93.7]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 351,
+  "literal": "85.2",
+  "macro": null,
+  "kind": "literal",
+  "text": "$18$ & 85.2\\% & $[84.3,86.8]$ & 92.9\\% & $[92.3,93.9]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 351,
+  "literal": "84.3",
+  "macro": null,
+  "kind": "literal",
+  "text": "$18$ & 85.2\\% & $[84.3,86.8]$ & 92.9\\% & $[92.3,93.9]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 351,
+  "literal": "86.8",
+  "macro": null,
+  "kind": "literal",
+  "text": "$18$ & 85.2\\% & $[84.3,86.8]$ & 92.9\\% & $[92.3,93.9]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 351,
+  "literal": "92.9",
+  "macro": null,
+  "kind": "literal",
+  "text": "$18$ & 85.2\\% & $[84.3,86.8]$ & 92.9\\% & $[92.3,93.9]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 351,
+  "literal": "92.3",
+  "macro": null,
+  "kind": "literal",
+  "text": "$18$ & 85.2\\% & $[84.3,86.8]$ & 92.9\\% & $[92.3,93.9]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 351,
+  "literal": "93.9",
+  "macro": null,
+  "kind": "literal",
+  "text": "$18$ & 85.2\\% & $[84.3,86.8]$ & 92.9\\% & $[92.3,93.9]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 353,
+  "literal": "58.55",
+  "macro": null,
+  "kind": "literal",
+  "text": "All SNR & 58.55\\% & $[58.1,59.4]$ & 65.23\\% & $[64.8,65.8]$\\\\",
+  "bucket": 2,
+  "provenance": "mean of the three MCLDNN seeds in metrics.csv (0.585454)"
+ },
+ {
+  "file": "supplement.tex",
+  "line": 353,
+  "literal": "58.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "All SNR & 58.55\\% & $[58.1,59.4]$ & 65.23\\% & $[64.8,65.8]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 353,
+  "literal": "59.4",
+  "macro": null,
+  "kind": "literal",
+  "text": "All SNR & 58.55\\% & $[58.1,59.4]$ & 65.23\\% & $[64.8,65.8]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 353,
+  "literal": "65.23",
+  "macro": null,
+  "kind": "literal",
+  "text": "All SNR & 58.55\\% & $[58.1,59.4]$ & 65.23\\% & $[64.8,65.8]$\\\\",
+  "bucket": 2,
+  "provenance": "mean of the three IQFormer seeds in metrics.csv (0.652258)"
+ },
+ {
+  "file": "supplement.tex",
+  "line": 353,
+  "literal": "64.8",
+  "macro": null,
+  "kind": "literal",
+  "text": "All SNR & 58.55\\% & $[58.1,59.4]$ & 65.23\\% & $[64.8,65.8]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 353,
+  "literal": "65.8",
+  "macro": null,
+  "kind": "literal",
+  "text": "All SNR & 58.55\\% & $[58.1,59.4]$ & 65.23\\% & $[64.8,65.8]$\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 354,
+  "literal": "62.05",
+  "macro": null,
+  "kind": "literal",
+  "text": "Reference release & 62.05\\% & --- & 64.19\\% & ---\\\\",
+  "bucket": 1
+ },
+ {
+  "file": "supplement.tex",
+  "line": 354,
+  "literal": "64.19",
+  "macro": null,
+  "kind": "literal",
+  "text": "Reference release & 62.05\\% & --- & 64.19\\% & ---\\\\",
+  "bucket": 2
+ },
+ {
+  "file": "supplement.tex",
+  "line": 361,
+  "literal": "1.04",
+  "macro": null,
+  "kind": "literal",
+  "text": "range, and IQFormer-inspired matches it closely ($+1.04$~\\pp), while MCLDNN",
+  "bucket": 2,
+  "provenance": "100*(0.652258-0.6419): IQFormer seed mean minus e1_reference.json overall"
+ },
+ {
+  "file": "supplement.tex",
+  "line": 362,
+  "literal": "3.50",
+  "macro": null,
+  "kind": "literal",
+  "text": "remains $3.50$~\\pp\\ lower but within the same broad range. Agreement is not",
+  "bucket": 2,
+  "provenance": "100*(0.6205-0.585454): e1_reference.json MCLDNN overall minus metrics.csv seed mean"
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 10,
+  "literal": "0.963",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeHoldoutNegShareIQ}{0.963}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 11,
+  "literal": "0.901",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeHoldoutNegShareMC}{0.901}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 12,
+  "literal": "0.03",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeOccSirPearson}{-0.03}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 13,
+  "literal": "0.003",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeOccSirPearsonFit}{-0.003}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 14,
+  "literal": "0.84",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeMaxCellOverlap}{0.84}",
+  "bucket": 4
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 22,
+  "literal": "8.40",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeConstantRmseIQ}{8.40}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 23,
+  "literal": "9.63",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeConstantRmseMC}{9.63}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 24,
+  "literal": "0.46",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeSkillRTwoIQ}{0.46}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 25,
+  "literal": "0.30",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeSkillRTwoMC}{0.30}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 26,
+  "literal": "8.27",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeFitMeanIQ}{-8.27}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 27,
+  "literal": "4.63",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeFitMeanMC}{-4.63}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 30,
+  "literal": "6.03",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeOracleConstRmseIQ}{6.03}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 31,
+  "literal": "6.77",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeOracleConstRmseMC}{6.77}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 33,
+  "literal": "0.41",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeOracleSkillMC}{-0.41}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 36,
+  "literal": "0.21",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\ASevenVsAFiveHardDiff}{0.21}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 39,
+  "literal": "7294",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\SidecarParamsAdd}{7294}",
+  "bucket": 4
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 41,
+  "literal": "43.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\SidecarMacsTotal}{43.1}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 53,
+  "literal": "5.9",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\CarrierGHz}{5.9}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 62,
+  "literal": "1367",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\MaxDopplerHeldHz}{1367}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 70,
+  "literal": "15.6",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\StftBinHz}{15.6}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 80,
+  "literal": "5.0",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\GradClip}{5.0}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 81,
+  "literal": "0.50",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\LossAlpha}{0.50}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 82,
+  "literal": "0.25",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\LossBeta}{0.25}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 84,
+  "literal": "0.10",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\LossEta}{0.10}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 107,
+  "literal": "6.23",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeNoCleanRmseIQ}{6.23}",
+  "bucket": 4
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 108,
+  "literal": "8.10",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeNoCleanRmseMC}{8.10}",
+  "bucket": 4
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 109,
+  "literal": "0.45",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeNoCleanSkillIQ}{0.45}",
+  "bucket": 4
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 110,
+  "literal": "0.29",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeNoCleanSkillMC}{0.29}",
+  "bucket": 4
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 112,
+  "literal": "6.12",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeThreeVarRmseIQ}{6.12}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 113,
+  "literal": "8.00",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeThreeVarRmseMC}{8.00}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 114,
+  "literal": "0.47",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeThreeVarSkillIQ}{0.47}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 115,
+  "literal": "0.31",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\EnvelopeThreeVarSkillMC}{0.31}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 117,
+  "literal": "4.02",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\SeedRandomEffectLow}{4.02}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 118,
+  "literal": "5.19",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\SeedRandomEffectHigh}{5.19}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 119,
+  "literal": "0.15",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\SeedRandomTeacherLow}{-0.15}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 120,
+  "literal": "0.42",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\SeedRandomTeacherHigh}{0.42}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 121,
+  "literal": "0.15",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\SeedRandomRouteLow}{-0.15}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 122,
+  "literal": "1.04",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\SeedRandomRouteHigh}{1.04}",
+  "bucket": 2,
+  "provenance": "100*(0.652258-0.6419): IQFormer seed mean minus e1_reference.json overall"
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 123,
+  "literal": "0.19",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\ASevenVsAFiveSeedLow}{-0.19}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 124,
+  "literal": "0.62",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\ASevenVsAFiveSeedHigh}{0.62}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 126,
+  "literal": "0.436",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\CapacitySFiveSeedAbs}{0.436}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 127,
+  "literal": "0.455",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\CapacityMFiveSeedAbs}{0.455}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 128,
+  "literal": "0.468",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\CapacityLFiveSeedAbs}{0.468}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 129,
+  "literal": "0.496",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\CapacityIQFormerFiveSeedAbs}{0.496}",
+  "bucket": 2
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 130,
+  "literal": "0.454",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\CapacityMCLDNNFiveSeedAbs}{0.454}",
+  "bucket": 4
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 132,
+  "literal": "4.66",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\CapacityTenSeedGapRef}{-4.66}",
+  "bucket": 4
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 133,
+  "literal": "6.02",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\CapacityFiveSeedGapRef}{-6.02}",
+  "bucket": 4
+ },
+ {
+  "file": "v1_audit_macros.tex",
+  "line": 140,
+  "literal": "18.1",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\newcommand{\\CapacityLCleanVsIqformerGap}{18.1}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 4,
+  "literal": "6.23",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeIqformerHoldoutRmse}{6.23}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 5,
+  "literal": "8.10",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeMcldnnHoldoutRmse}{8.10}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 6,
+  "literal": "0.975",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeIqformerHoldoutSign}{0.975}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 7,
+  "literal": "0.950",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeMcldnnHoldoutSign}{0.950}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 8,
+  "literal": "17.08",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeIqformerIntercept}{-17.08}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 9,
+  "literal": "14.38",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeIqformerOccupancySlope}{14.38}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 10,
+  "literal": "1.036",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeIqformerSirSlope}{-1.036}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 11,
+  "literal": "14.55",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeMcldnnIntercept}{-14.55}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 12,
+  "literal": "19.16",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeMcldnnOccupancySlope}{19.16}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 13,
+  "literal": "0.894",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeMcldnnSirSlope}{-0.894}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 14,
+  "literal": "0.963",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeHoldoutNegShareIQ}{0.963}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 15,
+  "literal": "0.900",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeHoldoutNegShareMC}{0.900}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 16,
+  "literal": "8.37",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeConstantRmseIQ}{8.37}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 17,
+  "literal": "9.63",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeConstantRmseMC}{9.63}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 18,
+  "literal": "0.45",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeSkillRTwoIQ}{0.45}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 19,
+  "literal": "0.29",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeSkillRTwoMC}{0.29}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 20,
+  "literal": "6.04",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeOracleConstRmseIQ}{6.04}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 21,
+  "literal": "6.81",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeOracleConstRmseMC}{6.81}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 22,
+  "literal": "0.06",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeOracleSkillIQ}{-0.06}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 23,
+  "literal": "0.42",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeOracleSkillMC}{-0.42}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 24,
+  "literal": "6.23",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeNoCleanRmseIQ}{6.23}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 25,
+  "literal": "8.10",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeNoCleanRmseMC}{8.10}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 26,
+  "literal": "0.45",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeNoCleanSkillIQ}{0.45}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 27,
+  "literal": "0.29",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeNoCleanSkillMC}{0.29}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 28,
+  "literal": "6.15",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeThreeVarRmseIQ}{6.15}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 29,
+  "literal": "8.05",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeThreeVarRmseMC}{8.05}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 30,
+  "literal": "0.46",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeThreeVarSkillIQ}{0.46}",
+  "bucket": 2
+ },
+ {
+  "file": "v41_envelope_macros.tex",
+  "line": 31,
+  "literal": "0.30",
+  "macro": null,
+  "kind": "literal",
+  "text": "\\renewcommand{\\EnvelopeThreeVarSkillMC}{0.30}",
+  "bucket": 2
+ }
+]

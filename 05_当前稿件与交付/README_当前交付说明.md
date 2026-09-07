@@ -1,0 +1,16 @@
+# TVT 当前稿件与交付
+
+快照日期：2026-09-07
+
+- `01_最新论文预览`：当前 V6 主稿与补充材料 PDF。
+- `02_投稿收口材料`：当前投稿收口材料的实体副本。
+
+| 文件 | SHA-256 |
+|---|---|
+| `01_最新论文预览/tvt_regime_dependent_ranking_iq_repair_V6.pdf` | `02A12F50AE8B65CF1A6CF96B4055A3A2536A79FC4A0D880ECC5668C61961A0CD` |
+| `01_最新论文预览/tvt_supporting_material_V6.pdf` | `2F5F7E6F9405D11A0E992A89A889E6818E06B2CFA7561F86C0097EC0159ECBE8` |
+
+当前稿件源校验：
+
+- `04_审稿意见与改稿/01_当前稿件源/main_V6.tex`：`8FF718E67714D3DFE5A75086957B427B4A2297168DE431F6B2E35269D17DC730`
+- `04_审稿意见与改稿/01_当前稿件源/supplement_V6.tex`：`EEADB2DB5B980419E0B8C7DB6DC19FEC9BF3AA8FDCFBC9A906E5887672622A90`

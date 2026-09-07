@@ -1,0 +1,15 @@
+{
+  "mixing_law": "x = (clean + jammer + noise + receiver_artifact) / sqrt(mean|.|^2)",
+  "source": "src/vimd_amc/data/synthesis.py lines 712-714",
+  "verified_splits": [
+    "train",
+    "validation",
+    "clean_retention",
+    "hard_interference"
+  ],
+  "valid_jammer_free_counterfactual": "AGC(clean + noise + receiver_artifact)",
+  "invalid_construction_used_in_first_probe_run": "x - jammer",
+  "why_invalid": "the stored components share x's post-AGC scale, but no post-removal renormalisation is applied; the resulting windows have mean square between about 0.06 and 0.50 while every window the networks were trained on has mean square exactly 0.5",
+  "consequence": "the representation_limited verdict of artifacts/tier2_clean_probe_v1 is confounded by input-scale and composition shift and must not be used as the H2-D decision",
+  "evidence_class": "exploratory_zero_compute_audit"
+}

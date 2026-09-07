@@ -1,0 +1,48 @@
+{
+  "schema": "vimd_amc.a23_s7_iqzero_severe_held.v1",
+  "evidence_class": "exploratory_retrained_ablation",
+  "preregistration": "docs/S7_IQZERO_SIDECAR_RETRAIN_PREREG.md",
+  "seeds": [
+    17,
+    29,
+    43,
+    71,
+    101
+  ],
+  "regimes": [
+    "s5_severe_r1",
+    "s5_severe_r2"
+  ],
+  "cache_digest": "e655abeebfccb8dbd7d1e9eac2642d2d128cdd82c67ff03e6ff5e9d5358c13e2",
+  "pooled_macro_f1": {
+    "iqzero": 0.20180177468774022,
+    "A5": 0.20718030955418376,
+    "sidecar_full": 0.26109160693019595
+  },
+  "pooled_contrasts_pp": {
+    "iqzero_vs_A5": {
+      "mean": -0.5378534866443557,
+      "ci95_low": -1.3350806624292995,
+      "ci95_high": 0.25937368914058817,
+      "positive_seeds": 2
+    },
+    "iqzero_vs_sidecar_full": {
+      "mean": -5.928983224245571,
+      "ci95_low": -7.526311483457649,
+      "ci95_high": -4.68523090536776,
+      "positive_seeds": 0
+    },
+    "sidecar_full_vs_A5": {
+      "mean": 5.391129737601216,
+      "ci95_low": 3.537966083431977,
+      "ci95_high": 7.661305238566558,
+      "positive_seeds": 5
+    }
+  },
+  "decision_rule": {
+    "delta_zero_point_pp": -0.5378534866443557,
+    "delta_zero_ci95_high_pp": 0.25937368914058817,
+    "delta_full_point_pp": 5.391129737601216,
+    "verdict": "attribution_supported"
+  }
+}

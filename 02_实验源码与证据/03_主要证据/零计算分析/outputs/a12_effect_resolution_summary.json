@@ -1,0 +1,44 @@
+{
+  "purpose": "distinguish an absent effect from an unresolved one, and give the largest effect the sealed data still permit",
+  "design_resolution_pp": {
+    "primary_method_effect_contrast": 1.3101037543980087,
+    "component_level_contrasts": [
+      {
+        "contrast": "margin_vs_proportional_teacher",
+        "mde_80power_pp": 1.3101037543980019
+      },
+      {
+        "contrast": "tri_vs_dual_route",
+        "mde_80power_pp": 1.3101037543980019
+      }
+    ]
+  },
+  "bounded_statements": [
+    {
+      "contrast": "margin_vs_proportional_teacher",
+      "intervention": "margin_teacher_vs_naive_power_ratio_teacher",
+      "observed_pp": 0.1590989002451,
+      "simultaneous_interval_pp": [
+        -0.75743797967187,
+        1.07563578016209
+      ],
+      "claimable": "the individual contribution of this component is bounded by 1.08 pp under joint 95% simultaneous confidence",
+      "not_claimable": "that the component is confirmed to help, or that it is proven useless"
+    },
+    {
+      "contrast": "tri_vs_dual_route",
+      "intervention": "tri_route_vs_dual_route_full_objective",
+      "observed_pp": 0.44440788407915005,
+      "simultaneous_interval_pp": [
+        -0.47212899583782,
+        1.36094476399614
+      ],
+      "claimable": "the individual contribution of this component is bounded by 1.36 pp under joint 95% simultaneous confidence",
+      "not_claimable": "that the component is confirmed to help, or that it is proven useless"
+    }
+  ],
+  "gate_status_unchanged": {
+    "confirmatory_family_gate_passed": false,
+    "note": "the family gate required all three contrasts to clear zero; it did not, and this module does not change that. It only replaces 'inconclusive' with a quantitative bound."
+  }
+}

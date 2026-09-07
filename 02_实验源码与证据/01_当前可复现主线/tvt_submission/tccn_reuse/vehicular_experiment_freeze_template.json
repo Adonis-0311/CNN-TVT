@@ -1,0 +1,43 @@
+{
+  "schema": "vimd_amc.tvt.freeze.v1",
+  "status": "template_not_frozen",
+  "experiment_id": "replace-before-running",
+  "evidence_tier": "screening",
+  "seeds": [
+    17,
+    29,
+    43
+  ],
+  "split_roles": {
+    "train": [
+      "train"
+    ],
+    "validation": [
+      "validation"
+    ],
+    "calibration": [
+      "calibration"
+    ],
+    "test": [
+      "test"
+    ]
+  },
+  "group_identity_fields": [
+    "source_id"
+  ],
+  "data_manifests": [
+    {
+      "path": "replace/data_manifest.json",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "protocol": {
+    "primary_metric": "macro_f1",
+    "paired_cluster": "source_id",
+    "calibration_isolated": true,
+    "hypothesis_family_declared_before_test": true,
+    "screening_minimum_seeds": 3,
+    "headline_minimum_seeds": 5
+  },
+  "notes": "Template only. Replace placeholders, set status to frozen_before_results, and record the file SHA-256 before any result-bearing run."
+}

@@ -1,0 +1,21 @@
+{
+  "preregistered_gate": {
+    "predicted_direction": "negative",
+    "sealed_spearman_rho": 0.7142857,
+    "sealed_one_sided_p": 0.9486111,
+    "direction_supported": false,
+    "positive_mechanism_claim_eligible": false,
+    "source": "artifacts/tvt_v4r_headline_composite/v2_scientific_release_gate.json"
+  },
+  "exploratory_reanalysis": {
+    "bin_spearman_rho_vs_a0": 0.6,
+    "bin_spearman_p_two_sided_vs_a0": 0.28475697986529375,
+    "bin_spearman_rho_vs_cssl": 0.9999999999999999,
+    "bin_spearman_p_two_sided_vs_cssl": 1.4042654220543672e-24,
+    "bin_occupancy_sir_spearman": -0.7999999999999999,
+    "family_spearman_rho_vs_a0": -0.6,
+    "family_spearman_p_two_sided_vs_a0": 0.20799999999999982,
+    "family_count": 6
+  },
+  "interpretation": "The sealed gate is not rescued.  The exploratory re-analysis reproduces a positive association between jammer spectral occupancy and the realised gain, i.e. the opposite of the preregistered direction.  It must be reported as a falsified prediction plus an exploratory observation, never as a confirmed mechanism."
+}

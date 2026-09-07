@@ -1,0 +1,401 @@
+{
+  "schema_version": "vimd_amc.tvt.formal_freeze.v2",
+  "status": "preregistered_not_executed",
+  "created_date": "2026-07-28",
+  "supersedes_for_future_execution": "tvt_submission/configs/formal_tvt_freeze_v1.json",
+  "historical_v1_results_reinterpreted": false,
+  "journal_target": "IEEE Transactions on Vehicular Technology",
+  "claim_scope": "simulation-only AMC under 3GPP TR 38.901 TDL-profile channels parameterized by vehicular Doppler",
+  "prospective_statistical_design": {
+    "frozen_date": "2026-07-29",
+    "status": "frozen_before_any_formal_v2_artifact",
+    "eligible_formal_v2_artifacts_observed_before_freeze": false,
+    "justification_path": "docs/TVT_V2_PROSPECTIVE_STATISTICAL_JUSTIFICATION.md",
+    "justification_sha256": "055b330c20ef7a908ef191b75bb7a39302c1c51be29a1d3b517639002cae26a7",
+    "design_basis": "precision_and_decision_rule_justification_without_model_based_power_percentage",
+    "power_claim": "none_no_eligible_pilot_variance_or_paired_dependence_estimates",
+    "estimand": {
+      "regime": "hard_interference",
+      "metric": "absolute_macro_f1",
+      "direction": "candidate_minus_reference",
+      "resampling_unit": "algorithm_seed_then_class_stratified_source_id_cluster_preserving_paired_predictions_and_views",
+      "validation_excluded": true
+    },
+    "smallest_effect_size_of_interest": {
+      "contrast_id": "full_vs_backbone",
+      "absolute_macro_f1_gain": 0.01,
+      "purpose": "minimum_point_gain_for_practically_material_primary_gain_wording",
+      "statistical_success_still_requires_simultaneous_ci95_low_gt": 0.0,
+      "below_threshold_wording": "statistically_resolved_but_below_preregistered_materiality_threshold"
+    },
+    "fixed_design": {
+      "confirmatory_model_count": 12,
+      "confirmatory_algorithm_seed_count": 10,
+      "required_model_seed_fit_count": 120,
+      "hard_interference_source_cluster_count": 5000,
+      "confirmatory_family_size": 3,
+      "bootstrap_draws": 10000,
+      "learning_curve_fit_count": 30,
+      "posthoc_seed_or_source_extension_permitted": false
+    },
+    "precision_reporting": {
+      "required_per_contrast": [
+        "point_estimate",
+        "marginal_ci95",
+        "simultaneous_ci95",
+        "simultaneous_interval_width"
+      ],
+      "primary_required": [
+        "simultaneous_interval_width_divided_by_sesoi",
+        "frozen_precision_classification"
+      ],
+      "wide_or_inconclusive_interval_requires_design_extension": false,
+      "wide_or_inconclusive_interval_must_be_reported": true
+    },
+    "stopping_rule": {
+      "fit_level": "maximum_30_epochs_with_frozen_validation_only_early_stopping",
+      "study_level": "complete_exact_120_fit_grid_without_interim_test_looks_or_efficacy_futility_stopping",
+      "test_metrics_used_for_checkpoint_or_stopping": false,
+      "technical_retry": "same_model_seed_cache_configuration_and_clean_output_with_failure_audit",
+      "replacement_seed_permitted": false,
+      "outcome_dependent_amendment_permitted": false
+    },
+    "amendment_rule": "if_infeasible_before_formal_result_inspection_issue_a_new_versioned_prospective_freeze_and_do_not_relabel_it_as_v2"
+  },
+  "cache": {
+    "output": "standards/cache_factor_headline_1024_v2",
+    "preset": "headline_v2",
+    "sample_length": 1024,
+    "guard_samples": 96,
+    "master_seed": 20260727,
+    "matlab_timeout_s": 3600,
+    "expected_designation": "headline_formal_tvt_evidence_v2",
+    "expected_split_source_counts": {
+      "train": 100000,
+      "validation": 2000,
+      "id_test": 5000,
+      "hard_interference": 5000,
+      "unseen_jammer": 5000,
+      "unseen_speed": 5000,
+      "heldout_channel": 5000,
+      "combined_ood": 5000,
+      "clean_retention": 5000,
+      "adc_10bit_agc": 5000,
+      "adc_12bit_agc": 5000,
+      "per_emitter_sync": 5000
+    },
+    "receiver_robustness_contract": {
+      "nominal_training": true,
+      "stress_splits_are_test_only": true,
+      "agc": {
+        "mode": "window_rms_before_adc",
+        "applied_before_quantization": true
+      },
+      "adc_10bit_agc": {
+        "adc_bits": 10,
+        "adc_full_scale": 3.0,
+        "isolated_factor": "adc_precision"
+      },
+      "adc_12bit_agc": {
+        "adc_bits": 12,
+        "adc_full_scale": 3.0,
+        "isolated_factor": "adc_precision"
+      },
+      "per_emitter_sync": {
+        "target_and_jammer_offsets_independent": true,
+        "application_stage": "pre_mixing_after_independent_TDL_channelization",
+        "per_emitter_cfo_norm_max": 0.006,
+        "per_emitter_timing_offset_max_samples": 3,
+        "component_identity_retained": true,
+        "isolated_factor": "emitter_synchronization"
+      }
+    }
+  },
+  "learning_curve": {
+    "role": "preregistered_scale_adequacy_evidence_not_model_selection",
+    "must_complete_before_confirmatory_run": true,
+    "training_source_counts": [
+      10000,
+      30000,
+      100000
+    ],
+    "cache_presets": [
+      "learning_10k_v2",
+      "learning_30k_v2",
+      "headline_v2"
+    ],
+    "cache_outputs": [
+      "standards/cache_factor_learning_10k_1024_v2",
+      "standards/cache_factor_learning_30k_1024_v2",
+      "standards/cache_factor_headline_1024_v2"
+    ],
+    "models": [
+      "a0_backbone",
+      "a5_vimd_full"
+    ],
+    "algorithm_seeds": [
+      17,
+      29,
+      43,
+      71,
+      101
+    ],
+    "required_epoch_metrics": [
+      "training_macro_f1",
+      "validation_macro_f1",
+      "training_total_loss",
+      "validation_loss"
+    ],
+    "required_scale_metrics": [
+      "selected_validation_macro_f1",
+      "id_test_macro_f1",
+      "hard_interference_macro_f1"
+    ],
+    "fixed_formal_scale_regardless_of_curve": 100000,
+    "posthoc_scale_or_hyperparameter_selection_permitted": false
+  },
+  "experiment": {
+    "runner": "experiments/run_formal_tvt_v2.py",
+    "run_id": "tvt_headline_1024_10seed_v2",
+    "output": "artifacts",
+    "expected_run_directory": "artifacts/tvt_headline_1024_10seed_v2",
+    "models": [
+      "a0_backbone",
+      "a1_single_mask",
+      "a2_tri_no_teacher",
+      "a3p_tri_proportional_teacher",
+      "a3_tri_teacher",
+      "a4_tri_teacher_mtl",
+      "a5_vimd_full",
+      "a6_dual_full",
+      "a7_vimd_no_residual",
+      "mcldnn_reimplementation",
+      "iqformer_inspired",
+      "cssl_amc_supervised_adaptation"
+    ],
+    "seeds": [
+      17,
+      29,
+      43,
+      71,
+      101,
+      131,
+      173,
+      211,
+      257,
+      307
+    ],
+    "reference_model": "cssl_amc_supervised_adaptation",
+    "reference_selection": "predeclared before training; not described as strongest",
+    "holm_candidates": [
+      "a0_backbone",
+      "a1_single_mask",
+      "a5_vimd_full",
+      "mcldnn_reimplementation",
+      "iqformer_inspired"
+    ],
+    "confirmatory_family": {
+      "family_id": "hard_macro_f1_confirmatory_family_v2",
+      "regime": "hard_interference",
+      "metric": "macro_f1",
+      "direction": "candidate_minus_reference",
+      "confidence_level": 0.95,
+      "multiplicity_method": "joint_max_absolute_centered_deviation_hierarchical_paired_bootstrap",
+      "simultaneous_ci95_low_strictly_greater_than": 0.0,
+      "minimum_algorithm_seeds": 10,
+      "contrasts": [
+        {
+          "contrast_id": "full_vs_backbone",
+          "reference": "a0_backbone",
+          "candidate": "a5_vimd_full",
+          "intervention": "complete_method_vs_shared_backbone",
+          "interpretation_scope": "composite_primary_method_effect"
+        },
+        {
+          "contrast_id": "margin_vs_proportional_teacher",
+          "reference": "a3p_tri_proportional_teacher",
+          "candidate": "a3_tri_teacher",
+          "intervention": "margin_teacher_vs_naive_power_ratio_teacher",
+          "interpretation_scope": "teacher_function_form"
+        },
+        {
+          "contrast_id": "tri_vs_dual_route",
+          "reference": "a6_dual_full",
+          "candidate": "a5_vimd_full",
+          "intervention": "tri_route_vs_dual_route_full_objective",
+          "interpretation_scope": "composite_control_no_single_block_attribution"
+        }
+      ]
+    },
+    "exploratory_contrasts": [
+      {
+        "contrast_id": "teacher_presence",
+        "reference": "a2_tri_no_teacher",
+        "candidate": "a3_tri_teacher",
+        "role": "exploratory_no_familywise_positive_claim"
+      },
+      {
+        "contrast_id": "multitask_bundle",
+        "reference": "a3_tri_teacher",
+        "candidate": "a4_tri_teacher_mtl",
+        "role": "exploratory_no_familywise_positive_claim"
+      },
+      {
+        "contrast_id": "cross_condition_contrast",
+        "reference": "a4_tri_teacher_mtl",
+        "candidate": "a5_vimd_full",
+        "role": "exploratory_no_familywise_positive_claim"
+      },
+      {
+        "contrast_id": "full_vs_single_mask",
+        "reference": "a1_single_mask",
+        "candidate": "a5_vimd_full",
+        "role": "exploratory_no_familywise_positive_claim"
+      },
+      {
+        "contrast_id": "bounded_bypass",
+        "reference": "a7_vimd_no_residual",
+        "candidate": "a5_vimd_full",
+        "role": "exploratory_no_familywise_positive_claim"
+      }
+    ],
+    "scientific_release_gates": {
+      "method_model": "a5_vimd_full",
+      "primary_reference_model": "cssl_amc_supervised_adaptation",
+      "required_nonoracle_baselines": [
+        "a0_backbone",
+        "mcldnn_reimplementation",
+        "iqformer_inspired",
+        "cssl_amc_supervised_adaptation"
+      ],
+      "confirmatory_family_all_simultaneous_ci95_low_above": 0.0,
+      "ood_axis_calibration": {
+        "id_regime": "id_test",
+        "baseline_model": "a0_backbone",
+        "candidate_model": "a5_vimd_full",
+        "axes": [
+          "unseen_jammer",
+          "unseen_speed",
+          "heldout_channel"
+        ],
+        "opportunity_metric": "a0_id_macro_f1_minus_a0_axis_macro_f1",
+        "opportunity_floor": 0.005,
+        "consequential_axis_rule": "opportunity_ci95_low_gt_floor",
+        "recovery_fraction": 0.25,
+        "consequential_axis_gate": "ci95_low_of_gain_minus_recovery_fraction_times_positive_a0_degradation_gt_0",
+        "nonconsequential_axis_gate": "a5_minus_a0_ci95_low_ge_minus_0.01",
+        "all_axes_must_pass_their_predeclared_branch": true,
+        "fixed_three_pp_threshold_used": false
+      },
+      "receiver_robustness": {
+        "axes": [
+          "adc_10bit_agc",
+          "adc_12bit_agc",
+          "per_emitter_sync"
+        ],
+        "nominal_reference_regime": "hard_interference",
+        "calibration_rule": "A0 hard-interference minus A0 stress-axis degradation with the same consequential/noninferiority CI branches; no id_test comparison",
+        "all_axes_must_be_reported": true,
+        "claim_positive_only_if_axis_gate_passed": true
+      },
+      "jammer_occupancy_directional_test": {
+        "regime": "hard_interference",
+        "baseline_model": "a0_backbone",
+        "candidate_model": "a5_vimd_full",
+        "family_pool": [
+          "tone",
+          "multitone",
+          "chirp",
+          "sweep",
+          "partial_band",
+          "comb"
+        ],
+        "minimum_family_count": 6,
+        "occupancy_definition": "per-source fraction of periodic-Hann complex-STFT cells in the single inference view (view1) whose jammer power is at least 0.01 times that source view's maximum jammer-cell power (-20 dB support); family value is the arithmetic mean over sources",
+        "gain_definition": "for each jammer family, compute paired A5-minus-A0 macro-F1 on that family's inference-view source subset within each algorithm seed, then take the arithmetic mean across algorithm seeds",
+        "test_statistic": "Spearman correlation across jammer-family occupancy and gain",
+        "predicted_direction": "negative",
+        "permutation_test": "exact one-sided enumeration of family-gain assignments",
+        "bootstrap_ci": "hierarchical algorithm-seed and within-family source bootstrap",
+        "must_be_reported": true,
+        "directional_success_required_for_submission_release": false,
+        "positive_mechanism_claim_permitted_only_if_rho_lt_0_and_one_sided_p_lte_0.05_and_no_strict_occupancy_inversions_and_ci95_high_lt_0": true
+      },
+      "clean_retention": {
+        "regime": "clean_retention",
+        "baseline_model": "cssl_amc_supervised_adaptation",
+        "candidate_model": "a5_vimd_full",
+        "profile_strata": {
+          "clean_retention_seen_acd": [
+            0,
+            2,
+            3
+          ],
+          "clean_retention_held_be": [
+            1,
+            4
+          ]
+        },
+        "metric": "macro_f1",
+        "point_gain_floor": -0.01,
+        "ci95_low_floor": -0.02,
+        "all_strata_must_pass": true
+      }
+    },
+    "device": "cuda",
+    "verify_checksums": true,
+    "validate_components": true,
+    "training": {
+      "epochs": 30,
+      "batch_size": 64,
+      "learning_rate": 0.0003,
+      "weight_decay": 0.01,
+      "mask_start_epoch": 2,
+      "contrastive_start_epoch": 5,
+      "mask_ramp_epochs": 3,
+      "contrastive_ramp_epochs": 3,
+      "minimum_full_stage_epochs": 3,
+      "patience": 8,
+      "use_amp": true
+    },
+    "model": {
+      "n_fft": 64,
+      "hop_length": 16,
+      "spectral_channels": 24,
+      "embedding_dim": 48,
+      "environment_dim": 32,
+      "dropout": 0.05
+    },
+    "statistics": {
+      "bootstrap_draws": 10000,
+      "bootstrap_seed": 20260803,
+      "master_seed_must_differ_from_bootstrap_seed": true,
+      "headline_inference": "hierarchical bootstrap over algorithm seed and class-stratified source cluster",
+      "ood_calibration_inference": "joint algorithm-seed bootstrap with independent ID/OOD source resampling and paired A5/A0 OOD resampling",
+      "mcnemar_role": "per-seed supplemental diagnostic",
+      "validation_excluded": true
+    }
+  },
+  "promotion_requirements": {
+    "prospective_statistical_design_verified": true,
+    "learning_curve_complete_before_confirmatory": true,
+    "run_eligible_true": true,
+    "source_tree_unchanged": true,
+    "all_required_models_and_seeds": true,
+    "at_least_one_checkpoint_selection_eligible_epoch_per_fit": true,
+    "no_fallback_checkpoint": true,
+    "confirmatory_family_artifact_derived": true,
+    "ood_axis_calibration_artifact_derived": true,
+    "receiver_robustness_artifact_derived": true,
+    "no_placeholder_result_macro": true,
+    "human_primary_source_audit": true
+  },
+  "prohibited_imports": [
+    "screening metrics",
+    "diagnostic metrics",
+    "oracle-control metrics",
+    "source-mutated metrics",
+    "historical v1 metrics reinterpreted as v2",
+    "manually typed performance values"
+  ]
+}

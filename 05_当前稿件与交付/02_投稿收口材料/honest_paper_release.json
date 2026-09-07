@@ -1,0 +1,284 @@
+{
+  "schema": "vimd_amc.tvt.honest_paper_release.v1",
+  "generated_utc": "2026-08-18T10:46:53.144883+00:00",
+  "manuscript_mode": "honest_scientific_integration",
+  "honest_manuscript_validated": true,
+  "submission_unlocked": false,
+  "scientific_evidence_passed": false,
+  "failed_gates": [
+    "clean_retention_gate_failed",
+    "confirmatory_family_gate_failed"
+  ],
+  "evidence_key_count": 229,
+  "checks": [
+    {
+      "id": "artifact_main_tex",
+      "passed": true,
+      "actual": "stable_nonempty_file",
+      "required": "stable_nonempty_file"
+    },
+    {
+      "id": "artifact_paper_macros",
+      "passed": true,
+      "actual": "stable_nonempty_file",
+      "required": "stable_nonempty_file"
+    },
+    {
+      "id": "artifact_paper_numbers",
+      "passed": true,
+      "actual": "stable_nonempty_file",
+      "required": "stable_nonempty_file"
+    },
+    {
+      "id": "artifact_latex_log",
+      "passed": true,
+      "actual": "stable_nonempty_file",
+      "required": "stable_nonempty_file"
+    },
+    {
+      "id": "artifact_pdf",
+      "passed": true,
+      "actual": "stable_nonempty_file",
+      "required": "stable_nonempty_file"
+    },
+    {
+      "id": "submission_remains_locked",
+      "passed": true,
+      "actual": false,
+      "required": false
+    },
+    {
+      "id": "scientific_gate_not_rewritten",
+      "passed": true,
+      "actual": false,
+      "required": false
+    },
+    {
+      "id": "failed_gate_set",
+      "passed": true,
+      "actual": [
+        "clean_retention_gate_failed",
+        "confirmatory_family_gate_failed"
+      ],
+      "required": [
+        "clean_retention_gate_failed",
+        "confirmatory_family_gate_failed"
+      ]
+    },
+    {
+      "id": "required_disclosure_01",
+      "passed": true,
+      "actual": "family gate (?:did not pass|does not pass)",
+      "required": "family gate (?:did not pass|does not pass)"
+    },
+    {
+      "id": "required_disclosure_02",
+      "passed": true,
+      "actual": "clean-retention gate (?:did not pass|does not pass)",
+      "required": "clean-retention gate (?:did not pass|does not pass)"
+    },
+    {
+      "id": "required_disclosure_03",
+      "passed": true,
+      "actual": "post hoc|post-hoc",
+      "required": "post hoc|post-hoc"
+    },
+    {
+      "id": "required_disclosure_04",
+      "passed": true,
+      "actual": "exploratory\\s+and\\s+outside\\s+the\\s+frozen\\s+confirmatory\\s+family",
+      "required": "exploratory\\s+and\\s+outside\\s+the\\s+frozen\\s+confirmatory\\s+family"
+    },
+    {
+      "id": "required_disclosure_05",
+      "passed": true,
+      "actual": "simulation.only|scope is simulation only",
+      "required": "simulation.only|scope is simulation only"
+    },
+    {
+      "id": "forbidden_term_01",
+      "passed": true,
+      "actual": "absent",
+      "required": "absent"
+    },
+    {
+      "id": "forbidden_term_02",
+      "passed": true,
+      "actual": "absent",
+      "required": "absent"
+    },
+    {
+      "id": "forbidden_term_03",
+      "passed": true,
+      "actual": "absent",
+      "required": "absent"
+    },
+    {
+      "id": "forbidden_term_04",
+      "passed": true,
+      "actual": "absent",
+      "required": "absent"
+    },
+    {
+      "id": "forbidden_term_05",
+      "passed": true,
+      "actual": "absent",
+      "required": "absent"
+    },
+    {
+      "id": "artifact_macro_input",
+      "passed": true,
+      "actual": true,
+      "required": true
+    },
+    {
+      "id": "used_evidence_macros_defined",
+      "passed": true,
+      "actual": [],
+      "required": []
+    },
+    {
+      "id": "source_digest_closure",
+      "passed": true,
+      "actual": [],
+      "required": []
+    },
+    {
+      "id": "log_no_fatal_errors",
+      "passed": true,
+      "actual": 0,
+      "required": 0
+    },
+    {
+      "id": "log_no_undefined_citations",
+      "passed": true,
+      "actual": 0,
+      "required": 0
+    },
+    {
+      "id": "log_no_undefined_references",
+      "passed": true,
+      "actual": 0,
+      "required": 0
+    },
+    {
+      "id": "log_no_overfull_boxes",
+      "passed": true,
+      "actual": 0,
+      "required": 0
+    },
+    {
+      "id": "log_no_rerun_required",
+      "passed": true,
+      "actual": 0,
+      "required": 0
+    },
+    {
+      "id": "single_log_output",
+      "passed": true,
+      "actual": [
+        [
+          "7",
+          "393597"
+        ]
+      ],
+      "required": "one page/byte record"
+    },
+    {
+      "id": "positive_page_count",
+      "passed": true,
+      "actual": 7,
+      "required": "> 0"
+    },
+    {
+      "id": "log_pdf_byte_match",
+      "passed": true,
+      "actual": {
+        "log": 393597,
+        "pdf": 393597
+      },
+      "required": "exact equality"
+    },
+    {
+      "id": "pdf_signature",
+      "passed": true,
+      "actual": "%PDF-1.5",
+      "required": "%PDF-"
+    },
+    {
+      "id": "build_freshness",
+      "passed": true,
+      "actual": true,
+      "required": true
+    },
+    {
+      "id": "pdf_text_extraction",
+      "passed": true,
+      "actual": 31889,
+      "required": "> 1000 characters"
+    },
+    {
+      "id": "pdf_no_placeholders",
+      "passed": true,
+      "actual": [],
+      "required": []
+    },
+    {
+      "id": "pdf_disclosure_01",
+      "passed": true,
+      "actual": "family gate (?:did not pass|does not pass)",
+      "required": "family gate (?:did not pass|does not pass)"
+    },
+    {
+      "id": "pdf_disclosure_02",
+      "passed": true,
+      "actual": "clean-retention gate (?:did not pass|does not pass)",
+      "required": "clean-retention gate (?:did not pass|does not pass)"
+    },
+    {
+      "id": "pdf_disclosure_03",
+      "passed": true,
+      "actual": "post hoc|post-hoc",
+      "required": "post hoc|post-hoc"
+    },
+    {
+      "id": "pdf_disclosure_04",
+      "passed": true,
+      "actual": "exploratory\\s+and\\s+outside\\s+the\\s+frozen\\s+confirmatory\\s+family",
+      "required": "exploratory\\s+and\\s+outside\\s+the\\s+frozen\\s+confirmatory\\s+family"
+    }
+  ],
+  "issues": [],
+  "artifacts": {
+    "main_tex": {
+      "path": "D:\\CNN信号调制识别\\vimd_amc\\paper\\main.tex",
+      "size_bytes": 30951,
+      "sha256": "c6327ada68756c14802bca21b0125aff878ac104d60d7adef5410dfe15168d06",
+      "mtime_utc": "2026-08-18T10:44:00.213737+00:00"
+    },
+    "paper_macros": {
+      "path": "D:\\CNN信号调制识别\\vimd_amc\\paper_data_layer\\outputs\\paper_macros.tex",
+      "size_bytes": 12948,
+      "sha256": "0a7ffb4b2215e2290cc3e60c99b71f563a737ab2881ab93ad7e8496359cbee3d",
+      "mtime_utc": "2026-08-18T10:44:38.019460+00:00"
+    },
+    "paper_numbers": {
+      "path": "D:\\CNN信号调制识别\\vimd_amc\\paper_data_layer\\outputs\\paper_numbers.json",
+      "size_bytes": 75124,
+      "sha256": "fa2a0e1f09f6f3b72569546c5abf86cf2433634efd31e86039b8aed3a1ecb24c",
+      "mtime_utc": "2026-08-18T10:44:38.018961+00:00"
+    },
+    "latex_log": {
+      "path": "D:\\CNN信号调制识别\\vimd_amc\\paper\\build_integrated\\main.log",
+      "size_bytes": 26488,
+      "sha256": "c68c75eeb73a63d36a066e82e2c5311b265b9ba4451c2f949a7001e733d1a7ee",
+      "mtime_utc": "2026-08-18T10:44:48.835684+00:00"
+    },
+    "pdf": {
+      "path": "D:\\CNN信号调制识别\\vimd_amc\\output\\pdf\\tvt_operating_envelope_integration.pdf",
+      "size_bytes": 393597,
+      "sha256": "98889193a079cfc8596252cc89dfcf1465add74e26942d1b5f8a3cd3bf8cbe68",
+      "mtime_utc": "2026-08-18T10:44:48.835684+00:00"
+    }
+  }
+}

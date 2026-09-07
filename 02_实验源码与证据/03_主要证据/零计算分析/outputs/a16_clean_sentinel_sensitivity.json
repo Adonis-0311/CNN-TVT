@@ -1,0 +1,73 @@
+{
+  "schema": "vimd_amc.a16_clean_sentinel_sensitivity.v1",
+  "evidence_class": "exploratory_zero_compute_reanalysis_of_sealed_predictions",
+  "source_cells": "analysis_zero_compute/outputs/csv/a14_envelope_cells.csv",
+  "excluded_cell": {
+    "split": "id_test",
+    "sir_db": 0.0,
+    "occupancy_mean": 1.016501813277948e-11,
+    "row_count": 1053,
+    "description": "id_test / SIR=0 / lowest-overlap quartile aggregate dominated by jammer-free sentinel windows"
+  },
+  "fit_cells_primary": 32,
+  "fit_cells_sensitivity": 31,
+  "held_cells": 80,
+  "references": {
+    "IQFormer": {
+      "fit_32": {
+        "reference": "IQFormer",
+        "fit_cells": 32,
+        "intercept_pp": -17.076554740158684,
+        "overlap_coefficient_pp": 14.37567417374658,
+        "sir_coefficient_pp_per_db": -1.0355802547536515,
+        "break_even_overlap_sir_minus15": 0.10732372619237075,
+        "break_even_overlap_sir_minus10": 0.4675086616039108,
+        "held_rmse_pp": 6.230341912558914,
+        "fit_domain_constant_rmse_pp": 8.368064220308474,
+        "r_squared_skill": 0.44566314625239034,
+        "oracle_constant_rmse_pp": 6.0442136783192675
+      },
+      "fit_31": {
+        "reference": "IQFormer",
+        "fit_cells": 31,
+        "intercept_pp": -18.154058441329088,
+        "overlap_coefficient_pp": 15.90320002088517,
+        "sir_coefficient_pp_per_db": -1.0663675337731104,
+        "break_even_overlap_sir_minus15": 0.13573025755179347,
+        "break_even_overlap_sir_minus10": 0.47099848418941476,
+        "held_rmse_pp": 6.4167852898205755,
+        "fit_domain_constant_rmse_pp": 8.276082227647015,
+        "r_squared_skill": 0.39884644251401224,
+        "oracle_constant_rmse_pp": 6.0442136783192675
+      }
+    },
+    "MCLDNN": {
+      "fit_32": {
+        "reference": "MCLDNN",
+        "fit_cells": 32,
+        "intercept_pp": -14.551350748328218,
+        "overlap_coefficient_pp": 19.160727594914174,
+        "sir_coefficient_pp_per_db": -0.8938043943128082,
+        "break_even_overlap_sir_minus15": 0.05972032262176838,
+        "break_even_overlap_sir_minus10": 0.2929589587553071,
+        "held_rmse_pp": 8.101174991763637,
+        "fit_domain_constant_rmse_pp": 9.634736423162218,
+        "r_squared_skill": 0.29300498701219857,
+        "oracle_constant_rmse_pp": 6.808797545016293
+      },
+      "fit_31": {
+        "reference": "MCLDNN",
+        "fit_cells": 31,
+        "intercept_pp": -15.533813668266744,
+        "overlap_coefficient_pp": 20.553518638166487,
+        "sir_coefficient_pp_per_db": -0.9218760937506482,
+        "break_even_overlap_sir_minus15": 0.08298687402553565,
+        "break_even_overlap_sir_minus10": 0.30724922782971276,
+        "held_rmse_pp": 8.19844718790394,
+        "fit_domain_constant_rmse_pp": 9.591530246700747,
+        "r_squared_skill": 0.2693869831634481,
+        "oracle_constant_rmse_pp": 6.808797545016293
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "claim": "at SIR = -15 dB the 39.5k-parameter proposed model exceeds both high-capacity literature baselines in hard-interference macro-F1",
+  "evidence_class": "exploratory_post_hoc_stratification_with_multiplicity_control",
+  "inspected_cell_family_size": 64,
+  "cells_surviving_holm_0_05": 12,
+  "surviving_cells_all_at_sir_minus_15": true,
+  "marginal_sir_level_results": [
+    {
+      "reference": "MCLDNN",
+      "difference_pp": 9.741478653090203,
+      "positive_seeds": "10/10",
+      "sign_flip_p": 0.0018499075046247689,
+      "robust_to_all_bootstrap_variants": true
+    },
+    {
+      "reference": "IQFormer",
+      "difference_pp": 10.458056738965618,
+      "positive_seeds": "10/10",
+      "sign_flip_p": 0.0018499075046247689,
+      "robust_to_all_bootstrap_variants": true
+    }
+  ],
+  "verdict": "the severe-interference advantage is not a multiplicity artefact: every surviving cell lies in the same SIR = -15 dB row, the marginal contrast is positive for every algorithm seed, and all four bootstrap variants keep the interval strictly positive"
+}

@@ -1,0 +1,58 @@
+{
+  "schema": "vimd_amc.a19_s5_severe_held.v1",
+  "evidence_class": "prospective_post_hoc_robustness_validation",
+  "preregistration": "docs/S5_A_SEVERE_HELD_PREREG.md",
+  "cache_root": "D:\\CNN信号调制识别\\vimd_amc\\standards\\cache_s5_severe_held_v1",
+  "usable_cells": 64,
+  "total_cells": 64,
+  "envelope": {
+    "fit_cells": 32,
+    "references": {
+      "IQFormer": {
+        "beta0": -0.17076554740158684,
+        "beta1_overlap": 0.1437567417374658,
+        "beta2_sir": -0.010355802547536513
+      },
+      "MCLDNN": {
+        "beta0": -0.14551350748328218,
+        "beta1_overlap": 0.19160727594914173,
+        "beta2_sir": -0.008938043943128082
+      }
+    }
+  },
+  "selector": {
+    "cells": 64,
+    "tp": 18,
+    "fp": 14,
+    "fn": 13,
+    "tn": 19,
+    "recall": 0.5806451612903226,
+    "precision": 0.5625,
+    "realized_cell_mean_macro_f1": 0.2014839154085773,
+    "oracle_cell_mean_macro_f1": 0.22909609384205237,
+    "regret_vs_oracle_pp": 2.7612178433475076,
+    "expected_macs_million": 198.70000000000002,
+    "mac_saving_vs_always_iqformer": 0.4412260967379078
+  },
+  "verdicts": {
+    "IQFormer": {
+      "strong_pass": false,
+      "direction_ok": true,
+      "sign_accuracy": 0.578125,
+      "rmse_full": 9.754325908864946,
+      "rmse_sir_only": 9.048345654390292,
+      "rmse_constant": 8.11365938934574,
+      "pooled_gain_pp": -3.12000652087726
+    },
+    "MCLDNN": {
+      "strong_pass": false,
+      "direction_ok": false,
+      "sign_accuracy": 0.40625,
+      "rmse_full": 22.563788536505427,
+      "rmse_sir_only": 22.28725428890352,
+      "rmse_constant": 15.413113953018359,
+      "pooled_gain_pp": -12.449180686535655
+    }
+  },
+  "overall_verdict": "fail"
+}

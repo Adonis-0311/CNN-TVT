@@ -1,0 +1,64 @@
+{
+  "schema": "tvt_paper_figures_origin_style.v1",
+  "generated_utc": "2026-08-27T10:10:40.424708+00:00",
+  "purpose": "Presentation-only restyle: unified OriginLab-convention house style.",
+  "guarantee": "No model is trained and no frozen artifact is refitted or edited.",
+  "house_style": {
+    "font": "Arial",
+    "frame": "four-sided black box, 0.9 pt",
+    "ticks": "inward, mirrored on top and right, minor ticks enabled",
+    "grid": "none",
+    "legend": "framed, 0.7 pt black rule",
+    "palette": {
+      "blue": "#0072B2",
+      "vermilion": "#D55E00",
+      "green": "#009E73",
+      "ink": "#000000",
+      "gray": "#5A5A5A"
+    },
+    "palette_validation": "three categorical slots; all-pairs light surface; worst CVD dE 11.0, worst normal-vision dE 18.7, all slots >= 3:1 contrast"
+  },
+  "sources": {
+    "fig2_rank_instability": [
+      "a1b_snr_sir_map.csv"
+    ],
+    "fig3_campaign_diagnostic_envelope": [
+      "a14_envelope_cells.csv",
+      "a14_v41_envelope_interfered_holdout.csv",
+      "a14_v41_envelope_summary.json"
+    ],
+    "fig4_clean_condition_transfer": [
+      "a13_condition_transfer.csv"
+    ],
+    "fig5_complexity_and_representation": [
+      "a15_v41_pareto_matched.csv"
+    ]
+  },
+  "source_sha256": {
+    "a1b_snr_sir_map.csv": "4e819f4e86c15d9867b003b239f5a54ea6843c7c3b034ab4e3fc68bc9f1a2e0f",
+    "a14_v41_envelope_interfered_holdout.csv": "bbb75a41f2bb44282034c9e6d8bc6d537f90b3ee86d546cbae8231db8a3d8461",
+    "a14_v41_envelope_summary.json": "bc584c8dee1d271483721eb4b88416fc8bc0bb0359ba2c4255aee2fc601ca0d2",
+    "a14_envelope_cells.csv": "b0d5725a8c5a277f1221172662cb11519f762bdd499cb67f48a51bf0a391eea7",
+    "a13_condition_transfer.csv": "dc023fe9fbcbce59a25b745eca773d19a75222d4002a1578f6770b7aac73baf9",
+    "a15_v41_pareto_matched.csv": "e9b5e6fa196fa65609fdcfa3a5befef3fafffd09c43a8daf991cfd5458c0aa93"
+  },
+  "outputs": [
+    "fig2_rank_instability.pdf",
+    "fig2_rank_instability.png",
+    "fig2_rank_instability.svg",
+    "fig2_rank_instability.tiff",
+    "fig3_campaign_diagnostic_envelope.pdf",
+    "fig3_campaign_diagnostic_envelope.png",
+    "fig3_campaign_diagnostic_envelope.svg",
+    "fig3_campaign_diagnostic_envelope.tiff",
+    "fig4_clean_condition_transfer.pdf",
+    "fig4_clean_condition_transfer.png",
+    "fig4_clean_condition_transfer.svg",
+    "fig4_clean_condition_transfer.tiff",
+    "fig5_complexity_and_representation.pdf",
+    "fig5_complexity_and_representation.png",
+    "fig5_complexity_and_representation.svg",
+    "fig5_complexity_and_representation.tiff",
+    "provenance_origin.json"
+  ]
+}

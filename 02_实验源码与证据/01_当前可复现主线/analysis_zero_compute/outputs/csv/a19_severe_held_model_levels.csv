@@ -1,0 +1,7 @@
+scope,reference,mean_gain_pp,cells
+pooled,IQFormer,-3.12000652087726,64
+pooled,MCLDNN,-12.449180686535655,64
+s5_severe_r1,IQFormer,-3.2640738490968815,32
+s5_severe_r1,MCLDNN,-12.387407965078195,32
+s5_severe_r2,IQFormer,-2.9759391926576386,32
+s5_severe_r2,MCLDNN,-12.510953407993114,32

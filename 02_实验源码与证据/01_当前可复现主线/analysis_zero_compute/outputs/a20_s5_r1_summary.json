@@ -1,0 +1,51 @@
+{
+  "schema": "vimd_amc.a20_s5_r1_sidecar_severe_held.v1",
+  "evidence_class": "prospective_post_hoc_robustness_validation",
+  "preregistration": "docs/S5_R1_PREREG.md",
+  "checkpoint_audit": "docs/S5_R1_CHECKPOINT_AUDIT.md",
+  "cache_digest": "e655abeebfccb8dbd7d1e9eac2642d2d128cdd82c67ff03e6ff5e9d5358c13e2",
+  "seeds": [
+    17,
+    29,
+    43,
+    71,
+    101,
+    131,
+    173,
+    211,
+    257,
+    307
+  ],
+  "seed_rule": "A (all ten seeds present; ten-seed primary analysis)",
+  "pooled_levels_macro_f1": {
+    "sidecar": 0.25087584846050537,
+    "A5": 0.20717115253207216,
+    "IQFormer": 0.2329401105611871,
+    "MCLDNN": 0.33748072074810626
+  },
+  "primary": {
+    "contrast": "sidecar_minus_A5",
+    "r1_pp": 4.217048015197458,
+    "r2_pp": 4.52389117048918,
+    "pooled_pp": 4.370469592843318,
+    "ci95_pp": [
+      2.9621562813776503,
+      5.901927637969457
+    ],
+    "positive_seeds": 10,
+    "snr_strata_sidecar_better_pooled": 8
+  },
+  "gap_recovery": {
+    "vs_IQFormer": 1.6960210761744288,
+    "vs_MCLDNN": 0.3353913033920675
+  },
+  "baseline_level": "C",
+  "macs_million": {
+    "A5": 41.8,
+    "sidecar": 43.1,
+    "IQFormer": 355.6,
+    "MCLDNN": 398.2
+  },
+  "verdict": "strong_repair",
+  "verdict_wording": "Independent severe-held validation supports a representation-repair effect that generalizes beyond the original campaign."
+}

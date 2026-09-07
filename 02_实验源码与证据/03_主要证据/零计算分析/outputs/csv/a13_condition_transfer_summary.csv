@@ -1,0 +1,9 @@
+model_family,training_condition_coverage,discriminability_type,jammed_f1,clean_f1,transfer_gap,transfer_failed_share,cells
+compact_spectral_A0_A7,jammed_and_clean,constellation_order,0.03619913074164896,0.38517825155521584,0.34897912081356686,0.0,18
+compact_spectral_A0_A7,jammed_and_clean,envelope_distinctive,0.7119899483823985,0.7932833439585131,0.08129339557611462,0.0,18
+compact_spectral_A0_A7,jammed_only,constellation_order,0.2513344092182331,0.0069825132953777146,-0.2443518959228554,1.0,27
+compact_spectral_A0_A7,jammed_only,envelope_distinctive,0.6923779848005706,0.8611574970375465,0.168779512236976,0.0,27
+iq_domain_high_capacity,jammed_and_clean,constellation_order,0.23349510121882697,0.5473710492943021,0.3138759480754751,0.0,6
+iq_domain_high_capacity,jammed_and_clean,envelope_distinctive,0.6162233525763048,0.8354813691750973,0.2192580165987926,0.0,6
+iq_domain_high_capacity,jammed_only,constellation_order,0.3052312256611257,0.3577554417119691,0.05252421605084341,0.1111111111111111,9
+iq_domain_high_capacity,jammed_only,envelope_distinctive,0.6156042816882695,0.8656193927395199,0.2500151110512504,0.0,9

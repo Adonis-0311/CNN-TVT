@@ -1,0 +1,2817 @@
+{
+  "schema": "tvt_paper_numbers_v1",
+  "generated_utc": "2026-08-22T04:28:03.339087+00:00",
+  "policy": "every manuscript number must resolve to a key in this file; hand-typed numbers are a build failure. Sealed and exploratory keys must be labelled as such in the text.",
+  "gate_status": {
+    "scientific_evidence_passed": false,
+    "submission_unlocked": false,
+    "failed_gates": [
+      "confirmatory_family_gate_failed",
+      "clean_retention_gate_failed"
+    ]
+  },
+  "source_sha256": {
+    "artifacts\\tvt_v4r_headline_composite\\run.json": "dee361e195344db72959d2530732785049bb267011f4c75d67b68543988fec57",
+    "artifacts\\tvt_v4r_headline_composite\\ablation_paired_statistics.csv": "3a65474a18bb1850202d0872fa9dfbe1c23252e5477a6e112c231699ccaebabe",
+    "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv": "09b985fac6862c20c56238e4ee710628e91d68eb84868ab73e0936c81cc46788",
+    "artifacts\\tvt_v4r_headline_composite\\seed_aggregates.csv": "e3d3002d6f696d701e255890d9c4fceefacaa23fc6fd9929a62772a6e3868681",
+    "analysis_zero_compute\\outputs\\csv\\a8_pareto.csv": "c76fb1cba50b006351c3d9f33fbe30247e4d04c78cd281ef1fa02b8c0a64b3d3",
+    "analysis_zero_compute\\outputs\\csv\\a11_severe_corner_robustness.csv": "54e3f368305a49368e053af5d3e8a1c40316458a509516bc42650bdfd1b0d9a7",
+    "analysis_zero_compute\\outputs\\csv\\a11_cell_multiplicity.csv": "847b687080dd059898eb8c5fdb70fafff8fd9ea15324f442af89779da1366e48",
+    "analysis_zero_compute\\outputs\\csv\\a14_envelope_fit.csv": "42ba1a2f7d44625c9fddbd7afcd2aa6adcee3e0e0ea315e5e860487c69193f63",
+    "analysis_zero_compute\\outputs\\csv\\a16_clean_sentinel_sensitivity.csv": "717908e32e4a22d72d9f90385307a324b1bb898a222eacb4f34fb939c8c84e80",
+    "analysis_zero_compute\\outputs\\csv\\a12_effect_resolution_ablation.csv": "b254adb11b2c26ccdf58fc06df8e8f6d24ac8b78c43cc2aecdabc089aefd9f3d",
+    "analysis_zero_compute\\outputs\\csv\\a13_condition_transfer_summary.csv": "05ee8f810dce16f903ecf35d06d16d5975d967804b07e8cbaca2982e1cc2aaad",
+    "analysis_zero_compute\\outputs\\csv\\a5_fusion.csv": "69bc77d30b24662e65470c23af1ae13ada512be08ba81ecf77fb2fb30b4c8fa0",
+    "analysis_zero_compute\\outputs\\csv\\a4_selective_points.csv": "9f5764a5aa7161d3991fc6d4d82c1fbf2df1b550dc4cffd52ee53a36cd51a059",
+    "analysis_zero_compute\\outputs\\csv\\a9_condition_coverage.csv": "8bcba07cc99fbfbbe2eb85a4d083ecc4a78413515872ddcc20af3e4a2d86d4e2",
+    "analysis_zero_compute\\outputs\\csv\\tier2_clean_probe_runs.csv": "59b9123773e586e2b515d5ddb9f2d0badf70b359e058796369d490381582ef82",
+    "analysis_zero_compute\\outputs\\csv\\tier2_condition_coverage_v1_compare.csv": "fd639451562b9bd22e0eec816a8e0a05d7711bbf8d00d8f5202552924f109211",
+    "analysis_zero_compute\\outputs\\csv\\tier2_presence_gated_v1_vs_a5.csv": "1f0d07c7c71aebd0e204529b630d9285c91b28f4cc4574f1a8db5435af7373d6",
+    "analysis_zero_compute\\outputs\\csv\\tier2_presence_gate_distribution.json": "01b6d336f92748a50469134bd7b7c3e2216ac54e153a1cc6fe0c3975bb3f55fe",
+    "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_a5.csv": "080df374dde23a03b6e56e50ec9a9fe03f23b1bb97e1ced12959accbe7d4e0bd",
+    "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_mcldnn.csv": "c4e90afae25d7430ef8412e354ee66ae0558fa4aa30413dbfb6cfb72726b0bce",
+    "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_iqformer.csv": "0fb3b88807c0c321dd96f0488585aa636554fcdf6ccc6751474e93dbd60c0a43",
+    "analysis_zero_compute\\outputs\\csv\\tier2_capacity_M_v2_vs_a5.csv": "1ed1c7f815c92a1e025fa2b224948d9b5fd0089267732c320d63807ad925c8f6",
+    "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_S.csv": "70e0103160df71fe1180b04bdaad3da790cf781a8885fae3323217a9a4ab95a5",
+    "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_M.csv": "aacb3ee5711ca18790549103c3913293432d8ce07dd56b58ff0ce4ac74010ff4",
+    "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_mcldnn.csv": "3b6a86a3cfa17f9f135ff2e60c4afcb5de4f993ab6a04d2abb8a6f59fe84e332",
+    "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv": "ed883b09f2f13e977131ef64e5f64806a3483e61a96a89af745134e8de5f2733",
+    "artifacts\\tier2_iq_sidecar_v1\\run.json": "544c0aa81c481a2d2f4437438ba089d7e2185c69307d3bca9b39bc72c4a73495",
+    "artifacts\\tier2_capacity_M_v2\\run.json": "ccb1d2409e17281ad71769543feae82beb33a3ed4ec7ffe0cf5c99a482ecea54",
+    "artifacts\\tier2_capacity_L_v1\\run.json": "f95e7f45dcd2f48057d7f7ef3d42a3915a72851c32bc70426122e67caa1b2a3a",
+    "analysis_zero_compute\\outputs\\v55_capacity_compute_audit.json": "59a4ce61aa2d25175cb2d7e9e4a4138c7415f50d13f171c78337f7d3275a202e",
+    "analysis_zero_compute\\outputs\\a19_s5_severe_held.json": "342716296019b5262e1d236300baf42524e64c9fe9d190df9e20a07d311e525e",
+    "analysis_zero_compute\\outputs\\a20_s5_r1_summary.json": "7a183e340eeee1e664a833a089339270b85d87c5276966a5298c734bf272fe90",
+    "analysis_zero_compute\\outputs\\a21_s6_controls_summary.json": "e405ccf300e21472e2cf3ece54735fa3374c9601db86702116a8c17cb3e37732",
+    "standards\\cache_s5_severe_held_v1\\manifest.json": "b0b8559ba0449820cc28b624ba6a3a8d7d20edba76477a06d17715185cd5a012",
+    "analysis_zero_compute\\outputs\\csv\\a21_control_paired_contrasts.csv": "683685683cc4481538b366e33ec686265d51a623d7ebf3347da004990ba2d22e",
+    "analysis_zero_compute\\outputs\\csv\\a21_control_matched5_levels.csv": "a94218c8c99bb283531d92eae55de435de0011a59de29e4c187fba3cc2a85536",
+    "analysis_zero_compute\\outputs\\a22_severe_held_decomposition.json": "71dd92ff806275b3f4c26bfa84011d2906176e87ef88a56a3010214d18c1e1a0",
+    "analysis_zero_compute\\outputs\\csv\\a22_lesion_ratios.csv": "6fcea8a8c8c7835cfa47585c500b12fdadb7afe665c3dc931ae840b8ac538ff6",
+    "analysis_zero_compute\\outputs\\a23_s7_iqzero_summary.json": "70c08b67bd77b5c97d33a6be7d18fb2ba92fdf18965fe8c8a97bb013f40bb49e",
+    "analysis_zero_compute\\outputs\\a24_s7_campaign_levels.json": "d14762534388a5cd64440ad03f26414d51763298afc494914acd86d56a8e6f51"
+  },
+  "keys": {
+    "ProtocolModelCount": {
+      "value": 12,
+      "unit": "",
+      "precision": 0,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\run.json",
+      "row_selector": "models",
+      "evidence_class": "sealed"
+    },
+    "ProtocolSeedCount": {
+      "value": 10,
+      "unit": "",
+      "precision": 0,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\run.json",
+      "row_selector": "algorithm_seeds",
+      "evidence_class": "sealed"
+    },
+    "ProtocolFitCount": {
+      "value": 120,
+      "unit": "",
+      "precision": 0,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\run.json",
+      "row_selector": "results[]",
+      "evidence_class": "sealed"
+    },
+    "ProtocolSplitCount": {
+      "value": 11,
+      "unit": "",
+      "precision": 0,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\run.json",
+      "row_selector": "evaluation splits",
+      "evidence_class": "sealed"
+    },
+    "ProtocolBootstrapDraws": {
+      "value": 10000,
+      "unit": "",
+      "precision": 0,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\run.json",
+      "row_selector": "bootstrap draws",
+      "evidence_class": "sealed"
+    },
+    "ProtocolTrainSources": {
+      "value": 100000,
+      "unit": "",
+      "precision": 0,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\run.json",
+      "row_selector": "train source sequences",
+      "evidence_class": "sealed"
+    },
+    "MethodEffectDiff": {
+      "value": 4.57106276652206,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\ablation_paired_statistics.csv",
+      "row_selector": "contrast_id == 'full_vs_backbone'",
+      "evidence_class": "sealed"
+    },
+    "MethodEffectSimLow": {
+      "value": 3.65452588660507,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\ablation_paired_statistics.csv",
+      "row_selector": "contrast_id == 'full_vs_backbone'",
+      "evidence_class": "sealed"
+    },
+    "MethodEffectSimHigh": {
+      "value": 5.4875996464390395,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\ablation_paired_statistics.csv",
+      "row_selector": "contrast_id == 'full_vs_backbone'",
+      "evidence_class": "sealed"
+    },
+    "TeacherFormDiff": {
+      "value": 0.1590989002451,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\ablation_paired_statistics.csv",
+      "row_selector": "contrast_id == 'margin_vs_proportional_teacher'",
+      "evidence_class": "sealed"
+    },
+    "TeacherFormSimLow": {
+      "value": -0.75743797967187,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\ablation_paired_statistics.csv",
+      "row_selector": "contrast_id == 'margin_vs_proportional_teacher'",
+      "evidence_class": "sealed"
+    },
+    "TeacherFormSimHigh": {
+      "value": 1.07563578016209,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\ablation_paired_statistics.csv",
+      "row_selector": "contrast_id == 'margin_vs_proportional_teacher'",
+      "evidence_class": "sealed"
+    },
+    "TriRouteDiff": {
+      "value": 0.44440788407915005,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\ablation_paired_statistics.csv",
+      "row_selector": "contrast_id == 'tri_vs_dual_route'",
+      "evidence_class": "sealed"
+    },
+    "TriRouteSimLow": {
+      "value": -0.47212899583782,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\ablation_paired_statistics.csv",
+      "row_selector": "contrast_id == 'tri_vs_dual_route'",
+      "evidence_class": "sealed"
+    },
+    "TriRouteSimHigh": {
+      "value": 1.36094476399614,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\ablation_paired_statistics.csv",
+      "row_selector": "contrast_id == 'tri_vs_dual_route'",
+      "evidence_class": "sealed"
+    },
+    "ConfirmatoryFamilyGatePassed": {
+      "value": "false",
+      "unit": "",
+      "precision": 0,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\ablation_paired_statistics.csv",
+      "row_selector": "family_gate_passed",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslId": {
+      "value": 4.96205888644624,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'id_test'",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslIdLow": {
+      "value": 3.77556832261364,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'id_test'",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslIdHigh": {
+      "value": 6.12632679215855,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'id_test'",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslHard": {
+      "value": 4.91065081603895,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'hard_interference'",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslHardLow": {
+      "value": 3.7809105507960696,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'hard_interference'",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslHardHigh": {
+      "value": 6.07206376209501,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'hard_interference'",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslUnseenJammer": {
+      "value": -4.14236477811199,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'unseen_jammer'",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslUnseenJammerLow": {
+      "value": -5.20417182661373,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'unseen_jammer'",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslUnseenJammerHigh": {
+      "value": -3.0797314521650203,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'unseen_jammer'",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslUnseenSpeed": {
+      "value": 1.53631642141674,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'unseen_speed'",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslUnseenSpeedLow": {
+      "value": 0.45034078779776004,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'unseen_speed'",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslUnseenSpeedHigh": {
+      "value": 2.64419501442636,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'unseen_speed'",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslHeldoutChannel": {
+      "value": 1.13141723107497,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'heldout_channel'",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslHeldoutChannelLow": {
+      "value": 0.0110872704937,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'heldout_channel'",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslHeldoutChannelHigh": {
+      "value": 2.2980110679104397,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'heldout_channel'",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslCombinedOod": {
+      "value": -4.11843466060421,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'combined_ood'",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslCombinedOodLow": {
+      "value": -5.28821432753483,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'combined_ood'",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslCombinedOodHigh": {
+      "value": -2.95846230715914,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'combined_ood'",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslClean": {
+      "value": -9.69333606488932,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'clean_retention'",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslCleanLow": {
+      "value": -10.56188656115082,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'clean_retention'",
+      "evidence_class": "sealed"
+    },
+    "HeadlineVsCsslCleanHigh": {
+      "value": -8.8326117556754,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\headline_paired_statistics.csv",
+      "row_selector": "candidate == 'a5_vimd_full' and regime == 'clean_retention'",
+      "evidence_class": "sealed"
+    },
+    "AbsAZeroHard": {
+      "value": 0.3948859471586475,
+      "unit": "",
+      "precision": 4,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\seed_aggregates.csv",
+      "row_selector": "model == 'a0_backbone' and regime == 'hard_interference'",
+      "evidence_class": "sealed"
+    },
+    "AbsAZeroId": {
+      "value": 0.510207486958193,
+      "unit": "",
+      "precision": 4,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\seed_aggregates.csv",
+      "row_selector": "model == 'a0_backbone' and regime == 'id_test'",
+      "evidence_class": "sealed"
+    },
+    "AbsAZeroClean": {
+      "value": 0.4705435495348229,
+      "unit": "",
+      "precision": 4,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\seed_aggregates.csv",
+      "row_selector": "model == 'a0_backbone' and regime == 'clean_retention'",
+      "evidence_class": "sealed"
+    },
+    "AbsAFiveHard": {
+      "value": 0.4405965748238681,
+      "unit": "",
+      "precision": 4,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\seed_aggregates.csv",
+      "row_selector": "model == 'a5_vimd_full' and regime == 'hard_interference'",
+      "evidence_class": "sealed"
+    },
+    "AbsAFiveId": {
+      "value": 0.5653841419768701,
+      "unit": "",
+      "precision": 4,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\seed_aggregates.csv",
+      "row_selector": "model == 'a5_vimd_full' and regime == 'id_test'",
+      "evidence_class": "sealed"
+    },
+    "AbsAFiveClean": {
+      "value": 0.5005032832098469,
+      "unit": "",
+      "precision": 4,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\seed_aggregates.csv",
+      "row_selector": "model == 'a5_vimd_full' and regime == 'clean_retention'",
+      "evidence_class": "sealed"
+    },
+    "AbsCSSLHard": {
+      "value": 0.3914900666634787,
+      "unit": "",
+      "precision": 4,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\seed_aggregates.csv",
+      "row_selector": "model == 'cssl_amc_supervised_adaptation' and regime == 'hard_interference'",
+      "evidence_class": "sealed"
+    },
+    "AbsCSSLId": {
+      "value": 0.5157635531124077,
+      "unit": "",
+      "precision": 4,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\seed_aggregates.csv",
+      "row_selector": "model == 'cssl_amc_supervised_adaptation' and regime == 'id_test'",
+      "evidence_class": "sealed"
+    },
+    "AbsCSSLClean": {
+      "value": 0.5974366438587402,
+      "unit": "",
+      "precision": 4,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\seed_aggregates.csv",
+      "row_selector": "model == 'cssl_amc_supervised_adaptation' and regime == 'clean_retention'",
+      "evidence_class": "sealed"
+    },
+    "AbsMCLDNNHard": {
+      "value": 0.4598705516793524,
+      "unit": "",
+      "precision": 4,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\seed_aggregates.csv",
+      "row_selector": "model == 'mcldnn_reimplementation' and regime == 'hard_interference'",
+      "evidence_class": "sealed"
+    },
+    "AbsMCLDNNId": {
+      "value": 0.6438539081259487,
+      "unit": "",
+      "precision": 4,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\seed_aggregates.csv",
+      "row_selector": "model == 'mcldnn_reimplementation' and regime == 'id_test'",
+      "evidence_class": "sealed"
+    },
+    "AbsMCLDNNClean": {
+      "value": 0.6414217483505242,
+      "unit": "",
+      "precision": 4,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\seed_aggregates.csv",
+      "row_selector": "model == 'mcldnn_reimplementation' and regime == 'clean_retention'",
+      "evidence_class": "sealed"
+    },
+    "AbsIQFormerHard": {
+      "value": 0.4872224105487034,
+      "unit": "",
+      "precision": 4,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\seed_aggregates.csv",
+      "row_selector": "model == 'iqformer_inspired' and regime == 'hard_interference'",
+      "evidence_class": "sealed"
+    },
+    "AbsIQFormerId": {
+      "value": 0.687979999728363,
+      "unit": "",
+      "precision": 4,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\seed_aggregates.csv",
+      "row_selector": "model == 'iqformer_inspired' and regime == 'id_test'",
+      "evidence_class": "sealed"
+    },
+    "AbsIQFormerClean": {
+      "value": 0.6918904098787153,
+      "unit": "",
+      "precision": 4,
+      "source_file": "artifacts\\tvt_v4r_headline_composite\\seed_aggregates.csv",
+      "row_selector": "model == 'iqformer_inspired' and regime == 'clean_retention'",
+      "evidence_class": "sealed"
+    },
+    "ParamsAZero": {
+      "value": 8458,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a8_pareto.csv",
+      "row_selector": "model == 'a0_backbone'",
+      "evidence_class": "sealed"
+    },
+    "MacsAZero": {
+      "value": 6.275424,
+      "unit": "M",
+      "precision": 1,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a8_pareto.csv",
+      "row_selector": "model == 'a0_backbone'",
+      "evidence_class": "sealed"
+    },
+    "LatencyAZero": {
+      "value": 0.7289500063052401,
+      "unit": "ms",
+      "precision": 3,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a8_pareto.csv",
+      "row_selector": "model == 'a0_backbone'",
+      "evidence_class": "sealed"
+    },
+    "ParamsAFive": {
+      "value": 39500,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a8_pareto.csv",
+      "row_selector": "model == 'a5_vimd_full'",
+      "evidence_class": "sealed"
+    },
+    "MacsAFive": {
+      "value": 41.798528,
+      "unit": "M",
+      "precision": 1,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a8_pareto.csv",
+      "row_selector": "model == 'a5_vimd_full'",
+      "evidence_class": "sealed"
+    },
+    "LatencyAFive": {
+      "value": 3.1720499973744154,
+      "unit": "ms",
+      "precision": 3,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a8_pareto.csv",
+      "row_selector": "model == 'a5_vimd_full'",
+      "evidence_class": "sealed"
+    },
+    "ParamsCSSL": {
+      "value": 8631948,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a8_pareto.csv",
+      "row_selector": "model == 'cssl_amc_supervised_adaptation'",
+      "evidence_class": "sealed"
+    },
+    "MacsCSSL": {
+      "value": 155.329152,
+      "unit": "M",
+      "precision": 1,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a8_pareto.csv",
+      "row_selector": "model == 'cssl_amc_supervised_adaptation'",
+      "evidence_class": "sealed"
+    },
+    "LatencyCSSL": {
+      "value": 0.7864499930292368,
+      "unit": "ms",
+      "precision": 3,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a8_pareto.csv",
+      "row_selector": "model == 'cssl_amc_supervised_adaptation'",
+      "evidence_class": "sealed"
+    },
+    "ParamsMCLDNN": {
+      "value": 406070,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a8_pareto.csv",
+      "row_selector": "model == 'mcldnn_reimplementation'",
+      "evidence_class": "sealed"
+    },
+    "MacsMCLDNN": {
+      "value": 398.215808,
+      "unit": "M",
+      "precision": 1,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a8_pareto.csv",
+      "row_selector": "model == 'mcldnn_reimplementation'",
+      "evidence_class": "sealed"
+    },
+    "LatencyMCLDNN": {
+      "value": 3.7893500411883,
+      "unit": "ms",
+      "precision": 3,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a8_pareto.csv",
+      "row_selector": "model == 'mcldnn_reimplementation'",
+      "evidence_class": "sealed"
+    },
+    "ParamsIQFormer": {
+      "value": 354984,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a8_pareto.csv",
+      "row_selector": "model == 'iqformer_inspired'",
+      "evidence_class": "sealed"
+    },
+    "MacsIQFormer": {
+      "value": 355.5744,
+      "unit": "M",
+      "precision": 1,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a8_pareto.csv",
+      "row_selector": "model == 'iqformer_inspired'",
+      "evidence_class": "sealed"
+    },
+    "LatencyIQFormer": {
+      "value": 4.180499992799014,
+      "unit": "ms",
+      "precision": 3,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a8_pareto.csv",
+      "row_selector": "model == 'iqformer_inspired'",
+      "evidence_class": "sealed"
+    },
+    "SevereGainMcldnn": {
+      "value": 9.741478653090201,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a11_severe_corner_robustness.csv",
+      "row_selector": "sir_db == -15 and reference == 'mcldnn_reimplementation'",
+      "evidence_class": "exploratory"
+    },
+    "SevereGainMcldnnLow": {
+      "value": 7.51812153256292,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a11_severe_corner_robustness.csv",
+      "row_selector": "sir_db == -15 and reference == 'mcldnn_reimplementation'",
+      "evidence_class": "exploratory"
+    },
+    "SevereGainMcldnnHigh": {
+      "value": 12.13948463200756,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a11_severe_corner_robustness.csv",
+      "row_selector": "sir_db == -15 and reference == 'mcldnn_reimplementation'",
+      "evidence_class": "exploratory"
+    },
+    "SevereGainMcldnnPositiveSeeds": {
+      "value": 10,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a11_severe_corner_robustness.csv",
+      "row_selector": "sir_db == -15 and reference == 'mcldnn_reimplementation'",
+      "evidence_class": "exploratory"
+    },
+    "SevereGainMcldnnSignFlipP": {
+      "value": 0.0018499075046247,
+      "unit": "",
+      "precision": 4,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a11_severe_corner_robustness.csv",
+      "row_selector": "sir_db == -15 and reference == 'mcldnn_reimplementation'",
+      "evidence_class": "exploratory"
+    },
+    "SevereGainIqformer": {
+      "value": 10.45805673896561,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a11_severe_corner_robustness.csv",
+      "row_selector": "sir_db == -15 and reference == 'iqformer_inspired'",
+      "evidence_class": "exploratory"
+    },
+    "SevereGainIqformerLow": {
+      "value": 6.77780582214204,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a11_severe_corner_robustness.csv",
+      "row_selector": "sir_db == -15 and reference == 'iqformer_inspired'",
+      "evidence_class": "exploratory"
+    },
+    "SevereGainIqformerHigh": {
+      "value": 14.287492326009621,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a11_severe_corner_robustness.csv",
+      "row_selector": "sir_db == -15 and reference == 'iqformer_inspired'",
+      "evidence_class": "exploratory"
+    },
+    "SevereGainIqformerPositiveSeeds": {
+      "value": 10,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a11_severe_corner_robustness.csv",
+      "row_selector": "sir_db == -15 and reference == 'iqformer_inspired'",
+      "evidence_class": "exploratory"
+    },
+    "SevereGainIqformerSignFlipP": {
+      "value": 0.0018499075046247,
+      "unit": "",
+      "precision": 4,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a11_severe_corner_robustness.csv",
+      "row_selector": "sir_db == -15 and reference == 'iqformer_inspired'",
+      "evidence_class": "exploratory"
+    },
+    "SevereCellsInspected": {
+      "value": 64,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a11_cell_multiplicity.csv",
+      "row_selector": "all strong-baseline cells",
+      "evidence_class": "exploratory"
+    },
+    "SevereCellsSurvivingHolm": {
+      "value": 12,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a11_cell_multiplicity.csv",
+      "row_selector": "survives_holm_0_05",
+      "evidence_class": "exploratory"
+    },
+    "EnvelopeIqformerIntercept": {
+      "value": -16.599171019765045,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a14_envelope_fit.csv",
+      "row_selector": "reference == 'iqformer_inspired'",
+      "evidence_class": "exploratory"
+    },
+    "EnvelopeIqformerOccupancySlope": {
+      "value": 11.38706601807771,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a14_envelope_fit.csv",
+      "row_selector": "reference == 'iqformer_inspired'",
+      "evidence_class": "exploratory"
+    },
+    "EnvelopeIqformerSirSlope": {
+      "value": -0.6662891445688588,
+      "unit": "",
+      "precision": 3,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a14_envelope_fit.csv",
+      "row_selector": "reference == 'iqformer_inspired'",
+      "evidence_class": "exploratory"
+    },
+    "EnvelopeIqformerRSquared": {
+      "value": 0.5798042350343774,
+      "unit": "",
+      "precision": 3,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a14_envelope_fit.csv",
+      "row_selector": "reference == 'iqformer_inspired'",
+      "evidence_class": "exploratory"
+    },
+    "EnvelopeIqformerHoldoutR": {
+      "value": 0.6936436853213249,
+      "unit": "",
+      "precision": 3,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a14_envelope_fit.csv",
+      "row_selector": "reference == 'iqformer_inspired'",
+      "evidence_class": "exploratory"
+    },
+    "EnvelopeIqformerHoldoutSign": {
+      "value": 0.9753086419753086,
+      "unit": "",
+      "precision": 3,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a14_envelope_fit.csv",
+      "row_selector": "reference == 'iqformer_inspired'",
+      "evidence_class": "exploratory"
+    },
+    "EnvelopeIqformerHoldoutRmse": {
+      "value": 6.1960016210235365,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a14_envelope_fit.csv",
+      "row_selector": "reference == 'iqformer_inspired'",
+      "evidence_class": "exploratory"
+    },
+    "EnvelopeMcldnnIntercept": {
+      "value": -14.27660485993453,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a14_envelope_fit.csv",
+      "row_selector": "reference == 'mcldnn_reimplementation'",
+      "evidence_class": "exploratory"
+    },
+    "EnvelopeMcldnnOccupancySlope": {
+      "value": 13.93183602727939,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a14_envelope_fit.csv",
+      "row_selector": "reference == 'mcldnn_reimplementation'",
+      "evidence_class": "exploratory"
+    },
+    "EnvelopeMcldnnSirSlope": {
+      "value": -0.5038482589332288,
+      "unit": "",
+      "precision": 3,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a14_envelope_fit.csv",
+      "row_selector": "reference == 'mcldnn_reimplementation'",
+      "evidence_class": "exploratory"
+    },
+    "EnvelopeMcldnnRSquared": {
+      "value": 0.4491031681830132,
+      "unit": "",
+      "precision": 3,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a14_envelope_fit.csv",
+      "row_selector": "reference == 'mcldnn_reimplementation'",
+      "evidence_class": "exploratory"
+    },
+    "EnvelopeMcldnnHoldoutR": {
+      "value": 0.5114152203839727,
+      "unit": "",
+      "precision": 3,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a14_envelope_fit.csv",
+      "row_selector": "reference == 'mcldnn_reimplementation'",
+      "evidence_class": "exploratory"
+    },
+    "EnvelopeMcldnnHoldoutSign": {
+      "value": 0.9506172839506172,
+      "unit": "",
+      "precision": 3,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a14_envelope_fit.csv",
+      "row_selector": "reference == 'mcldnn_reimplementation'",
+      "evidence_class": "exploratory"
+    },
+    "EnvelopeMcldnnHoldoutRmse": {
+      "value": 8.051174321151729,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a14_envelope_fit.csv",
+      "row_selector": "reference == 'mcldnn_reimplementation'",
+      "evidence_class": "exploratory"
+    },
+    "EnvelopeCellCount": {
+      "value": 113,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a14_envelope_fit.csv",
+      "row_selector": "cells",
+      "evidence_class": "exploratory"
+    },
+    "EnvelopeHoldoutCells": {
+      "value": 81,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a14_envelope_fit.csv",
+      "row_selector": "holdout_cells",
+      "evidence_class": "exploratory"
+    },
+    "BreakEvenIqformerSirFifteen": {
+      "value": 0.1073237261923707,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a16_clean_sentinel_sensitivity.csv",
+      "row_selector": "reference == 'IQFormer' and fit_cells == 32",
+      "evidence_class": "exploratory"
+    },
+    "BreakEvenIqformerSirTen": {
+      "value": 0.4675086616039108,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a16_clean_sentinel_sensitivity.csv",
+      "row_selector": "reference == 'IQFormer' and fit_cells == 32",
+      "evidence_class": "exploratory"
+    },
+    "BreakEvenMcldnnSirFifteen": {
+      "value": 0.0597203226217683,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a16_clean_sentinel_sensitivity.csv",
+      "row_selector": "reference == 'MCLDNN' and fit_cells == 32",
+      "evidence_class": "exploratory"
+    },
+    "BreakEvenMcldnnSirTen": {
+      "value": 0.2929589587553071,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a16_clean_sentinel_sensitivity.csv",
+      "row_selector": "reference == 'MCLDNN' and fit_cells == 32",
+      "evidence_class": "exploratory"
+    },
+    "DesignResolution": {
+      "value": 1.3101037543980087,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a12_effect_resolution_ablation.csv",
+      "row_selector": "simultaneous_mde_80power_pp",
+      "evidence_class": "exploratory"
+    },
+    "ComponentEffectBound": {
+      "value": 1.36094476399614,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a12_effect_resolution_ablation.csv",
+      "row_selector": "max over bounded contrasts",
+      "evidence_class": "exploratory"
+    },
+    "TransferFailShareCompact": {
+      "value": 100.0,
+      "unit": "%",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a13_condition_transfer_summary.csv",
+      "row_selector": "compact x jammed_only x constellation_order",
+      "evidence_class": "exploratory"
+    },
+    "TransferFailShareHighCapacity": {
+      "value": 11.11111111111111,
+      "unit": "%",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a13_condition_transfer_summary.csv",
+      "row_selector": "iq_domain x jammed_only x constellation_order",
+      "evidence_class": "exploratory"
+    },
+    "FusionIqformerGain": {
+      "value": 4.7081951371334005,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a5_fusion.csv",
+      "row_selector": "regime == 'hard_interference' and partner == 'iqformer_inspired'",
+      "evidence_class": "exploratory"
+    },
+    "FusionIqformerControl": {
+      "value": 1.48667414709466,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a5_fusion.csv",
+      "row_selector": "regime == 'hard_interference' and partner == 'iqformer_inspired'",
+      "evidence_class": "exploratory"
+    },
+    "FusionIqformerExcess": {
+      "value": 3.22152099003874,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a5_fusion.csv",
+      "row_selector": "regime == 'hard_interference' and partner == 'iqformer_inspired'; fusion_gain_vs_stronger - control_gain_vs_stronger",
+      "evidence_class": "exploratory"
+    },
+    "FusionMcldnnGain": {
+      "value": 5.70317041449216,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a5_fusion.csv",
+      "row_selector": "regime == 'hard_interference' and partner == 'mcldnn_reimplementation'",
+      "evidence_class": "exploratory"
+    },
+    "FusionMcldnnControl": {
+      "value": 1.6856087434990001,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a5_fusion.csv",
+      "row_selector": "regime == 'hard_interference' and partner == 'mcldnn_reimplementation'",
+      "evidence_class": "exploratory"
+    },
+    "FusionMcldnnExcess": {
+      "value": 4.017561670993159,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a5_fusion.csv",
+      "row_selector": "regime == 'hard_interference' and partner == 'mcldnn_reimplementation'; fusion_gain_vs_stronger - control_gain_vs_stronger",
+      "evidence_class": "exploratory"
+    },
+    "SelectiveAFiveAtThirty": {
+      "value": 94.39333333333335,
+      "unit": "%",
+      "precision": 1,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a4_selective_points.csv",
+      "row_selector": "model == 'a5_vimd_full' and coverage == 0.3",
+      "evidence_class": "exploratory"
+    },
+    "SelectiveIQFormerAtThirty": {
+      "value": 94.86,
+      "unit": "%",
+      "precision": 1,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a4_selective_points.csv",
+      "row_selector": "model == 'iqformer_inspired' and coverage == 0.3",
+      "evidence_class": "exploratory"
+    },
+    "TrainClassesWithCleanWindows": {
+      "value": 4,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a9_condition_coverage.csv",
+      "row_selector": "split == 'train' and jammer_free > 0",
+      "evidence_class": "exploratory"
+    },
+    "TrainClassesWithoutCleanWindows": {
+      "value": 6,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a9_condition_coverage.csv",
+      "row_selector": "split == 'train' and jammer_free == 0",
+      "evidence_class": "exploratory"
+    },
+    "ProbeThreshold": {
+      "value": 0.25,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_clean_probe_runs.csv",
+      "row_selector": "preregistered high-order macro-F1 decision threshold",
+      "evidence_class": "exploratory"
+    },
+    "ProbeAFiveCells": {
+      "value": 6,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_clean_probe_runs.csv",
+      "row_selector": "v2 valid and model == 'a5_vimd_full'",
+      "evidence_class": "exploratory"
+    },
+    "ProbeAFiveBelowThreshold": {
+      "value": 5,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_clean_probe_runs.csv",
+      "row_selector": "v2 valid A5 and probe_high_order_mlp < 0.25",
+      "evidence_class": "exploratory"
+    },
+    "ProbeStrongCells": {
+      "value": 18,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_clean_probe_runs.csv",
+      "row_selector": "v2 valid strong IQ-domain baselines",
+      "evidence_class": "exploratory"
+    },
+    "ProbeStrongAboveThreshold": {
+      "value": 18,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_clean_probe_runs.csv",
+      "row_selector": "v2 valid strong baselines and probe_high_order_mlp > 0.25",
+      "evidence_class": "exploratory"
+    },
+    "CoverageCleanReference": {
+      "value": 50.0503283209847,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_condition_coverage_v1_compare.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CoverageCleanCandidate": {
+      "value": 50.2048106661427,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_condition_coverage_v1_compare.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CoverageCleanDiff": {
+      "value": 0.15448234515798,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_condition_coverage_v1_compare.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CoverageCleanLow": {
+      "value": -0.31496487552589,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_condition_coverage_v1_compare.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CoverageCleanHigh": {
+      "value": 0.63365116269888,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_condition_coverage_v1_compare.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CoverageCleanSeeds": {
+      "value": 10,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_condition_coverage_v1_compare.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CoverageHardReference": {
+      "value": 44.05965748238681,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_condition_coverage_v1_compare.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CoverageHardCandidate": {
+      "value": 43.75549643281503,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_condition_coverage_v1_compare.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CoverageHardDiff": {
+      "value": -0.30416104957179,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_condition_coverage_v1_compare.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CoverageHardLow": {
+      "value": -0.9146504402818201,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_condition_coverage_v1_compare.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CoverageHardHigh": {
+      "value": 0.26626051466382,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_condition_coverage_v1_compare.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CoverageHardSeeds": {
+      "value": 10,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_condition_coverage_v1_compare.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "PresenceGateCleanVsAFiveReference": {
+      "value": 50.0503283209847,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_presence_gated_v1_vs_a5.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "PresenceGateCleanVsAFiveCandidate": {
+      "value": 49.75411265143069,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_presence_gated_v1_vs_a5.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "PresenceGateCleanVsAFiveDiff": {
+      "value": -0.29621566955399997,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_presence_gated_v1_vs_a5.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "PresenceGateCleanVsAFiveLow": {
+      "value": -0.66010557413992,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_presence_gated_v1_vs_a5.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "PresenceGateCleanVsAFiveHigh": {
+      "value": 0.08150838917188,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_presence_gated_v1_vs_a5.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "PresenceGateCleanVsAFiveSeeds": {
+      "value": 10,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_presence_gated_v1_vs_a5.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "PresenceGateHardVsAFiveReference": {
+      "value": 44.05965748238681,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_presence_gated_v1_vs_a5.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "PresenceGateHardVsAFiveCandidate": {
+      "value": 43.87477624372743,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_presence_gated_v1_vs_a5.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "PresenceGateHardVsAFiveDiff": {
+      "value": -0.18488123865938,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_presence_gated_v1_vs_a5.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "PresenceGateHardVsAFiveLow": {
+      "value": -0.72075159025914,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_presence_gated_v1_vs_a5.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "PresenceGateHardVsAFiveHigh": {
+      "value": 0.35074226031958,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_presence_gated_v1_vs_a5.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "PresenceGateHardVsAFiveSeeds": {
+      "value": 10,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_presence_gated_v1_vs_a5.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "PresenceGateCleanMean": {
+      "value": 99.99405324459076,
+      "unit": "%",
+      "precision": 3,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_presence_gate_distribution.json",
+      "row_selector": "aggregate.clean_retention.mean_of_seed_means",
+      "evidence_class": "exploratory"
+    },
+    "PresenceGateHardMean": {
+      "value": 99.99146223068237,
+      "unit": "%",
+      "precision": 3,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_presence_gate_distribution.json",
+      "row_selector": "aggregate.hard_interference.mean_of_seed_means",
+      "evidence_class": "exploratory"
+    },
+    "SidecarCleanVsAFiveReference": {
+      "value": 50.0503283209847,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_a5.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarCleanVsAFiveCandidate": {
+      "value": 61.81820524828523,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_a5.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarCleanVsAFiveDiff": {
+      "value": 11.76787692730053,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_a5.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarCleanVsAFiveLow": {
+      "value": 11.05985262326487,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_a5.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarCleanVsAFiveHigh": {
+      "value": 12.488851200853409,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_a5.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarCleanVsAFiveSeeds": {
+      "value": 10,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_a5.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarHardVsAFiveReference": {
+      "value": 44.05965748238681,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_a5.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarHardVsAFiveCandidate": {
+      "value": 48.429852985594266,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_a5.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarHardVsAFiveDiff": {
+      "value": 4.37019550320744,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_a5.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarHardVsAFiveLow": {
+      "value": 3.4425972469969404,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_a5.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarHardVsAFiveHigh": {
+      "value": 5.31318789147547,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_a5.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarHardVsAFiveSeeds": {
+      "value": 10,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_a5.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarHardVsMcldnnReference": {
+      "value": 45.98705516793524,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_mcldnn.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarHardVsMcldnnCandidate": {
+      "value": 48.429852985594266,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_mcldnn.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarHardVsMcldnnDiff": {
+      "value": 2.44279781765902,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_mcldnn.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarHardVsMcldnnLow": {
+      "value": 1.3624818350263,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_mcldnn.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarHardVsMcldnnHigh": {
+      "value": 3.49085601817188,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_mcldnn.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarHardVsMcldnnSeeds": {
+      "value": 10,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_mcldnn.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarHardVsIqformerReference": {
+      "value": 48.72224105487034,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarHardVsIqformerCandidate": {
+      "value": 48.429852985594266,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarHardVsIqformerDiff": {
+      "value": -0.29238806927607003,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarHardVsIqformerLow": {
+      "value": -1.95053271792342,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarHardVsIqformerHigh": {
+      "value": 1.457041688448,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarHardVsIqformerSeeds": {
+      "value": 10,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarSevereVsMcldnnReference": {
+      "value": 26.4716552011587,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_mcldnn.csv",
+      "row_selector": "split == 'hard_interference_sir_minus15'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarSevereVsMcldnnCandidate": {
+      "value": 37.8429714889215,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_mcldnn.csv",
+      "row_selector": "split == 'hard_interference_sir_minus15'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarSevereVsMcldnnDiff": {
+      "value": 11.3713162877628,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_mcldnn.csv",
+      "row_selector": "split == 'hard_interference_sir_minus15'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarSevereVsMcldnnLow": {
+      "value": 9.04889229197891,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_mcldnn.csv",
+      "row_selector": "split == 'hard_interference_sir_minus15'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarSevereVsMcldnnHigh": {
+      "value": 13.70069212224912,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_mcldnn.csv",
+      "row_selector": "split == 'hard_interference_sir_minus15'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarSevereVsMcldnnSeeds": {
+      "value": 10,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_mcldnn.csv",
+      "row_selector": "split == 'hard_interference_sir_minus15'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarSevereVsIqformerReference": {
+      "value": 25.75507711528328,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference_sir_minus15'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarSevereVsIqformerCandidate": {
+      "value": 37.8429714889215,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference_sir_minus15'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarSevereVsIqformerDiff": {
+      "value": 12.08789437363821,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference_sir_minus15'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarSevereVsIqformerLow": {
+      "value": 8.32077392109596,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference_sir_minus15'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarSevereVsIqformerHigh": {
+      "value": 15.88277609105459,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference_sir_minus15'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarSevereVsIqformerSeeds": {
+      "value": 10,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_iq_sidecar_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference_sir_minus15'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityMHardVsSReference": {
+      "value": 43.59411703132182,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_M_v2_vs_a5.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityMHardVsSCandidate": {
+      "value": 45.538453684050076,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_M_v2_vs_a5.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityMHardVsSDiff": {
+      "value": 1.94433665272827,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_M_v2_vs_a5.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityMHardVsSLow": {
+      "value": 1.0667374346332799,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_M_v2_vs_a5.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityMHardVsSHigh": {
+      "value": 2.8027759684730698,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_M_v2_vs_a5.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityMHardVsSSeeds": {
+      "value": 5,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_M_v2_vs_a5.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityMCleanVsSReference": {
+      "value": 49.957493417356105,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_M_v2_vs_a5.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityMCleanVsSCandidate": {
+      "value": 51.05678226843319,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_M_v2_vs_a5.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityMCleanVsSDiff": {
+      "value": 1.09928885107707,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_M_v2_vs_a5.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityMCleanVsSLow": {
+      "value": 0.44394283910513005,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_M_v2_vs_a5.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityMCleanVsSHigh": {
+      "value": 1.74340217513527,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_M_v2_vs_a5.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityMCleanVsSSeeds": {
+      "value": 5,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_M_v2_vs_a5.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsSReference": {
+      "value": 43.59411703132182,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_S.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsSCandidate": {
+      "value": 46.77600448705902,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_S.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsSDiff": {
+      "value": 3.1818874557372,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_S.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsSLow": {
+      "value": 2.43842125744669,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_S.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsSHigh": {
+      "value": 3.96416414803294,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_S.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsSSeeds": {
+      "value": 5,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_S.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLCleanVsSReference": {
+      "value": 49.957493417356105,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_S.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLCleanVsSCandidate": {
+      "value": 51.156503725702294,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_S.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLCleanVsSDiff": {
+      "value": 1.19901030834619,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_S.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLCleanVsSLow": {
+      "value": 0.63101958401731,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_S.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLCleanVsSHigh": {
+      "value": 1.8185959446101199,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_S.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLCleanVsSSeeds": {
+      "value": 5,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_S.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsMReference": {
+      "value": 45.538453684050076,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_M.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsMCandidate": {
+      "value": 46.77600448705902,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_M.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsMDiff": {
+      "value": 1.23755080300893,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_M.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsMLow": {
+      "value": 0.31178348099585,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_M.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsMHigh": {
+      "value": 2.3683906682167,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_M.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsMSeeds": {
+      "value": 5,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_M.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsMcldnnReference": {
+      "value": 45.40671842753904,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_mcldnn.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsMcldnnCandidate": {
+      "value": 46.77600448705902,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_mcldnn.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsMcldnnDiff": {
+      "value": 1.36928605951997,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_mcldnn.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsMcldnnLow": {
+      "value": 0.03492260158035,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_mcldnn.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsMcldnnHigh": {
+      "value": 2.7226286852125603,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_mcldnn.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsMcldnnSeeds": {
+      "value": 5,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_mcldnn.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsIqformerReference": {
+      "value": 49.613751590187945,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsIqformerCandidate": {
+      "value": 46.77600448705902,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsIqformerDiff": {
+      "value": -2.8377471031289203,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsIqformerLow": {
+      "value": -4.30306186840269,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsIqformerHigh": {
+      "value": -1.30760213800841,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsIqformerSeeds": {
+      "value": 5,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLHardVsIqformerMagnitude": {
+      "value": 2.8377471031289203,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv",
+      "row_selector": "abs(macro_f1_difference), split == 'hard_interference'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLSevereVsIqformerReference": {
+      "value": 26.22730603562069,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference_sir_minus15'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLSevereVsIqformerCandidate": {
+      "value": 40.302178009249175,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference_sir_minus15'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLSevereVsIqformerDiff": {
+      "value": 14.07487197362849,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference_sir_minus15'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLSevereVsIqformerLow": {
+      "value": 9.55287291698051,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference_sir_minus15'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLSevereVsIqformerHigh": {
+      "value": 18.50667983000571,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference_sir_minus15'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLSevereVsIqformerSeeds": {
+      "value": 5,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv",
+      "row_selector": "split == 'hard_interference_sir_minus15'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLCleanVsIqformerReference": {
+      "value": 69.2976795808763,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLCleanVsIqformerCandidate": {
+      "value": 51.156503725702294,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLCleanVsIqformerDiff": {
+      "value": -18.141175855173998,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLCleanVsIqformerLow": {
+      "value": -19.34197144965614,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLCleanVsIqformerHigh": {
+      "value": -16.997729379885378,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLCleanVsIqformerSeeds": {
+      "value": 5,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv",
+      "row_selector": "split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLCleanVsIqformerMagnitude": {
+      "value": 18.141175855173998,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_iqformer.csv",
+      "row_selector": "abs(macro_f1_difference), split == 'clean_retention'",
+      "evidence_class": "exploratory"
+    },
+    "SidecarParameters": {
+      "value": 46794,
+      "unit": "",
+      "precision": 0,
+      "source_file": "artifacts\\tier2_iq_sidecar_v1\\run.json",
+      "row_selector": "results[0].complexity.parameters",
+      "evidence_class": "exploratory"
+    },
+    "CapacityMParameters": {
+      "value": 99596,
+      "unit": "",
+      "precision": 0,
+      "source_file": "artifacts\\tier2_capacity_M_v2\\run.json",
+      "row_selector": "results[0].complexity.parameters",
+      "evidence_class": "exploratory"
+    },
+    "CapacityLParameters": {
+      "value": 233244,
+      "unit": "",
+      "precision": 0,
+      "source_file": "artifacts\\tier2_capacity_L_v1\\run.json",
+      "row_selector": "results[0].complexity.parameters",
+      "evidence_class": "exploratory"
+    },
+    "CapacityMMacs": {
+      "value": 104.070512,
+      "unit": "M MACs",
+      "precision": 1,
+      "source_file": "analysis_zero_compute\\outputs\\v55_capacity_compute_audit.json",
+      "row_selector": "models[model == 'Width M'].macs_million",
+      "evidence_class": "audit"
+    },
+    "CapacityLMacs": {
+      "value": 249.080768,
+      "unit": "M MACs",
+      "precision": 1,
+      "source_file": "analysis_zero_compute\\outputs\\v55_capacity_compute_audit.json",
+      "row_selector": "models[model == 'Width L'].macs_million",
+      "evidence_class": "audit"
+    },
+    "CapacityRatioMidToShort": {
+      "value": 2.5214177215189872,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_M_v2_vs_a5.csv",
+      "row_selector": "CapacityMParameters / ParamsAFive",
+      "evidence_class": "exploratory"
+    },
+    "CapacityRatioLargeToShort": {
+      "value": 5.904911392405063,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_S.csv",
+      "row_selector": "CapacityLParameters / ParamsAFive",
+      "evidence_class": "exploratory"
+    },
+    "CapacityRatioAFiveToAZero": {
+      "value": 4.670134783636794,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a8_pareto.csv",
+      "row_selector": "a5_vimd_full.parameters / a0_backbone.parameters",
+      "evidence_class": "sealed"
+    },
+    "CapacitySlopeMidPerDoubling": {
+      "value": 1.4572668507754303,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_M_v2_vs_a5.csv",
+      "row_selector": "hard M-minus-S diff / log2(param ratio)",
+      "evidence_class": "exploratory"
+    },
+    "CapacitySlopeLargePerDoubling": {
+      "value": 1.2419955170991268,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_S.csv",
+      "row_selector": "hard L-minus-S diff / log2(param ratio)",
+      "evidence_class": "exploratory"
+    },
+    "CapacityAFiveDoublingsVsAZero": {
+      "value": 2.2234641878103885,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a8_pareto.csv",
+      "row_selector": "log2(ParamsAFive / ParamsAZero)",
+      "evidence_class": "sealed"
+    },
+    "CapacityImpliedShareLow": {
+      "value": 2.7615325536909534,
+      "unit": "pp",
+      "precision": 1,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_S.csv",
+      "row_selector": "doublings x S-to-L slope (concave lower bound)",
+      "evidence_class": "exploratory"
+    },
+    "CapacityImpliedShareHigh": {
+      "value": 3.2401806547823946,
+      "unit": "pp",
+      "precision": 1,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_M_v2_vs_a5.csv",
+      "row_selector": "doublings x S-to-M slope (concave lower bound)",
+      "evidence_class": "exploratory"
+    },
+    "CapacityImpliedShareLowPct": {
+      "value": 60.41335887829197,
+      "unit": "%",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_L_v1_vs_S.csv",
+      "row_selector": "share_low / A5--A0 effect",
+      "evidence_class": "exploratory"
+    },
+    "CapacityImpliedShareHighPct": {
+      "value": 70.88462399845189,
+      "unit": "%",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\tier2_capacity_M_v2_vs_a5.csv",
+      "row_selector": "share_high / A5--A0 effect",
+      "evidence_class": "exploratory"
+    },
+    "SevereTransferGainIqformer": {
+      "value": -3.12000652087726,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a19_s5_severe_held.json",
+      "row_selector": "verdicts.IQFormer.pooled_gain_pp",
+      "evidence_class": "exploratory"
+    },
+    "SevereTransferLeadIqformer": {
+      "value": 3.12000652087726,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a19_s5_severe_held.json",
+      "row_selector": "-verdicts.IQFormer.pooled_gain_pp",
+      "evidence_class": "exploratory"
+    },
+    "SevereTransferSignAccIqformer": {
+      "value": 0.578125,
+      "unit": "",
+      "precision": 3,
+      "source_file": "analysis_zero_compute\\outputs\\a19_s5_severe_held.json",
+      "row_selector": "verdicts.IQFormer.sign_accuracy",
+      "evidence_class": "exploratory"
+    },
+    "SevereTransferRmseIqformerFull": {
+      "value": 9.754325908864946,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a19_s5_severe_held.json",
+      "row_selector": "verdicts.IQFormer.rmse_full",
+      "evidence_class": "exploratory"
+    },
+    "SevereTransferRmseIqformerSirOnly": {
+      "value": 9.048345654390292,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a19_s5_severe_held.json",
+      "row_selector": "verdicts.IQFormer.rmse_sir_only",
+      "evidence_class": "exploratory"
+    },
+    "SevereTransferRmseIqformerConstant": {
+      "value": 8.11365938934574,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a19_s5_severe_held.json",
+      "row_selector": "verdicts.IQFormer.rmse_constant",
+      "evidence_class": "exploratory"
+    },
+    "SevereTransferGainMcldnn": {
+      "value": -12.449180686535655,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a19_s5_severe_held.json",
+      "row_selector": "verdicts.MCLDNN.pooled_gain_pp",
+      "evidence_class": "exploratory"
+    },
+    "SevereTransferLeadMcldnn": {
+      "value": 12.449180686535655,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a19_s5_severe_held.json",
+      "row_selector": "-verdicts.MCLDNN.pooled_gain_pp",
+      "evidence_class": "exploratory"
+    },
+    "SevereTransferSignAccMcldnn": {
+      "value": 0.40625,
+      "unit": "",
+      "precision": 3,
+      "source_file": "analysis_zero_compute\\outputs\\a19_s5_severe_held.json",
+      "row_selector": "verdicts.MCLDNN.sign_accuracy",
+      "evidence_class": "exploratory"
+    },
+    "SevereTransferRmseMcldnnFull": {
+      "value": 22.563788536505427,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a19_s5_severe_held.json",
+      "row_selector": "verdicts.MCLDNN.rmse_full",
+      "evidence_class": "exploratory"
+    },
+    "SevereTransferRmseMcldnnSirOnly": {
+      "value": 22.28725428890352,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a19_s5_severe_held.json",
+      "row_selector": "verdicts.MCLDNN.rmse_sir_only",
+      "evidence_class": "exploratory"
+    },
+    "SevereTransferRmseMcldnnConstant": {
+      "value": 15.413113953018359,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a19_s5_severe_held.json",
+      "row_selector": "verdicts.MCLDNN.rmse_constant",
+      "evidence_class": "exploratory"
+    },
+    "SevereTransferSelectorRecall": {
+      "value": 0.5806451612903226,
+      "unit": "",
+      "precision": 3,
+      "source_file": "analysis_zero_compute\\outputs\\a19_s5_severe_held.json",
+      "row_selector": "selector.recall",
+      "evidence_class": "exploratory"
+    },
+    "SevereRepairDiff": {
+      "value": 4.370469592843318,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a20_s5_r1_summary.json",
+      "row_selector": "primary.pooled_pp",
+      "evidence_class": "exploratory"
+    },
+    "SevereRepairCiLow": {
+      "value": 2.9621562813776503,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a20_s5_r1_summary.json",
+      "row_selector": "primary.ci95_pp[0]",
+      "evidence_class": "exploratory"
+    },
+    "SevereRepairCiHigh": {
+      "value": 5.901927637969457,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a20_s5_r1_summary.json",
+      "row_selector": "primary.ci95_pp[1]",
+      "evidence_class": "exploratory"
+    },
+    "SevereRepairRegimeOneDiff": {
+      "value": 4.217048015197458,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a20_s5_r1_summary.json",
+      "row_selector": "primary.r1_pp",
+      "evidence_class": "exploratory"
+    },
+    "SevereRepairRegimeTwoDiff": {
+      "value": 4.52389117048918,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a20_s5_r1_summary.json",
+      "row_selector": "primary.r2_pp",
+      "evidence_class": "exploratory"
+    },
+    "SevereRepairPositiveSeeds": {
+      "value": 10,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\a20_s5_r1_summary.json",
+      "row_selector": "primary.positive_seeds",
+      "evidence_class": "exploratory"
+    },
+    "SevereRepairPositiveSnrStrata": {
+      "value": 8,
+      "unit": "",
+      "precision": 0,
+      "source_file": "analysis_zero_compute\\outputs\\a20_s5_r1_summary.json",
+      "row_selector": "primary.snr_strata_sidecar_better_pooled",
+      "evidence_class": "exploratory"
+    },
+    "SevereRepairGapRecoveryIqformer": {
+      "value": 1.6960210761744288,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a20_s5_r1_summary.json",
+      "row_selector": "gap_recovery.vs_IQFormer",
+      "evidence_class": "exploratory"
+    },
+    "SevereRepairGapRecoveryMcldnn": {
+      "value": 0.3353913033920675,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a20_s5_r1_summary.json",
+      "row_selector": "gap_recovery.vs_MCLDNN",
+      "evidence_class": "exploratory"
+    },
+    "SevereRepairLevelSidecar": {
+      "value": 25.087584846050536,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a20_s5_r1_summary.json",
+      "row_selector": "pooled_levels_macro_f1.sidecar",
+      "evidence_class": "exploratory"
+    },
+    "SevereRepairLevelAFive": {
+      "value": 20.717115253207215,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a20_s5_r1_summary.json",
+      "row_selector": "pooled_levels_macro_f1.A5",
+      "evidence_class": "exploratory"
+    },
+    "SevereRepairLevelIqformer": {
+      "value": 23.29401105611871,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a20_s5_r1_summary.json",
+      "row_selector": "pooled_levels_macro_f1.IQFormer",
+      "evidence_class": "exploratory"
+    },
+    "SevereRepairLevelMcldnn": {
+      "value": 33.74807207481062,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a20_s5_r1_summary.json",
+      "row_selector": "pooled_levels_macro_f1.MCLDNN",
+      "evidence_class": "exploratory"
+    },
+    "SevereReferenceLeadIqformer": {
+      "value": 2.576895802911494,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a20_s5_r1_summary.json",
+      "row_selector": "pooled_levels_macro_f1.IQFormer - pooled_levels_macro_f1.A5",
+      "evidence_class": "exploratory"
+    },
+    "SevereSeedMeanGapIqformer": {
+      "value": -2.576895802911494,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a20_s5_r1_summary.json",
+      "row_selector": "pooled_levels_macro_f1.A5 - pooled_levels_macro_f1.IQFormer",
+      "evidence_class": "exploratory"
+    },
+    "SevereRepairResidualGapIqformer": {
+      "value": 1.7935737899318265,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a20_s5_r1_summary.json",
+      "row_selector": "pooled_levels_macro_f1.sidecar - pooled_levels_macro_f1.IQFormer",
+      "evidence_class": "exploratory"
+    },
+    "SevereReferenceLeadMcldnn": {
+      "value": 13.030956821603409,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a20_s5_r1_summary.json",
+      "row_selector": "pooled_levels_macro_f1.MCLDNN - pooled_levels_macro_f1.A5",
+      "evidence_class": "exploratory"
+    },
+    "SevereSeedMeanGapMcldnn": {
+      "value": -13.030956821603409,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a20_s5_r1_summary.json",
+      "row_selector": "pooled_levels_macro_f1.A5 - pooled_levels_macro_f1.MCLDNN",
+      "evidence_class": "exploratory"
+    },
+    "SevereRepairResidualGapMcldnn": {
+      "value": -8.660487228760088,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a20_s5_r1_summary.json",
+      "row_selector": "pooled_levels_macro_f1.sidecar - pooled_levels_macro_f1.MCLDNN",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlDecisionPattern": {
+      "value": "mixed_representation_and_fusion",
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a21_s6_controls_summary.json",
+      "row_selector": "decision_pattern",
+      "evidence_class": "exploratory"
+    },
+    "SevereHeldSourcesPerRegime": {
+      "value": 6400,
+      "unit": "",
+      "precision": 0,
+      "source_file": "standards\\cache_s5_severe_held_v1\\manifest.json",
+      "row_selector": "component_audit.s5_severe_r1.view_count / 2 (paired views per source)",
+      "evidence_class": "exploratory"
+    },
+    "SevereHeldSourcesTotal": {
+      "value": 12800,
+      "unit": "",
+      "precision": 0,
+      "source_file": "standards\\cache_s5_severe_held_v1\\manifest.json",
+      "row_selector": "(component_audit.s5_severe_r1.view_count + component_audit.s5_severe_r2.view_count) / 2 (paired views per source)",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlLevelCapM": {
+      "value": 21.765593885776955,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a21_s6_controls_summary.json",
+      "row_selector": "pooled_seed_mean_macro_f1.M",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlLevelCapL": {
+      "value": 20.892409640583733,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a21_s6_controls_summary.json",
+      "row_selector": "pooled_seed_mean_macro_f1.L",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlLevelIqZero": {
+      "value": 12.804328449806086,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a21_s6_controls_summary.json",
+      "row_selector": "pooled_seed_mean_macro_f1.sidecar_iq_zero",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlLevelIqShuffle": {
+      "value": 16.2461519045475,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a21_s6_controls_summary.json",
+      "row_selector": "pooled_seed_mean_macro_f1.sidecar_iq_shuffle",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlLevelNoSideHead": {
+      "value": 7.093094315768239,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a21_s6_controls_summary.json",
+      "row_selector": "pooled_seed_mean_macro_f1.sidecar_no_side_head",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlIqZeroLoss": {
+      "value": 12.283256396244452,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a21_s6_controls_summary.json",
+      "row_selector": "control_b.full_minus_zero_pp",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlIqShuffleLoss": {
+      "value": 8.841432941503038,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a21_s6_controls_summary.json",
+      "row_selector": "control_b.full_minus_shuffle_pp",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlDiffCapM": {
+      "value": 1.047562930358582,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a21_control_paired_contrasts.csv",
+      "row_selector": "contrast == 'M_minus_A5' and scope == 'pooled'",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlDiffCapMLow": {
+      "value": -1.465770587840508,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a21_control_paired_contrasts.csv",
+      "row_selector": "contrast == 'M_minus_A5' and scope == 'pooled'",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlDiffCapMHigh": {
+      "value": 3.161583948774678,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a21_control_paired_contrasts.csv",
+      "row_selector": "contrast == 'M_minus_A5' and scope == 'pooled'",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlDiffCapL": {
+      "value": 0.1743786851653606,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a21_control_paired_contrasts.csv",
+      "row_selector": "contrast == 'L_minus_A5' and scope == 'pooled'",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlDiffCapLLow": {
+      "value": -2.471897288309711,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a21_control_paired_contrasts.csv",
+      "row_selector": "contrast == 'L_minus_A5' and scope == 'pooled'",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlDiffCapLHigh": {
+      "value": 2.50902569535341,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a21_control_paired_contrasts.csv",
+      "row_selector": "contrast == 'L_minus_A5' and scope == 'pooled'",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlDiffIqZero": {
+      "value": -7.912786803401135,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a21_control_paired_contrasts.csv",
+      "row_selector": "contrast == 'sidecar_iq_zero_minus_A5' and scope == 'pooled'",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlDiffIqZeroLow": {
+      "value": -9.927484689764134,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a21_control_paired_contrasts.csv",
+      "row_selector": "contrast == 'sidecar_iq_zero_minus_A5' and scope == 'pooled'",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlDiffIqZeroHigh": {
+      "value": -5.908308583495836,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a21_control_paired_contrasts.csv",
+      "row_selector": "contrast == 'sidecar_iq_zero_minus_A5' and scope == 'pooled'",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlDiffIqShuffle": {
+      "value": -4.47096334865972,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a21_control_paired_contrasts.csv",
+      "row_selector": "contrast == 'sidecar_iq_shuffle_minus_A5' and scope == 'pooled'",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlDiffIqShuffleLow": {
+      "value": -5.579760324707838,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a21_control_paired_contrasts.csv",
+      "row_selector": "contrast == 'sidecar_iq_shuffle_minus_A5' and scope == 'pooled'",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlDiffIqShuffleHigh": {
+      "value": -3.3621899138732347,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a21_control_paired_contrasts.csv",
+      "row_selector": "contrast == 'sidecar_iq_shuffle_minus_A5' and scope == 'pooled'",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlDiffNoSideHead": {
+      "value": -13.62402093743898,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a21_control_paired_contrasts.csv",
+      "row_selector": "contrast == 'sidecar_no_side_head_minus_A5' and scope == 'pooled'",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlDiffNoSideHeadLow": {
+      "value": -15.50448622809193,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a21_control_paired_contrasts.csv",
+      "row_selector": "contrast == 'sidecar_no_side_head_minus_A5' and scope == 'pooled'",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlDiffNoSideHeadHigh": {
+      "value": -11.761355076757068,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a21_control_paired_contrasts.csv",
+      "row_selector": "contrast == 'sidecar_no_side_head_minus_A5' and scope == 'pooled'",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlMatchedLevelAFive": {
+      "value": 20.71803095541837,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a21_control_matched5_levels.csv",
+      "row_selector": "condition == 'A5_matched5' and scope == 'pooled'",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlMatchedLevelSidecar": {
+      "value": 26.10916069301959,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a21_control_matched5_levels.csv",
+      "row_selector": "condition == 'S_matched5' and scope == 'pooled'",
+      "evidence_class": "exploratory"
+    },
+    "SevereHeldFamilyPulseAFive": {
+      "value": 29.026312393002552,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a22_severe_held_decomposition.json",
+      "row_selector": "pooled_family_levels_pct.pulse.A5",
+      "evidence_class": "exploratory"
+    },
+    "SevereHeldFamilyPulseIqformer": {
+      "value": 37.453625463824274,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a22_severe_held_decomposition.json",
+      "row_selector": "pooled_family_levels_pct.pulse.IQFormer",
+      "evidence_class": "exploratory"
+    },
+    "SevereHeldFamilyPulseMcldnn": {
+      "value": 55.343418153726034,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a22_severe_held_decomposition.json",
+      "row_selector": "pooled_family_levels_pct.pulse.MCLDNN",
+      "evidence_class": "exploratory"
+    },
+    "SevereHeldFamilyPulseSidecar": {
+      "value": 38.215904708402725,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a22_severe_held_decomposition.json",
+      "row_selector": "pooled_family_levels_pct.pulse.sidecar",
+      "evidence_class": "exploratory"
+    },
+    "SevereHeldFamilyOfdmAFive": {
+      "value": 4.601496703663331,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a22_severe_held_decomposition.json",
+      "row_selector": "pooled_family_levels_pct.ofdm_like.A5",
+      "evidence_class": "exploratory"
+    },
+    "SevereHeldFamilyOfdmIqformer": {
+      "value": 4.558443888475666,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a22_severe_held_decomposition.json",
+      "row_selector": "pooled_family_levels_pct.ofdm_like.IQFormer",
+      "evidence_class": "exploratory"
+    },
+    "SevereHeldFamilyOfdmMcldnn": {
+      "value": 4.920529161097701,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a22_severe_held_decomposition.json",
+      "row_selector": "pooled_family_levels_pct.ofdm_like.MCLDNN",
+      "evidence_class": "exploratory"
+    },
+    "SevereHeldFamilyOfdmSidecar": {
+      "value": 5.736141575341157,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a22_severe_held_decomposition.json",
+      "row_selector": "pooled_family_levels_pct.ofdm_like.sidecar",
+      "evidence_class": "exploratory"
+    },
+    "SevereHeldRegimeOneAFive": {
+      "value": 21.126199793250706,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a22_severe_held_decomposition.json",
+      "row_selector": "severe_held_levels_pct.r1.A5",
+      "evidence_class": "exploratory"
+    },
+    "SevereHeldRegimeOneIqformer": {
+      "value": 23.816617752657198,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a22_severe_held_decomposition.json",
+      "row_selector": "severe_held_levels_pct.r1.IQFormer",
+      "evidence_class": "exploratory"
+    },
+    "SevereHeldRegimeOneMcldnn": {
+      "value": 33.97632545537884,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a22_severe_held_decomposition.json",
+      "row_selector": "severe_held_levels_pct.r1.MCLDNN",
+      "evidence_class": "exploratory"
+    },
+    "SevereHeldRegimeOneSidecar": {
+      "value": 25.34324780844816,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a22_severe_held_decomposition.json",
+      "row_selector": "severe_held_levels_pct.r1.sidecar",
+      "evidence_class": "exploratory"
+    },
+    "SevereHeldRegimeTwoAFive": {
+      "value": 20.30803071316373,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a22_severe_held_decomposition.json",
+      "row_selector": "severe_held_levels_pct.r2.A5",
+      "evidence_class": "exploratory"
+    },
+    "SevereHeldRegimeTwoIqformer": {
+      "value": 22.77140435958022,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a22_severe_held_decomposition.json",
+      "row_selector": "severe_held_levels_pct.r2.IQFormer",
+      "evidence_class": "exploratory"
+    },
+    "SevereHeldRegimeTwoMcldnn": {
+      "value": 33.51981869424241,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a22_severe_held_decomposition.json",
+      "row_selector": "severe_held_levels_pct.r2.MCLDNN",
+      "evidence_class": "exploratory"
+    },
+    "SevereHeldRegimeTwoSidecar": {
+      "value": 24.831921883652914,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a22_severe_held_decomposition.json",
+      "row_selector": "severe_held_levels_pct.r2.sidecar",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlIqZeroRepairRatio": {
+      "value": 2.810511807783397,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a22_lesion_ratios.csv",
+      "row_selector": "condition == 'iq_zero'",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlIqShuffleRepairRatio": {
+      "value": 2.022993811919194,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a22_lesion_ratios.csv",
+      "row_selector": "condition == 'iq_shuffle'",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlNoSideHeadRepairRatio": {
+      "value": 4.117289949745542,
+      "unit": "",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a22_lesion_ratios.csv",
+      "row_selector": "condition == 'no_side_head'",
+      "evidence_class": "exploratory"
+    },
+    "SevereControlNoSideHeadLoss": {
+      "value": 17.9944905302823,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\csv\\a22_lesion_ratios.csv",
+      "row_selector": "condition == 'no_side_head'",
+      "evidence_class": "exploratory"
+    },
+    "RetrainedIqzeroVsAFiveDiff": {
+      "value": -0.5378534866443557,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a23_s7_iqzero_summary.json",
+      "row_selector": "pooled_contrasts_pp.iqzero_vs_A5.mean",
+      "evidence_class": "exploratory"
+    },
+    "RetrainedIqzeroVsAFiveCiLow": {
+      "value": -1.3350806624292995,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a23_s7_iqzero_summary.json",
+      "row_selector": "pooled_contrasts_pp.iqzero_vs_A5.ci95_low",
+      "evidence_class": "exploratory"
+    },
+    "RetrainedIqzeroVsAFiveCiHigh": {
+      "value": 0.25937368914058817,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a23_s7_iqzero_summary.json",
+      "row_selector": "pooled_contrasts_pp.iqzero_vs_A5.ci95_high",
+      "evidence_class": "exploratory"
+    },
+    "RetrainedFullVsAFiveDiff": {
+      "value": 5.391129737601216,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a23_s7_iqzero_summary.json",
+      "row_selector": "pooled_contrasts_pp.sidecar_full_vs_A5.mean",
+      "evidence_class": "exploratory"
+    },
+    "RetrainedFullVsAFiveCiLow": {
+      "value": 3.537966083431977,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a23_s7_iqzero_summary.json",
+      "row_selector": "pooled_contrasts_pp.sidecar_full_vs_A5.ci95_low",
+      "evidence_class": "exploratory"
+    },
+    "RetrainedFullVsAFiveCiHigh": {
+      "value": 7.661305238566558,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a23_s7_iqzero_summary.json",
+      "row_selector": "pooled_contrasts_pp.sidecar_full_vs_A5.ci95_high",
+      "evidence_class": "exploratory"
+    },
+    "RetrainedIqzeroVsFullDiff": {
+      "value": -5.928983224245571,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a23_s7_iqzero_summary.json",
+      "row_selector": "pooled_contrasts_pp.iqzero_vs_sidecar_full.mean",
+      "evidence_class": "exploratory"
+    },
+    "RetrainedIqzeroVsFullCiLow": {
+      "value": -7.526311483457649,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a23_s7_iqzero_summary.json",
+      "row_selector": "pooled_contrasts_pp.iqzero_vs_sidecar_full.ci95_low",
+      "evidence_class": "exploratory"
+    },
+    "RetrainedIqzeroVsFullCiHigh": {
+      "value": -4.68523090536776,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a23_s7_iqzero_summary.json",
+      "row_selector": "pooled_contrasts_pp.iqzero_vs_sidecar_full.ci95_high",
+      "evidence_class": "exploratory"
+    },
+    "RetrainedIqzeroPooledLevel": {
+      "value": 20.180177468774023,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a23_s7_iqzero_summary.json",
+      "row_selector": "pooled_macro_f1.iqzero",
+      "evidence_class": "exploratory"
+    },
+    "RetrainedFullPooledLevel": {
+      "value": 26.109160693019597,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a23_s7_iqzero_summary.json",
+      "row_selector": "pooled_macro_f1.sidecar_full",
+      "evidence_class": "exploratory"
+    },
+    "RetrainedCampaignIqzeroLevel": {
+      "value": 43.38419355758698,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a24_s7_campaign_levels.json",
+      "row_selector": "levels_pct.iqzero",
+      "evidence_class": "exploratory"
+    },
+    "RetrainedCampaignAFiveLevel": {
+      "value": 43.59411703132182,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a24_s7_campaign_levels.json",
+      "row_selector": "levels_pct.A5",
+      "evidence_class": "exploratory"
+    },
+    "RetrainedCampaignFullLevel": {
+      "value": 48.347259609041586,
+      "unit": "%",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a24_s7_campaign_levels.json",
+      "row_selector": "levels_pct.sidecar_full",
+      "evidence_class": "exploratory"
+    },
+    "RetrainedCampaignIqzeroVsAFiveDiff": {
+      "value": -0.209923473734841,
+      "unit": "pp",
+      "precision": 2,
+      "source_file": "analysis_zero_compute\\outputs\\a24_s7_campaign_levels.json",
+      "row_selector": "contrasts_pp.iqzero_vs_A5",
+      "evidence_class": "exploratory"
+    }
+  }
+}

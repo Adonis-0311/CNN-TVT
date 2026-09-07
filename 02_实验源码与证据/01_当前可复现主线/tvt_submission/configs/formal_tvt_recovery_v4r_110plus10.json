@@ -1,0 +1,70 @@
+{
+  "schema_version": "vimd_amc.tvt.formal_recovery.v4r_110plus10",
+  "status": "prospective_recovery_after_native_abort",
+  "created_date": "2026-08-11",
+  "purpose": "Preserve and cryptographically bind the 110 completed V4 fits, recover only the 10 missing CSSL fits in fresh per-seed CUDA processes, and produce a separate composite evidence artifact without modifying the aborted V4 run directory.",
+  "source_run": {
+    "run_id": "tvt_headline_1024_10seed_v4_8gb_dual",
+    "run_json": "artifacts/tvt_headline_1024_10seed_v4_8gb_dual/run.json",
+    "run_json_sha256_at_seal": "fe7d302fee218b960594ad0ca181536cab7711357462154e575c8bcdf3daadfb",
+    "completed_fit_count": 110,
+    "expected_fit_count": 120,
+    "last_completed_fit": "iqformer_inspired/seed307",
+    "source_tree_aggregate_digest": "2d1cbff1c2734d5232e1f482b0b158c15883c4d832775456751e0ca3204a3593",
+    "cache_digest": "f2003d4bfb0895ed8c883c6432b82345999be64df3d9834d2bd9451dc0697d80"
+  },
+  "bindings": {
+    "v4_freeze": "tvt_submission/configs/formal_tvt_freeze_v4_8gb_dual.json",
+    "v4_freeze_sha256": "3b7076e3f6cf09f7d1b5e1d45d33989f8eb34510345349bb1683f6c6f52ec1aa",
+    "learning_evidence": "artifacts/tvt_learning_curve_v4_8gb_dual/learning_curve_evidence.json",
+    "learning_evidence_sha256": "1a9974b6b79b74db974f807d7e67c42ccfae6ad8fa940c6e953eada75bec9f20",
+    "headline_cache_manifest": "standards/cache_factor_headline_1024_v2/manifest.json",
+    "headline_cache_manifest_sha256": "47ca2c06d5433369b02210d45e7874e954353bfff657bfac43e70b3cc81bdd69"
+  },
+  "missing_fit_plan": {
+    "model": "cssl_amc_supervised_adaptation",
+    "seeds": [17, 29, 43, 71, 101, 131, 173, 211, 257, 307],
+    "process_isolation": "one_fresh_python_cuda_process_per_seed",
+    "worker_run_id_template": "tvt_v4r_cssl_seed{seed}",
+    "worker_output_root": "artifacts/tvt_v4r_cssl_recovery_workers",
+    "worker_concurrency": 1,
+    "retry_policy": "fail_closed_manual_audit_before_retry"
+  },
+  "scientific_invariants": {
+    "reuse_completed_v4_fit_artifacts_without_retraining": true,
+    "mutate_source_v4_run_directory": false,
+    "training_batch_size": 16,
+    "epochs": 30,
+    "learning_rate": 0.0003,
+    "weight_decay": 0.01,
+    "mask_start_epoch": 2,
+    "contrastive_start_epoch": 5,
+    "mask_ramp_epochs": 3,
+    "contrastive_ramp_epochs": 3,
+    "minimum_full_stage_epochs": 3,
+    "patience": 8,
+    "use_amp": true,
+    "n_fft": 64,
+    "hop_length": 16,
+    "spectral_channels": 24,
+    "embedding_dim": 48,
+    "environment_dim": 32,
+    "dropout": 0.05,
+    "bootstrap_draws": 10000,
+    "bootstrap_seed": 20260803
+  },
+  "resource_safety": {
+    "minimum_free_gpu_mib_before_each_worker": 6000,
+    "minimum_free_ram_gib_before_each_worker": 8,
+    "allocator_configuration": "max_split_size_mb:128,garbage_collection_threshold:0.8",
+    "fresh_cuda_context_per_fit": true,
+    "adaptive_batch_or_model_changes_allowed": false
+  },
+  "composite_evidence": {
+    "output_root": "artifacts/tvt_v4r_headline_composite",
+    "must_bind_every_source_and_worker_artifact_by_sha256": true,
+    "must_recompute_all_cross_model_statistics": true,
+    "must_not_claim_original_v4_run_completed": true,
+    "release_label": "V4R interrupted-run recovery evidence"
+  }
+}

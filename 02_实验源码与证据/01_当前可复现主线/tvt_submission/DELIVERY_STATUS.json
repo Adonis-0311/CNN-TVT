@@ -1,0 +1,150 @@
+{
+  "schema_version": "vimd_amc.tvt.delivery_status.v4",
+  "updated_date": "2026-08-02",
+  "authority": "docs/TVT_V3_8GB_EXECUTION_AMENDMENT_2026-08-02.md",
+  "package_state": "v3_8gb_cache_generation_in_progress",
+  "upload_ready": false,
+  "formal_v2_execution_started": false,
+  "formal_v2_results_generated": false,
+  "formal_v2_numerical_claims_permitted": false,
+  "formal_v3_8gb_cache_generation_started": true,
+  "formal_v3_8gb_cuda_training_started": false,
+  "historical_v1_reinterpretable_as_v2": false,
+  "closure_scope": {
+    "deliverable": "simulation_only_initial_manuscript",
+    "scientific_scope": "source_disjoint_structured_interference_tdl_profile_simulations",
+    "evidence_chain_closed_to_precompute_boundary": true,
+    "only_remaining_evidence_generation": "single_local_v3_8gb_queue_after_active_cache_builds",
+    "post_run_initial_draft_work": "deterministic_artifact_derived_macro_backfill_and_internal_rebuild",
+    "submission_workflow_assessed": false
+  },
+  "delivered": {
+    "method_and_teacher_implementation": true,
+    "receiver_stress_implementation": true,
+    "formal_v2_freeze": true,
+    "learning_curve_runner": true,
+    "formal_12_model_10_seed_runner": true,
+    "scientific_release_validator": true,
+    "v2_paper_macro_derivation": true,
+    "atomic_paper_release_lock": true,
+    "v2_paper_build_contract": true,
+    "single_local_execution_handoff": true,
+    "internal_placeholder_manuscript": true,
+    "prospective_statistical_justification": true,
+    "current_scope_boundary_written": true,
+    "non_overridable_cuda_execution_contract": true,
+    "full_v2_executable_source_closure": true,
+    "runtime_library_and_gpu_environment_binding": true
+  },
+  "completed": {
+    "recent_auditable_amc_comparator": true
+  },
+  "not_completed": {
+    "verified_recent_structured_interference_comparator": true
+  },
+  "scope_excluded_non_blocking": {
+    "verified_recent_structured_interference_comparator_is_not_required_by_current_claim": true,
+    "radioml_or_native_public_dataset_transfer": true,
+    "mfenet_numerical_reproduction": true,
+    "strongest_published_or_interference_specific_superiority_claim": true,
+    "sdr_or_field_transfer": true,
+    "complete_v2x_geometry": true,
+    "dominant_emitter_cochannel_and_multi_jammer": true,
+    "submission_authorship_policy_cover_letter_archive_upload": true
+  },
+  "formal_contract": {
+    "freeze": "tvt_submission/configs/formal_tvt_freeze_v3_8gb.json",
+    "freeze_sha256": "8ff752ead790663f38e25e7c72a00d44d3dde2291a14a8ac2b580a4fd38dafc6",
+    "prospective_statistical_justification": "docs/TVT_V2_PROSPECTIVE_STATISTICAL_JUSTIFICATION.md",
+    "prospective_statistical_justification_sha256": "055b330c20ef7a908ef191b75bb7a39302c1c51be29a1d3b517639002cae26a7",
+    "status": "preregistered_not_executed_resource_amendment",
+    "training_sources": 100000,
+    "learning_curve_source_counts": [
+      10000,
+      30000,
+      100000
+    ],
+    "learning_curve_models": [
+      "a0_backbone",
+      "a5_vimd_full"
+    ],
+    "learning_curve_seed_count": 5,
+    "formal_model_count": 12,
+    "formal_seed_count": 10,
+    "formal_fit_count": 120,
+    "device": "cuda",
+    "device_override_permitted": false,
+    "executable_source_closure_schema": "vimd_amc.source_tree.v2",
+    "executable_source_closure_profile": "tvt_v2_execution",
+    "formal_run_id": "tvt_headline_1024_10seed_v3_8gb",
+    "primary_reference": "cssl_amc_supervised_adaptation",
+    "confirmatory_contrasts": [
+      "a5_vimd_full-minus-a0_backbone",
+      "a3_tri_teacher-minus-a3p_tri_proportional_teacher",
+      "a5_vimd_full-minus-a6_dual_full"
+    ]
+  },
+  "next_machine_action": {
+    "entrypoint": "tvt_submission/run_v3_8gb_after_gpu_free.ps1",
+    "default_behavior": "dry_preflight_only",
+    "explicit_execution_switch": "-Execute",
+    "required_acknowledgement": "START_TVT_ONLY_WHEN_MACHINE_IS_IDLE",
+    "minimum_free_gpu_mib": 6000,
+    "minimum_free_disk_gib": 40,
+    "fresh_run_is_single_supported_compute_entrypoint": true
+  },
+  "expected_outputs_after_zero_exit": [
+    "standards/cache_factor_learning_10k_1024_v2/manifest.json",
+    "standards/cache_factor_learning_30k_1024_v2/manifest.json",
+    "standards/cache_factor_headline_1024_v2/manifest.json",
+    "artifacts/tvt_learning_curve_v3_8gb/learning_curve_evidence.json",
+    "artifacts/tvt_headline_1024_10seed_v3_8gb/run.json",
+    "artifacts/tvt_headline_1024_10seed_v3_8gb/v2_scientific_release_gate.json",
+    "tvt_submission/formal_macro_values_v3_8gb.json"
+  ],
+  "formal_outputs_present_at_delivery": false,
+  "remaining_before_populated_initial_draft": [
+    "complete the active v3 8 GiB cache builds, then execute the single frozen local v3 queue",
+    "require a passing hash-bound scientific gate",
+    "validate the artifact-derived v2 macro manifest",
+    "atomically backfill and revalidate the manuscript macros",
+    "rebuild and inspect the populated internal manuscript"
+  ],
+  "paper_release": {
+    "scientific_gate_distinct_from_submission_unlock": true,
+    "macro_manifest_generator": "tvt_submission/validate_v2_paper_release.py",
+    "macro_manifest_generated": false,
+    "results_auto_is_placeholder": true,
+    "release_lock_generated": false,
+    "write_release_requires_explicit_human_action": true,
+    "release_pdf_generated": false
+  },
+  "validated_internal_artifact": {
+    "path": "paper/build_initial_v2/main.pdf",
+    "role": "internal_review_placeholder_only",
+    "pages": 9,
+    "bytes": 438006,
+    "sha256": "d683cb2317279d54236a8e5cbc4ea417c9405d96996aff6b10824000d04e2c32",
+    "fatal_latex_errors": 0,
+    "undefined_citations": 0,
+    "undefined_references": 0,
+    "overfull_boxes": 0,
+    "release_eligible": false,
+    "source_freshness_validated": true,
+    "note": "Fresh internal placeholder render; it contains no formal v2 numerical evidence."
+  },
+  "deferred_submission_only": {
+    "authorship_and_affiliations": "not_assessed_in_initial_draft_closure",
+    "funding_conflicts_patent_review": "not_assessed_in_initial_draft_closure",
+    "primary_source_license_and_tvt_policy_review": "not_assessed_in_initial_draft_closure",
+    "cover_letter_source_archive_and_upload": "not_assessed_in_initial_draft_closure"
+  },
+  "prohibited_promotions": [
+    "screening metrics",
+    "diagnostic metrics",
+    "oracle-control metrics",
+    "source-mutated metrics",
+    "historical v1 metrics",
+    "manually entered performance values"
+  ]
+}

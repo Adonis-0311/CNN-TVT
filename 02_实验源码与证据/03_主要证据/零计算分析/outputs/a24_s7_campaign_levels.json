@@ -1,0 +1,22 @@
+{
+  "schema": "vimd_amc.a24_s7_campaign_levels.v1",
+  "evidence_class": "exploratory_retrained_ablation",
+  "split": "hard_interference",
+  "seeds": [
+    17,
+    29,
+    43,
+    71,
+    101
+  ],
+  "levels_pct": {
+    "iqzero": 43.38419355758698,
+    "sidecar_full": 48.347259609041586,
+    "A5": 43.59411703132182
+  },
+  "contrasts_pp": {
+    "iqzero_vs_A5": -0.209923473734841,
+    "sidecar_full_vs_A5": 4.753142577719766,
+    "iqzero_vs_sidecar_full": -4.963066051454606
+  }
+}

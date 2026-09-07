@@ -1,0 +1,32 @@
+{
+  "design": "gain ~ 1 + occupancy + sir_db, cells = split x SIR x occupancy quartile",
+  "fit_splits": [
+    "id_test",
+    "hard_interference"
+  ],
+  "holdout_splits": [
+    "unseen_jammer",
+    "unseen_speed",
+    "heldout_channel",
+    "combined_ood",
+    "clean_retention"
+  ],
+  "headline": {
+    "IQFormer": {
+      "occupancy_slope_pp_per_unit_occupancy": 11.39,
+      "sir_slope_pp_per_db": -0.666,
+      "r_squared_all_cells": 0.58,
+      "holdout_pearson_r": 0.694,
+      "holdout_sign_agreement": 0.975
+    },
+    "MCLDNN": {
+      "occupancy_slope_pp_per_unit_occupancy": 13.93,
+      "sir_slope_pp_per_db": -0.504,
+      "r_squared_all_cells": 0.449,
+      "holdout_pearson_r": 0.511,
+      "holdout_sign_agreement": 0.951
+    }
+  },
+  "interpretation": "a two-variable envelope fitted only on in-distribution and hard-interference cells predicts the sign and magnitude of the gain on regimes it never saw, including held-out jammer families and the jammer-free condition",
+  "evidence_class": "exploratory_zero_compute"
+}

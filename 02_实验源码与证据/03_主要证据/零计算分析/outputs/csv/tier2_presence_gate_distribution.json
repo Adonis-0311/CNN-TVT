@@ -1,0 +1,41 @@
+{
+  "schema": "vimd_amc.tier2.presence_gate_distribution.v1",
+  "evidence_class": "exploratory_tier2_outside_frozen_confirmatory_family",
+  "input_view": "view1 received-IQ mixture",
+  "clean_split": "clean_retention",
+  "jammed_split": "hard_interference",
+  "run_id": "tier2_presence_gated_v1",
+  "run_json_sha256": "a057a4a1781d3151a561e3eedbfdf5c34d547210831757f32392494afb23cedc",
+  "execution_context_sha256": "0a93424729235c9231883d08c106d5d59f4a5f56c5721aaec46219ca4f0bbc8e",
+  "cache_digest": "f2003d4bfb0895ed8c883c6432b82345999be64df3d9834d2bd9451dc0697d80",
+  "model_configuration": {
+    "dropout": 0.05,
+    "embedding_dim": 48,
+    "environment_dim": 32,
+    "feature_channels": 32,
+    "first_complex_channels": 8,
+    "hop_length": 16,
+    "n_fft": 64,
+    "rho_max": 0.35,
+    "rho_min": 0.05,
+    "second_complex_channels": 16,
+    "spectral_channels": 24,
+    "temperature_max": 2.0,
+    "temperature_min": 0.5
+  },
+  "per_seed_summary_csv": "D:\\CNN\u4fe1\u53f7\u8c03\u5236\u8bc6\u522b\\vimd_amc\\analysis_zero_compute\\outputs\\csv\\tier2_presence_gate_distribution.csv",
+  "aggregate": {
+    "clean_retention": {
+      "seed_count": 10,
+      "mean_of_seed_means": 0.9999405324459076,
+      "min_seed_mean": 0.9998381733894348,
+      "max_seed_mean": 0.9999786019325256
+    },
+    "hard_interference": {
+      "seed_count": 10,
+      "mean_of_seed_means": 0.9999146223068237,
+      "min_seed_mean": 0.999765157699585,
+      "max_seed_mean": 0.9999781250953674
+    }
+  }
+}

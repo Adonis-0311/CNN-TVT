@@ -1,0 +1,66 @@
+{
+  "purpose": "TVT V5.5 matched-capacity compute audit",
+  "counter": "vimd_amc.evaluation.complexity_metrics forward-hook MAC counter",
+  "sample_length": 1024,
+  "device": "cuda",
+  "torch_version": "2.12.1+cu130",
+  "a5_gate_passed": true,
+  "sidecar_crosscheck_passed": true,
+  "models": [
+    {
+      "model": "A5",
+      "parameters": 39500,
+      "conv_linear_recurrent_macs_excluding_stft": 41798528,
+      "macs_million": 41.798528,
+      "stft_estimated_real_operations": 124928,
+      "dimensions": [
+        24,
+        48,
+        32
+      ]
+    },
+    {
+      "model": "Width M",
+      "parameters": 99596,
+      "conv_linear_recurrent_macs_excluding_stft": 104070512,
+      "macs_million": 104.070512,
+      "stft_estimated_real_operations": 124928,
+      "dimensions": [
+        40,
+        80,
+        48
+      ]
+    },
+    {
+      "model": "Width L",
+      "parameters": 233244,
+      "conv_linear_recurrent_macs_excluding_stft": 249080768,
+      "macs_million": 249.080768,
+      "stft_estimated_real_operations": 124928,
+      "dimensions": [
+        64,
+        128,
+        64
+      ]
+    },
+    {
+      "model": "I/Q sidecar",
+      "parameters": 46794,
+      "conv_linear_recurrent_macs_excluding_stft": 43119008,
+      "macs_million": 43.119008,
+      "stft_estimated_real_operations": 124928,
+      "dimensions": [
+        24,
+        48,
+        32
+      ]
+    }
+  ],
+  "dependency_sha256": {
+    "analysis_zero_compute\\v55_capacity_compute_audit.py": "b2dcab028b497af0840a4ff201fa55aea6ff7b2cc7d0858642110fd777e55eb8",
+    "tvt_submission\\configs\\formal_tvt_recovery_v4r_110plus10.json": "e88926f3c4d0958074524665b9543734fc89455d0b463a967ae70da382cbb916",
+    "src\\vimd_amc\\evaluation.py": "03b6cf41ab9471e61e2ca29840e7dbe5f0aa45d624cd70a95ca19ea83bdb7ef3",
+    "analysis_zero_compute\\a21_s6_severe_held_controls.py": "763d950d1da05fdf919587bed20172299d3408409b88ca52e60ea637843de063",
+    "analysis_zero_compute\\tier2_gpu\\run_tier2_experiment.py": "d5b2f38b95eea0055fa17d8e41d61f41308b11d5f7638f011a8da4b7c5aa1916"
+  }
+}

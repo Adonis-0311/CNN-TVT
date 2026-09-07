@@ -1,0 +1,66 @@
+{
+  "schema": "tvt_paper_figures_v1",
+  "generated_utc": "2026-08-12T14:10:13.614642+00:00",
+  "geometry": {
+    "single_column_in": 3.5,
+    "double_column_in": 7.16
+  },
+  "policy": "figures render sealed or analysis CSVs only; they never recompute evidence",
+  "figures": {
+    "fig_teacher": [
+      {
+        "source_pdf": "paper/figures/physical_teacher_example.pdf",
+        "sha256": "DC391F4D3C7E4C7915E3EF3D3EACF6E3B699E61FAA5BF76AE002A2A292AC1027",
+        "generator": "paper/make_teacher_figure.py",
+        "generator_sha256": "0CECC105528122F39AE8D2AD85B156E1074CAA45E73401BC5A17FCDC48D58847",
+        "cache_manifest": "standards/cache_factor_micro_v4/manifest.json",
+        "cache_manifest_sha256": "DB44DE2D6AD83E53D8985732B0B5882019AB6D19802E8A6F7C27B647260801E7",
+        "note": "method illustration of the fixed simulation-component teacher on an immutable cache record; not performance evidence"
+      }
+    ],
+    "fig_envelope": [
+      {
+        "source_csv": "a14_envelope_cells.csv",
+        "sha256": "b0d5725a8c5a277f1221172662cb11519f762bdd499cb67f48a51bf0a391eea7"
+      },
+      {
+        "source_csv": "a14_envelope_fit.csv",
+        "sha256": "42ba1a2f7d44625c9fddbd7afcd2aa6adcee3e0e0ea315e5e860487c69193f63"
+      }
+    ],
+    "fig_operating_map": [
+      {
+        "source_csv": "a1b_snr_sir_map.csv",
+        "sha256": "4e819f4e86c15d9867b003b239f5a54ea6843c7c3b034ab4e3fc68bc9f1a2e0f"
+      }
+    ],
+    "fig_severe_corner": [
+      {
+        "source_csv": "a11_severe_corner_robustness.csv",
+        "sha256": "54e3f368305a49368e053af5d3e8a1c40316458a509516bc42650bdfd1b0d9a7"
+      },
+      {
+        "source_csv": "a1_absolute_by_level.csv",
+        "sha256": "6ad39cb3d20400a7d2d68bb5c5ab06b04d9a7f251d5200ee163f35291b35b967"
+      }
+    ],
+    "fig_pareto": [
+      {
+        "source_csv": "a8_pareto.csv",
+        "sha256": "c76fb1cba50b006351c3d9f33fbe30247e4d04c78cd281ef1fa02b8c0a64b3d3"
+      }
+    ],
+    "fig_risk_coverage": [
+      {
+        "source_csv": "a4_risk_coverage_curves.csv",
+        "sha256": "a295a439dc609f2dc7c8812b7bed4152b45cb1674e5ca0c7f461a7fd5c7047f4"
+      }
+    ],
+    "fig_condition_transfer": [
+      {
+        "source_csv": "a13_condition_transfer.csv",
+        "sha256": "3a6b2337626e3a658e3bd39ff9174a951e6dd8d652635d70a1493597a268f694"
+      }
+    ]
+  }
+}

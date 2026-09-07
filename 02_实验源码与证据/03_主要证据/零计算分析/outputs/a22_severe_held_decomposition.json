@@ -1,0 +1,40 @@
+{
+  "schema": "vimd_amc.a22_severe_held_decomposition.v1",
+  "evidence_class": "post_review_diagnostic_zero_compute",
+  "note": "Per-jammer and per-regime decomposition of the frozen severe-held predictions plus the S6 lesion loss/repair ratios. No inference, no retraining.",
+  "repair_effect_pp": 4.370469592843321,
+  "pooled_family_levels_pct": {
+    "pulse": {
+      "A5": 29.026312393002552,
+      "IQFormer": 37.453625463824274,
+      "MCLDNN": 55.343418153726034,
+      "sidecar": 38.215904708402725
+    },
+    "ofdm_like": {
+      "A5": 4.601496703663331,
+      "IQFormer": 4.558443888475666,
+      "MCLDNN": 4.920529161097701,
+      "sidecar": 5.736141575341157
+    }
+  },
+  "severe_held_levels_pct": {
+    "r1": {
+      "A5": 21.126199793250706,
+      "IQFormer": 23.816617752657198,
+      "MCLDNN": 33.97632545537884,
+      "sidecar": 25.34324780844816
+    },
+    "r2": {
+      "A5": 20.30803071316373,
+      "IQFormer": 22.77140435958022,
+      "MCLDNN": 33.51981869424241,
+      "sidecar": 24.831921883652914
+    },
+    "pooled": {
+      "A5": 20.717115253207215,
+      "IQFormer": 23.29401105611871,
+      "MCLDNN": 33.74807207481062,
+      "sidecar": 25.087584846050536
+    }
+  }
+}

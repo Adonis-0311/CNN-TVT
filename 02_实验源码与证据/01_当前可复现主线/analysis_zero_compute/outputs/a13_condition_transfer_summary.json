@@ -1,0 +1,34 @@
+{
+  "benchmark_property": "the frozen factor-isolated cache presents jammer-free training views for PI2BPSK, 8PSK, 256QAM, CPFSK; for the remaining 6 modulations the clean-retention split is an out-of-distribution interference-condition transfer by construction",
+  "train_classes_with_jammer_free_views": [
+    "PI2BPSK",
+    "8PSK",
+    "256QAM",
+    "CPFSK"
+  ],
+  "train_classes_without_jammer_free_views": [
+    "BPSK",
+    "QPSK",
+    "16QAM",
+    "64QAM",
+    "GMSK",
+    "4FSK"
+  ],
+  "transfer_failure_definition": "clean-retention F1 < 0.05 while hard-interference F1 > 0.10",
+  "failures_by_family": {
+    "compact_spectral_A0_A7": [
+      "16QAM",
+      "64QAM",
+      "QPSK"
+    ],
+    "iq_domain_high_capacity": [
+      "64QAM"
+    ]
+  },
+  "failure_cell_count": {
+    "compact_spectral_A0_A7": 27,
+    "iq_domain_high_capacity": 1
+  },
+  "finding": "transfer failure is concentrated in the compact spectral family and constellation-order classes; coverage is reported separately because the failure taxonomy does not reduce to condition coverage alone",
+  "consequence_for_reporting": "the clean-retention contrast measures condition transfer, not clean-signal accuracy; it should be reported as a characterised operating boundary of compact spectral representations under this benchmark, with the preregistered gate outcome stated as failed"
+}

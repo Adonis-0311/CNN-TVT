@@ -1,0 +1,985 @@
+% =====================================================================
+% Optional supporting material, version V4.8 major revision (2026-08-20).
+% Audit-only companion: no result required to support the manuscript's main
+% claims appears only in this document. It provides complete cell
+% construction, aggregation definitions, per-seed/SNR/class results,
+% architecture details, frozen-control analyses, convergence histories,
+% preregistration provenance, and artifact paths for results summarized in
+% the manuscript.
+% =====================================================================
+\documentclass[letterpaper,onecolumn,11pt,journal]{IEEEtran}
+\usepackage[margin=1.1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+\urlstyle{tt}
+\makeatletter
+\g@addto@macro\UrlBreaks{\UrlOrds\do\_\do\/\do\-\do\.}
+\makeatother
+\setlength{\Urlmuskip}{0mu plus 1mu}
+\sloppy
+
+\newcommand{\pp}{percentage points}
+\input{../paper_data_layer/outputs/paper_macros.tex}
+% Audit-verified envelope constants shared with the manuscript. The v4.1
+% audit file renews names that the manuscript defines elsewhere; provide
+% placeholders so the renew is safe in this standalone document.
+\providecommand{\EnvelopeHoldoutNegShareIQ}{}
+\providecommand{\EnvelopeHoldoutNegShareMC}{}
+\providecommand{\EnvelopeConstantRmseIQ}{}
+\providecommand{\EnvelopeConstantRmseMC}{}
+\providecommand{\EnvelopeSkillRTwoIQ}{}
+\providecommand{\EnvelopeSkillRTwoMC}{}
+\providecommand{\EnvelopeOracleConstRmseIQ}{}
+\providecommand{\EnvelopeOracleConstRmseMC}{}
+\providecommand{\EnvelopeOracleSkillIQ}{}
+\providecommand{\EnvelopeOracleSkillMC}{}
+\providecommand{\EnvelopeNoCleanRmseIQ}{}
+\providecommand{\EnvelopeNoCleanRmseMC}{}
+\providecommand{\EnvelopeNoCleanSkillIQ}{}
+\providecommand{\EnvelopeNoCleanSkillMC}{}
+\providecommand{\EnvelopeThreeVarRmseIQ}{}
+\providecommand{\EnvelopeThreeVarRmseMC}{}
+\providecommand{\EnvelopeThreeVarSkillIQ}{}
+\providecommand{\EnvelopeThreeVarSkillMC}{}
+\input{v41_envelope_macros.tex}
+
+\title{Supporting Material: Artifact-Level Detail for Rank Instability and
+Representation Repair in Automatic Modulation Classification under Structured
+Interference}
+\author{Anonymous Author(s)}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This is optional supporting material. No result required to support the
+manuscript's main claims appears only in this document. It provides complete
+cell construction, aggregation definitions, per-seed/SNR/class results,
+architecture details, frozen-control analyses, convergence histories,
+preregistration provenance, and artifact paths for results summarized in the
+manuscript. The three preregistered severe-held stages---the transfer check,
+the sidecar repair, and the frozen-inference attribution controls---are
+stated in the manuscript and expanded here only at artifact level; none
+changes the original sealed evidence class. A reviewer who wants to audit the
+construction of the evaluation cells, the full capacity-control sweep, the
+per-SNR comparator-fidelity curves, the covariate ladder and selector audits,
+the leave-$-15$-dB-out extrapolation and paired overlap-increment tests, the
+comparator convergence histories, the sidecar architecture, the severe-held
+construction and control breakdowns, or the seed-level robustness can do so
+directly.
+\end{abstract}
+
+\section{Scope and How to Read This Document}
+The study asks why compact spectral and high-capacity I/Q AMC representations
+exhibit condition-dependent rank instability, how far a campaign-internal
+empirical envelope transports, and whether a representation intervention can
+repair the failure exposed by independent severe-domain validation. All
+evidence is from source-disjoint 3GPP TR~38.901 TDL-profile simulation.
+
+Because this document is standalone, the identifiers used throughout are
+restated here.
+\begin{itemize}
+  \item \textbf{A0} is the direct spectral reference backbone (8{,}458
+  parameters) and \textbf{A5} is the sealed complete configuration
+  (39{,}500 parameters), which adds a three-route spectral allocation, a
+  simulation-component teacher, multi-task and contrastive objectives, a
+  residual bypass, and a small route-orthogonality regularizer.
+  \item \textbf{S}, \textbf{M}, and \textbf{L} are prospective spectral
+  capacity tiers. S \emph{is} the sealed A5 configuration; M and L widen only
+  the spectral-channel, embedding, and environment dimensions, to
+  99{,}596 and 233{,}244 parameters.
+  \item \textbf{sidecar} is a prospective received-I/Q repair branch that
+  raises the total model size from 39{,}500 to 46{,}794 parameters.
+  \item \textbf{IQFormer-inspired} and \textbf{MCLDNN} are
+  architecture-faithful unified-retraining references, not exact reproductions
+  of every original training recipe.
+  \item The \textbf{target-support jammer overlap} $o$ is the fraction of the
+  jammer's total STFT power that falls inside the target's 99\%-energy
+  time--frequency support. It is not an occupied-bandwidth fraction.
+\end{itemize}
+
+Four evidence levels are kept apart. The sealed family contains the original
+confirmatory contrasts. Campaign-internal SNR--SIR, envelope, fusion, and
+capacity analyses are exploratory. Probe, coverage, route-gating, and sidecar
+experiments are prospective diagnosis or intervention evidence. The severe-held
+transfer check, the sidecar repair, and the frozen-inference attribution
+controls are three sequential preregistered post-campaign diagnostic stages on
+one independently generated held set; their preregistration provenance is in
+Section~\ref{sec:preregp}. None changes the original sealed family.
+
+\section{Construction of the Evaluation Cells}
+The envelope is fitted on aggregate cells rather than on individual windows. A
+cell is one (split, SIR stratum, overlap quartile) triple that retains at least
+150 windows and all ten modulation classes. Overlap quartile edges are computed
+within each split. Table~\ref{tab:cells} gives the resulting construction; the
+fit total of 32 and the primary held total of 80 are both reconstructible from
+its rows.
+
+\begin{table}[t]
+\centering
+\caption{Cell construction for the campaign-diagnostic envelope. ``Windows per cell'' is
+the range of source-disjoint test windows contributing to a cell.}
+\label{tab:cells}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{llrrr}
+\toprule
+Split & Role & SIR strata (dB) & Cells & Windows per cell\\
+\midrule
+\texttt{id\_test} & fit & $-$10, $-$5, 0, $+$5, $+$10 & 16 & 230--1053\\
+\texttt{hard\_interference} & fit & $-$15, $-$10, $-$5, 0 & 16 & 290--343\\
+\texttt{unseen\_jammer} & held & $-$10, $-$5, 0, $+$5, $+$10 & 20 & 229--276\\
+\texttt{unseen\_speed} & held & $-$10, $-$5, 0, $+$5, $+$10 & 20 & 228--277\\
+\texttt{heldout\_channel} & held & $-$10, $-$5, 0, $+$5, $+$10 & 20 & 216--279\\
+\texttt{combined\_ood} & held & $-$10, $-$5, 0, $+$5, $+$10 & 20 & 223--270\\
+\texttt{clean\_retention} & excluded & $0$ & 1 & 5000\\
+\midrule
+\multicolumn{3}{l}{Fit total} & 32 & \\
+\multicolumn{3}{l}{Primary held total} & 80 & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Two features of Table~\ref{tab:cells} are worth stating plainly. First, the
+\texttt{id\_test} split contributes 16 cells rather than 20 because its lowest
+overlap quartile is populated almost entirely by jammer-free windows, which
+carry $o=0$ and the SIR $=0$~dB cache sentinel; that bin clears the 150-window
+floor only in the $0$~dB stratum. Second, the single
+\texttt{clean\_retention} cell is excluded from the primary envelope because a
+jammer-free window has no physical finite SIR, which is also why its window
+count is the full split rather than a quartile of it.
+
+\section{Campaign-Diagnostic Envelope Skill by Held Regime}
+Table~\ref{tab:regime} reports the held-regime skill for both strong
+references, including two diagnostics that are easy to omit and easy to
+misread. ``Const.'' is the fit-domain constant predictor: the mean gain over
+the 32 fitting cells, applied unchanged to the held cells, with
+$R^2_{\mathrm{skill}}=1-\mathrm{MSE}_{\mathrm{envelope}}/\mathrm{MSE}_{\mathrm{const}}$.
+``Oracle'' is instead the mean of the held cells themselves (pooled row) or of
+the regime's own held cells (regime rows), which no predictor could know in
+advance; it is reported as a hindsight reference, not as evidence that the
+envelope fails to resolve within-regime structure.
+
+\begin{table}[t]
+\centering
+\caption{Held-regime envelope skill. RMSE values in \pp.}
+\label{tab:regime}
+\scriptsize
+\setlength{\tabcolsep}{2.4pt}
+\begin{tabular}{llrrrrrr}
+\toprule
+Reference & Held regime & Cells & Env. & Const. & $R^2_{\mathrm{skill}}$ & Oracle & Sign\\
+\midrule
+IQFormer-insp. & unseen speed & 20 & 3.94 & 7.87 & 0.75 & 6.71 & 1.000\\
+IQFormer-insp. & held-out channel & 20 & 4.86 & 7.59 & 0.59 & 6.95 & 1.000\\
+IQFormer-insp. & combined OOD & 20 & 7.50 & 9.23 & 0.34 & 4.24 & 0.950\\
+IQFormer-insp. & unseen jammer & 20 & 7.74 & 8.67 & 0.20 & 3.83 & 0.950\\
+IQFormer-insp. & pooled (80) & 80 & 6.23 & 8.37 & 0.45 & 6.04 & 0.975\\
+\midrule
+MCLDNN & unseen speed & 20 & 4.66 & 8.88 & 0.72 & 7.78 & 1.000\\
+MCLDNN & held-out channel & 20 & 5.41 & 9.06 & 0.64 & 8.41 & 1.000\\
+MCLDNN & combined OOD & 20 & 10.23 & 10.28 & 0.01 & 2.71 & 0.900\\
+MCLDNN & unseen jammer & 20 & 10.34 & 10.24 & -0.02 & 3.23 & 0.900\\
+MCLDNN & pooled (80) & 80 & 8.10 & 9.63 & 0.29 & 6.81 & 0.950\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The heterogeneity is real and is not smoothed away. Against
+IQFormer-inspired, the envelope predicts the gain level well in the
+unseen-speed and held-out-channel regimes ($R^2_{\mathrm{skill}}=0.75$ and
+$0.59$) and much less well into the unseen-jammer and combined-OOD regimes
+($0.20$ and $0.34$); against MCLDNN the unseen-jammer and combined-OOD regimes
+are at or below the constant baseline. The regime-wise oracle comparison is
+likewise heterogeneous: on the unseen-speed and held-out-channel shifts the
+envelope substantially beats the corresponding regime-specific constant
+(3.94 vs 6.71 and 4.86 vs 6.95 pp against IQFormer-inspired; 4.66 vs 7.78
+and 5.41 vs 8.41 pp against MCLDNN), while on the unseen-jammer and
+combined-OOD shifts the regime-specific constant is better. The pooled oracle
+(6.04 and 6.81 pp) is lower than the pooled envelope RMSE because it
+uses the held-domain mean in hindsight; a pooled constant still bears the
+between-regime variation and the pooled comparison should not be read as the
+envelope lacking within-regime structure. The demonstrated property is
+therefore regime-dependent transport and within-regime structure, not uniform
+held-domain superiority.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.92\columnwidth]{../paper_figures/outputs_v46/fig3_campaign_diagnostic_envelope.pdf}
+\caption{Exploratory campaign-diagnostic overlap--SIR envelope against
+IQFormer-inspired (moved from the manuscript's figure set). Panel~(a) uses
+the target-support jammer overlap, not occupied bandwidth: filled markers are
+the 32 fit cells and open markers the 80 held cells. Panel~(b) compares
+predicted and observed held-cell gain. RMSE is
+\EnvelopeIqformerHoldoutRmse\ \pp\ versus \EnvelopeConstantRmseIQ\ \pp\ for
+the frozen fit-domain constant
+($R^2_{\mathrm{skill}}=\EnvelopeSkillRTwoIQ$). The surface has limited
+held-regime skill inside the frozen campaign and does not transport to the
+independent severe-held regimes (Section~\ref{sec:transfer}).}
+\label{fig:envelope_supp}
+\end{figure}
+
+\section{Clean-Sentinel Fitting-Cell Sensitivity}
+The primary held envelope excludes jammer-free clean retention because a
+jammer-free window has no physical finite SIR. The fitting domain, however,
+retains one aggregate dominated by jammer-free sentinel windows, the
+\texttt{id\_test}/SIR$=0$/lowest-overlap cell (mean overlap
+$\approx10^{-11}$, 1053 windows, SIR taken from the cache sentinel). To
+close this definition asymmetry, we exclude exactly that aggregate, refit
+the two-variable envelope on the remaining 31 cells, and re-score the
+unchanged 80 finite-SIR interfered held cells; no model prediction changes
+and nothing is retrained.
+
+\begin{table}[t]
+\centering
+\caption{Clean-sentinel fitting-cell sensitivity. The 31-cell fit excludes
+the single \texttt{id\_test}/SIR$=0$/lowest-overlap aggregate dominated by
+jammer-free sentinel windows; the held evaluation is the unchanged 80
+finite-SIR interfered cells. RMSE values in \pp; BE denotes the break-even
+overlap.}
+\label{tab:sentinel}
+\scriptsize
+\setlength{\tabcolsep}{2.0pt}
+\begin{tabular}{lrrrrrrrr}
+\toprule
+Reference & Fit & Held & Const. & $R^2_{\mathrm{skill}}$ & Overlap & SIR & BE $o$ & BE $o$\\
+& cells & RMSE & RMSE & & coeff. & coeff. & @ $-15$ & @ $-10$\\
+\midrule
+IQFormer-insp. & 32 & 6.23 & 8.37 & 0.45 & 14.38 & $-1.036$ & 0.11 & 0.47\\
+IQFormer-insp. & 31 & 6.42 & 8.28 & 0.40 & 15.90 & $-1.066$ & 0.14 & 0.47\\
+\midrule
+MCLDNN & 32 & 8.10 & 9.63 & 0.29 & 19.16 & $-0.894$ & 0.06 & 0.29\\
+MCLDNN & 31 & 8.20 & 9.59 & 0.27 & 20.55 & $-0.922$ & 0.08 & 0.31\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The excluded aggregate is the \texttt{id\_test}/SIR$=0$/lowest-overlap cell
+dominated by jammer-free sentinel windows. Excluding it moves the held RMSE
+by at most $0.20$~\pp\ and $R^2_{\mathrm{skill}}$ by at most $0.05$, leaves
+both coefficient signs and the break-even ordering (required overlap rising
+as interference becomes less severe) unchanged, and therefore leaves the
+envelope conclusions materially unchanged; the 32-cell primary fit is
+retained.
+
+\section{Capacity Control across All Splits}
+The capacity ladder isolates width from representation: S, M, and L differ only
+in three width numbers and share the routes, teacher, objective, and training
+recipe. All values in Tables~\ref{tab:capabs} and~\ref{tab:capdiff} are
+computed on the same matched five-seed subset, and must not be mixed
+numerically with ten-seed results reported elsewhere.
+
+\begin{table}[t]
+\centering
+\caption{Absolute macro-F1 on the matched five-seed subset. These split-level
+five-seed macro-F1 values should not be numerically differenced against the
+ten-seed cell-mean gains in the manuscript envelope table.}
+\label{tab:capabs}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrrr}
+\toprule
+Split & S & M & L & IQFormer-insp. & MCLDNN\\
+\midrule
+hard interference & 0.436 & 0.455 & 0.468 & 0.496 & 0.454\\
+hard, SIR $=-15$ dB & 0.353 & 0.384 & 0.403 & 0.262 & 0.255\\
+in distribution & 0.563 & 0.584 & 0.588 & 0.696 & 0.636\\
+unseen jammer & 0.456 & 0.462 & 0.466 & 0.612 & 0.584\\
+unseen speed & 0.487 & 0.507 & 0.510 & 0.626 & 0.582\\
+held-out channel & 0.488 & 0.510 & 0.515 & 0.613 & 0.567\\
+combined OOD & 0.450 & 0.462 & 0.465 & 0.621 & 0.587\\
+clean retention & 0.500 & 0.511 & 0.512 & 0.693 & 0.643\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Paired capacity contrasts on the matched five-seed subset, in \pp\
+with 95\% intervals.}
+\label{tab:capdiff}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrr}
+\toprule
+Contrast (hard interference unless noted) & Diff. & Low & High\\
+\midrule
+M minus S & $1.94$ & $1.07$ & $2.80$\\
+L minus S & $3.18$ & $2.44$ & $3.96$\\
+L minus IQFormer-insp. & $-2.84$ & $-4.30$ & $-1.31$\\
+L minus MCLDNN & $1.37$ & $0.03$ & $2.72$\\
+L minus S, SIR $=-15$ dB & $4.96$ & $3.48$ & $6.48$\\
+L minus IQFormer-insp., SIR $=-15$ dB & $14.07$ & $9.55$ & $18.51$\\
+L minus IQFormer-insp., clean retention & $-18.14$ & $-19.34$ & $-17.00$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The pattern is consistent across splits. Width raises the average
+monotonically, and it helps most where the compact model was already
+competitive: at SIR $=-15$~dB the widest tier gains $4.96$~\pp\ over S and
+stays $14.07$~\pp\ ahead of IQFormer-inspired. It does not close the gap that
+matters for the boundary. On the marginal hard split L is still $2.84$~\pp\
+behind IQFormer-inspired, and on clean retention it is $18.14$~\pp\ behind,
+a deficit essentially untouched by tripling the width from M to L
+($0.10$~\pp\ of movement). This is the arithmetic behind the manuscript's
+statement that capacity is not a substitute for the representation change.
+
+\section{Prospective Tier-2 Interventions}
+The Tier-2 chain was designed after inspecting the frozen evidence and sits
+outside the sealed family. Table~\ref{tab:tier2s} restates its three arms with
+the intervals that the compact form in the manuscript omits.
+
+\begin{table}[t]
+\centering
+\caption{Prospective Tier-2 diagnosis, repair, and negative control, relative
+to A5, in \pp\ with 95\% intervals. Exploratory throughout.}
+\label{tab:tier2s}
+\footnotesize
+\setlength{\tabcolsep}{2.6pt}
+\begin{tabular}{lrrr}
+\toprule
+Intervention & Params & Clean diff. [95\% CI] & Hard diff. [95\% CI]\\
+\midrule
+Per-class clean coverage & 39.5k & $0.15$ $[-0.31,0.63]$ & $-0.30$ $[-0.91,0.27]$\\
+Presence-gated route & 39.5k & $-0.30$ $[-0.66,0.08]$ & $-0.18$ $[-0.72,0.35]$\\
+Received-I/Q sidecar & 46.8k & $11.77$ $[11.06,12.49]$ & $4.37$ $[3.44,5.31]$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The ordering carries the argument. Adding jammer-free windows for every class
+moves clean macro-F1 by $0.15$~\pp, so exposure alone is not the explanation.
+Gating the modulation route on predicted interference presence moves nothing
+either, and the learned gate saturates near the modulated route in both clean
+and hard conditions ($99.994\%$ and $99.991\%$), so it functions as a negative
+control rather than as a demonstration that a mask fallback was learned. Only
+restoring a small amount of received-I/Q information moves both conditions with
+intervals clear of zero.
+
+\section{Seed-Level Robustness}
+The sealed intervals treat algorithm seeds as fixed blocks. Treating them
+instead as a random effect and resampling seeds directly gives
+$[4.02,5.19]$~\pp\ for the A5--A0 whole-configuration contrast,
+$[-0.15,0.42]$~\pp\ for the teacher-form contrast, $[-0.15,1.04]$~\pp\ for the
+route-count contrast, and $[-0.19,0.62]$~\pp\ for the residual-free A7 variant
+against A5. The qualitative reading is unchanged under either treatment: the
+whole-configuration effect is resolved, the isolated component effects are not.
+
+\section{Comparator Fidelity on a Public Benchmark}
+This check exists to establish that the two I/Q comparators are implemented
+competently, not to validate the simulator-domain envelope; a public benchmark
+cannot do the latter, because it does not expose the separately tracked target
+and jammer components the overlap covariate requires. The protocol follows the
+benchmark result table released with the IQFormer reference implementation:
+the 11-class RML2016.10a set, the full $-20$ to $18$~dB grid, per-stratum
+$600/200/200$ splits seeded at $233$, three algorithm seeds, no augmentation
+and no input-length change. The public-benchmark fidelity runs use a separate
+recipe following the benchmark protocol---a $60$-epoch budget for
+IQFormer-inspired and a $200$-epoch budget for MCLDNN---and should not be used
+to infer convergence sufficiency of the $30$-epoch main campaign.
+
+\begin{table}[t]
+\centering
+\caption{Per-SNR accuracy on RML2016.10a over three seeds. Brackets are the
+seed minimum and maximum, not confidence intervals.}
+\label{tab:e1s}
+\footnotesize
+\setlength{\tabcolsep}{3.4pt}
+\begin{tabular}{rrrrr}
+\toprule
+SNR (dB) & MCLDNN mean & [min, max] & IQFormer-insp. mean & [min, max]\\
+\midrule
+$-20$ & 12.1\% & $[12.0,12.2]$ & 14.9\% & $[14.5,15.2]$\\
+$-18$ & 13.1\% & $[12.3,13.9]$ & 18.1\% & $[16.8,19.0]$\\
+$-16$ & 14.8\% & $[14.0,15.3]$ & 22.3\% & $[21.7,23.0]$\\
+$-14$ & 17.9\% & $[16.8,18.9]$ & 27.2\% & $[26.6,28.3]$\\
+$-12$ & 22.0\% & $[20.4,23.3]$ & 33.3\% & $[31.5,34.6]$\\
+$-10$ & 26.0\% & $[25.0,26.7]$ & 37.0\% & $[36.5,37.8]$\\
+$-8$ & 32.5\% & $[31.1,33.3]$ & 41.4\% & $[41.1,41.5]$\\
+$-6$ & 44.0\% & $[42.8,45.7]$ & 49.8\% & $[49.5,50.3]$\\
+$-4$ & 58.8\% & $[58.3,59.9]$ & 63.3\% & $[63.0,63.5]$\\
+$-2$ & 74.7\% & $[74.3,75.0]$ & 77.3\% & $[76.1,77.9]$\\
+$0$ & 83.4\% & $[82.9,84.1]$ & 86.1\% & $[85.7,86.7]$\\
+$2$ & 85.1\% & $[84.7,85.6]$ & 89.4\% & $[88.6,90.5]$\\
+$4$ & 85.5\% & $[84.7,87.1]$ & 91.6\% & $[90.6,93.0]$\\
+$6$ & 86.1\% & $[85.7,86.8]$ & 93.4\% & $[93.0,94.1]$\\
+$8$ & 86.4\% & $[84.9,88.6]$ & 93.3\% & $[92.8,94.2]$\\
+$10$ & 85.3\% & $[84.0,87.1]$ & 93.0\% & $[92.0,94.4]$\\
+$12$ & 86.3\% & $[85.1,88.4]$ & 93.8\% & $[93.1,94.7]$\\
+$14$ & 86.0\% & $[85.0,87.9]$ & 93.4\% & $[92.9,93.9]$\\
+$16$ & 85.5\% & $[84.5,87.1]$ & 92.9\% & $[92.1,93.7]$\\
+$18$ & 85.2\% & $[84.3,86.8]$ & 92.9\% & $[92.3,93.9]$\\
+\midrule
+All SNR & 58.55\% & $[58.1,59.4]$ & 65.23\% & $[64.8,65.8]$\\
+Reference release & 62.05\% & --- & 64.19\% & ---\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:e1s} makes the shape of the agreement explicit. Both
+implementations reproduce the reference release at the level of the all-SNR
+range, and IQFormer-inspired matches it closely ($+1.04$~\pp), while MCLDNN
+remains $3.50$~\pp\ lower but within the same broad range. Agreement is not
+pointwise: individual SNR bins deviate by up to about $8$~\pp, which is why
+this is reported as range-level implementation fidelity rather than
+reproduction. No fidelity threshold was declared before these runs, so no
+pass/fail band is claimed here.
+
+\section{Comparator Convergence Audit}
+All models were trained under one shared 30-epoch budget with the same
+cosine-scheduled learning rate and an 8-epoch early-stopping rule; the
+reported checkpoint is selected solely by validation modulation
+cross-entropy. Table~\ref{tab:convergence} audits the sealed training
+histories (selected epoch and completed epochs over the ten algorithm seeds)
+to check whether any comparator's comparison is distorted by an immediately
+binding training cap.
+
+\begin{table}[t]
+\centering
+\caption{Convergence audit over the ten sealed training histories per model.
+``At epoch 30'' counts seeds whose training ran the full shared budget;
+``Early-stopped'' counts seeds stopped earlier by the patience rule.}
+\label{tab:convergence}
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lrrrr}
+\toprule
+Model & Median best epoch & Range & Seeds at epoch 30 & Early-stopped seeds\\
+\midrule
+MCLDNN & 13 & 11--16 & 0/10 & 10/10\\
+IQFormer-insp. & 27 & 24--30 & 10/10 & 0/10\\
+CSSL & 29 & 26--30 & 10/10 & 0/10\\
+A5 & 29.5 & 27--30 & 10/10 & 0/10\\
+A0 & 30 & 28--30 & 10/10 & 0/10\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The budget binds asymmetrically. IQFormer-inspired and CSSL run the full
+30-epoch budget in all ten seeds (median selected epoch 27 and 29), so their
+reported performance should be interpreted as potentially budget-limited under
+this shared 30-epoch protocol and the shared epoch budget may favor
+faster-converging
+models; the manuscript states this caveat in its Limitations. MCLDNN
+early-stops in every seed with best epochs well inside the budget (median 13,
+range 11--16), so the severe-region comparisons against MCLDNN are not
+explained by a binding cap. A5 itself also trains to the budget in all ten
+seeds, and the direct spectral reference A0 likewise runs to the budget in
+all ten seeds (median selected epoch 30, range 28--30), so the cap concern
+is not one-sided against the comparators. No model
+was retrained for this audit; the table reads the sealed histories only.
+
+\section{Sidecar Architecture Detail}
+Table~\ref{tab:sidecar} lists the received-I/Q sidecar layer by layer so the
+reported parameter increment is fully reconstructible. All convolution layers
+are bias-free; SiLU activations (parameter-free) follow each normalization.
+The branch consumes the received two-channel mixture at the full sample rate,
+uses one depthwise-separable stack with aggressive time pooling
+(mean/std/max over the window), and fuses the resulting embedding residually
+with the spectral embedding before a side classification head. The fused
+embedding passes through the 10-class linear head of layer~13, and these
+logits are added residually to the base spectral classifier logits; the side
+head receives no separate auxiliary supervision, and inference consumes only
+the received mixture. The parameter
+counts were verified directly against the sealed checkpoint state dict.
+
+\begin{table}[t]
+\centering
+\caption{Sidecar layer structure and parameter count. All Conv1D layers use
+stride 1 and no bias; DW denotes depthwise (groups = in channels) and PW
+pointwise ($1\times1$) convolution. Total model size is $39{,}500+7{,}294=
+46{,}794$ parameters.}
+\label{tab:sidecar}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{llccrr}
+\toprule
+Layer & Type & Kernel & Stride & In$\to$Out ch. & Params\\
+\midrule
+1 & Conv1D & 9 & 1 & 2$\to$12 & 216\\
+2 & GroupNorm (3 groups) & --- & --- & 12 & 24\\
+3 & DW Conv1D & 7 & 1 & 12$\to$12 & 84\\
+4 & PW Conv1D & 1 & 1 & 12$\to$24 & 288\\
+5 & GroupNorm (6 groups) & --- & --- & 24 & 48\\
+6 & DW Conv1D & 5 & 1 & 24$\to$24 & 120\\
+7 & PW Conv1D & 1 & 1 & 24$\to$24 & 576\\
+8 & GroupNorm (6 groups) & --- & --- & 24 & 48\\
+9 & mean/std/max pool + Linear & --- & --- & 72$\to$24 & 1{,}752\\
+10 & LayerNorm & --- & --- & 24 & 48\\
+11 & Fusion Linear & --- & --- & 72$\to$48 & 3{,}504\\
+12 & Fusion LayerNorm & --- & --- & 48 & 96\\
+13 & Classifier Linear & --- & --- & 48$\to$10 & 490\\
+\midrule
+\multicolumn{5}{l}{Total sidecar increment} & 7{,}294\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Diagnostic Envelope Covariate and Selector Audits}
+Two zero-compute audits recompute, on the same 32 fitting cells and the same
+80 finite-SIR interfered held cells as the primary envelope, (i) a covariate
+ladder that isolates the skill of each physical covariate and (ii) a
+diagnostic selector evaluation. No model is retrained and no prediction
+changes; both are exploratory.
+
+Table~\ref{tab:ladder} gives the ladder. All models are fitted on the 32
+fitting cells by least squares and scored unchanged on the 80 held cells;
+$R^2_{\mathrm{skill}}$ uses the same fit-domain constant baseline as the
+manuscript. SIR is the stronger single covariate against IQFormer-inspired,
+whereas SIR and overlap have comparable single-covariate skill against
+MCLDNN; overlap adds a consistent increment beyond SIR against both
+references, while SIR adds more beyond overlap against IQFormer-inspired
+than the reverse. The statistical status of that increment is assessed by the
+paired bootstrap in Section~\ref{sec:s4tests}.
+
+\begin{table}[t]
+\centering
+\caption{Covariate ladder on the shared 32 fitting / 80 held cells. RMSE in
+\pp. Increments: overlap$|$SIR reduces held RMSE by $0.61$~\pp\ against both
+references; SIR$|$overlap by $1.23$~\pp\ against IQFormer-inspired and
+$0.58$~\pp\ against MCLDNN.}
+\label{tab:ladder}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrr}
+\toprule
+Model & IQ RMSE & IQ $R^2_{\mathrm{skill}}$ & MC RMSE & MC $R^2_{\mathrm{skill}}$\\
+\midrule
+Constant & 8.37 & 0.00 & 9.63 & 0.00\\
+SIR only & 6.84 & 0.33 & 8.71 & 0.18\\
+Overlap only & 7.46 & 0.20 & 8.68 & 0.19\\
+Overlap + SIR & 6.23 & 0.45 & 8.10 & 0.29\\
+Overlap + SIR + SNR & 6.15 & 0.46 & 8.05 & 0.30\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:selector} evaluates the envelope sign as a diagnostic rule on
+the 80 held cells. Each sign selector uses envelope coefficients fitted only
+on the 32 fitting cells and applied to held cells by covariate value; the
+oracle is a hindsight per-cell best and is not achievable. Realized score is
+the mean over cells of the selected model's actual macro-F1; MACs use the
+sealed complexity table values (41.8~M for A5, 355.6~M for IQFormer-inspired).
+
+\begin{table}[t]
+\centering
+\caption{Selector evaluation on the 80 held cells. Regret is against the
+hindsight oracle; expected MACs average the selected model's cost over cells.
+These selector statistics are computed from the ten-seed held-cell aggregates
+and should not be numerically differenced against the matched-five-seed
+split-level macro-F1 values in Table~\ref{tab:capabs}.}
+\label{tab:selector}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lrrrrr}
+\toprule
+Selector & Realized F1 & Regret (pp) & A5 cells & MACs (M) & MAC saving\\
+\midrule
+Always A5 & 0.4488 & 14.19 & 80/80 & 41.8 & 88.2\%\\
+Always IQFormer & 0.5894 & 0.14 & 0/80 & 355.6 & 0\%\\
+SIR-only sign rule & 0.5894 & 0.14 & 0/80 & 355.6 & 0\%\\
+Overlap+SIR sign rule & 0.5872 & 0.36 & 5/80 & 336.0 & 5.5\%\\
+Oracle (hindsight) & 0.5907 & 0 & 3/80 & 343.8 & 3.3\%\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The reading is deliberately plain. Inside the held finite-SIR regimes the
+large I/Q reference leads in almost every cell, so no selector recovers much
+against always using it, and the envelope's demonstrated value is boundary
+localization---identifying the few severe, high-overlap cells where the
+compact model is competitive---rather than a large expected compute saving in
+this campaign. The overlap+SIR rule is the only rule that ever selects the
+compact model (5 of 80 cells), at a regret of $0.36$~\pp\ against the
+hindsight oracle; the SIR-only rule never selects it. Computed directly from
+the held-cell artifacts, its confusion matrix against the hindsight-optimal
+indicator is TP$=3$, FP$=2$, FN$=0$, TN$=75$: it identifies all three
+compact-favoring cells (recall $3/3$) with two additional selections
+(precision $3/5$), so its held-domain value is boundary localization without
+missed positive cells, while always using IQFormer-inspired still attains the
+higher average realized macro-F1. This is the honest
+selector consequence of a regime structure in which the compact model's
+advantage is concentrated in a small corner of the plane.
+
+\section{Leave-$-15$-dB-Out Extrapolation and Paired Overlap-Increment Tests}
+\label{sec:s4tests}
+Two further zero-compute audits close the remaining envelope questions. Both
+reuse the frozen cell table; no model is retrained and no prediction changes.
+
+The 80 held cells contain no SIR $=-15$~dB cell: that stratum occurs only in
+the \texttt{hard\_interference} fitting split. To probe extrapolation toward
+the most severe level, we refit the two-variable envelope on the 28 fitting
+cells excluding the four $-15$-dB cells and predict those four cells
+out-of-sample (a leave-one-SIR-stratum-out test, not an external validation).
+Table~\ref{tab:leave15} compares the envelope with a 28-cell constant and a
+28-cell SIR-only fit.
+
+\begin{table}[t]
+\centering
+\caption{Leave-$-15$-dB-out test. All predictors are fitted on the 28
+fitting cells excluding the four \texttt{hard\_interference} SIR $=-15$~dB
+cells and scored on those four cells only. RMSE and MAE in \pp; sign
+accuracy is the fraction of the four cells whose predicted gain sign matches
+the observed sign.}
+\label{tab:leave15}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{llrrr}
+\toprule
+Reference & Predictor & RMSE & MAE & Sign acc.\\
+\midrule
+IQFormer-insp. & Constant & 21.34 & 21.26 & 0/4\\
+IQFormer-insp. & SIR only & 12.15 & 12.02 & 0/4\\
+IQFormer-insp. & Overlap + SIR & 12.69 & 12.01 & 1/4\\
+\midrule
+MCLDNN & Constant & 16.43 & 15.83 & 0/4\\
+MCLDNN & SIR only & 7.87 & 6.54 & 4/4\\
+MCLDNN & Overlap + SIR & 6.84 & 6.52 & 2/4\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The outcome is reference-dependent, and Table~\ref{tab:leave15} must be read
+on both skill dimensions. For MCLDNN, the full overlap+SIR surface reduces
+RMSE relative to the constant baseline ($6.84$ versus $16.43$~\pp) but
+predicts the correct sign in only two of four held-out cells, whereas the
+SIR-only surface preserves all four signs ($7.87$~\pp\ RMSE). For
+IQFormer-inspired, the full model is no better than SIR-only ($12.69$ versus
+$12.15$~\pp\ RMSE; sign accuracy $1/4$ versus $0/4$). The
+leave-one-SIR-stratum-out test therefore does not confirm a transportable
+overlap increment: the full surface does not preserve the severe-region sign
+structure that the SIR-only surface retains. The $-15$-dB break-even overlaps
+remain conditional extrapolations of the fitted envelope rather than
+independently held-regime-validated thresholds.
+
+For the incremental value of overlap beyond SIR on the 80 held cells, we use
+a block-paired bootstrap. The paired statistic is the per-cell
+squared-error difference
+$d_i=e^2_{\mathrm{SIR\text{-}only},i}-e^2_{\mathrm{overlap+SIR},i}$, so
+$\bar d>0$ means adding overlap lowers MSE. The 80 held cells form 20
+held-regime$\times$SIR blocks of four overlap quartiles each; each draw
+resamples the 20 blocks with replacement ($B=10{,}000$, seed $20260820$)
+and keeps all quartiles inside a sampled block.
+
+\begin{table}[t]
+\centering
+\caption{Block-paired bootstrap of the overlap increment beyond SIR on the
+80 held cells. $\Delta$MSE is the paired squared-error reduction
+(SIR-only minus overlap+SIR), in $\mathrm{pp}^2$; intervals are 2.5/97.5
+percentiles over $10{,}000$ block resamples.}
+\label{tab:bootpair}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lrrrr}
+\toprule
+Reference & Mean $\Delta$MSE & 95\% CI & $P(\Delta\mathrm{MSE}>0)$ & RMSE red. (pp)\\
+\midrule
+IQFormer-insp. & 7.97 & $[-2.06, 18.18]$ & 0.94 & 0.61\\
+MCLDNN & 10.18 & $[-8.29, 29.84]$ & 0.85 & 0.61\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Both references show positive point estimates and a majority of positive
+draws, but both percentile intervals include zero; overlap therefore provides
+a consistent point-estimate refinement beyond SIR rather than a separately
+resolved predictor, and the manuscript reports it as an exploratory
+refinement.
+
+Finally, applying the 28-cell sign rule to the four excluded $-15$-dB cells
+with the same ten-seed cell-level aggregates and MAC cost model selects A5
+in only one of the four hindsight-A5-favoring cells (sign accuracy $1/4$;
+realized cell-mean macro-F1 $0.285$ versus the $0.361$ hindsight oracle on
+those four cells). The cross-model selector therefore transfers poorly to
+the excluded severe stratum, which is the selector-side counterpart of the
+extrapolation caveat above.
+
+\section{Independent Severe-Held Validation: Transfer Boundary of the Corner
+Advantage and the Diagnostic Envelope}
+\label{sec:transfer}
+After the campaign was frozen, a preregistered post-campaign robustness
+validation asked whether the severe-corner advantage and the overlap--SIR
+envelope survive on data generated outside the frozen campaign. The
+independent severe-held set fixes SIR at $-15$~dB and uses two
+source-disjoint regimes with different operating-regime factors: regime R1
+keeps the training channel profiles (TDL-A/C/D) and combines them with held
+jammer families (pulse and OFDM-like emitters) at a held terminal speed of
+$180$~km/h, while regime R2 combines held channel profiles (TDL-B/E) with the
+same held jammer families at $250$~km/h. Each regime contains
+\SevereHeldSourcesPerRegime\ fresh sources disjoint from the campaign source
+pool (12,820 new sources against the campaign's 152,000; the disjointness is
+asserted programmatically at cache build), evaluated on the eight-point SNR
+grid from $-10$ to $18$~dB at view $0$. The set is stored under
+\path{standards/cache_s5_severe_held_v1/} with a manifest recording the
+cache digest. All frozen checkpoints were evaluated unchanged; no model was
+retrained, tuned, or selected against this set. The validation is
+exploratory and post-campaign relative to the sealed family throughout.
+
+Two aggregation conventions appear in this document, and every reported
+number is labelled by its convention. \emph{Window-pooled} macro-F1 pools all
+predictions first and then computes macro-F1; it is used for the transfer
+gains in Table~\ref{tab:s5a}. The \emph{seed-wise} convention computes
+macro-F1 per seed and per regime first and then averages, with pooled the
+equally weighted regime mean; it is used for the repair contrast and levels
+and for all frozen-inference controls, and it is the manuscript's headline
+convention because it supports paired seed inference. Because macro-F1 is
+nonlinear, the two conventions need not agree numerically
+(\SevereTransferGainIqformer\ versus \SevereSeedMeanGapIqformer\ \pp\
+against IQFormer-inspired, \SevereTransferGainMcldnn\ versus
+\SevereSeedMeanGapMcldnn\ \pp\ against MCLDNN for the A5 gap on this held
+set), and they are never mixed within a single contrast.
+
+Table~\ref{tab:s5a} reports the preregistered transfer verdicts. The pooled
+A5 gain is negative against both comparators, the envelope's sign accuracy
+is near chance (and below it against MCLDNN), a SIR-only or constant
+predictor beats the full overlap--SIR envelope on RMSE against both
+references, and the overlap--SIR cell selector recalls only
+\SevereTransferSelectorRecall\ of the truly A5-favoring cells. The
+preregistered verdict is therefore a transfer failure: neither the
+severe-corner advantage nor the $-15$-dB envelope transport reproduces on
+independently generated severe data.
+
+\begin{table}[t]
+\centering
+\caption{Independent severe-held transfer check (post-campaign, exploratory).
+Pooled gain is A5 minus the reference in window-pooled macro-F1 \pp. RMSE
+rows apply the frozen coefficients estimated from the original campaign
+fitting domain without refitting to the independent severe-held data; the
+constant baseline is likewise the frozen campaign-domain constant.}
+\label{tab:s5a}
+\footnotesize
+\setlength{\tabcolsep}{2.4pt}
+\begin{tabular}{lrrrrr}
+\toprule
+Reference & Pooled gain & Sign acc. & RMSE full & RMSE SIR-only & RMSE const.\\
+\midrule
+IQFormer-insp. & \SevereTransferGainIqformer & \SevereTransferSignAccIqformer
+& \SevereTransferRmseIqformerFull & \SevereTransferRmseIqformerSirOnly
+& \SevereTransferRmseIqformerConstant\\
+MCLDNN & \SevereTransferGainMcldnn & \SevereTransferSignAccMcldnn
+& \SevereTransferRmseMcldnnFull & \SevereTransferRmseMcldnnSirOnly
+& \SevereTransferRmseMcldnnConstant\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Independent Severe-Held Validation: Representation Repair by the
+I/Q Sidecar}
+After the preregistered transfer check revealed a cross-regime transport
+boundary on the independently generated severe-held set, a second
+preregistration froze the repair hypothesis, primary contrast, and decision
+rule before any sidecar inference on that same held set. The data stay locked
+to the same cache; the A5, IQFormer-inspired, and MCLDNN predictions are
+reused from the transfer check; and the ten sidecar checkpoints pass a
+provenance audit (\SidecarParameters\ parameters each, strict loading of the
+frozen state dicts, SHA-256 recorded in
+\path{docs/S5_R1_CHECKPOINT_AUDIT.md}). The primary contrast is sidecar
+minus A5 under the seed-wise convention, pooled as the equally weighted mean
+of the per-seed paired differences, with a seed-level paired bootstrap
+interval.
+
+The repair is consistent across seeds and strata. Seed-mean pooled macro-F1
+rises from \SevereRepairLevelAFive\%
+(A5) to \SevereRepairLevelSidecar\% (sidecar), a difference of
+\SevereRepairDiff\ \pp\ ($[\SevereRepairCiLow,\SevereRepairCiHigh]$), with
+regime contributions \SevereRepairRegimeOneDiff\ and
+\SevereRepairRegimeTwoDiff\ \pp; the difference is positive in
+\SevereRepairPositiveSeeds\ of \ProtocolSeedCount\ seeds and in
+\SevereRepairPositiveSnrStrata\ of eight SNR strata. A window-level
+hierarchical paired audit reproduces the interval. On the same held set the
+sidecar also overtakes IQFormer-inspired (\SevereRepairLevelIqformer\%;
+descriptive gap-recovery ratio \SevereRepairGapRecoveryIqformer) while
+recovering only \SevereRepairGapRecoveryMcldnn\ of the remaining gap to
+MCLDNN (\SevereRepairLevelMcldnn\%). The absolute levels remain low for every
+evaluated model at this SIR $=-15$~dB operating point, so the verdict is a
+consistent relative repair effect rather than deployable classification
+accuracy. The repair transfers to the independently generated severe-held
+regimes even where the campaign-internal corner advantage and the envelope
+transport do not. Per-seed, per-SNR, and per-class tables are stored as CSV
+(artifact index below); the sidecar remains exploratory and outside the
+sealed family.
+
+\section{Severe-Held Frozen-Inference Attribution Controls}
+\label{sec:controls}
+A third preregistration froze three forward-only attribution controls on the
+same locked cache before any control inference
+(\path{docs/S6_SEVERE_HELD_INFERENCE_CONTROLS_PREREG.md}). No model was
+retrained, tuned, or re-selected; the controls are post-campaign diagnostic
+evidence and cannot change the sealed family or the two earlier severe-held
+verdicts.
+
+Control~A forwards the frozen capacity tiers M (\CapacityMParameters\
+parameters) and L (\CapacityLParameters\ parameters) on both regimes, with
+A5 and the sidecar restricted to the same matched five seeds
+(17, 29, 43, 71, 101). Tested spectral width scaling does not reproduce the
+repair: M and L reach \SevereControlLevelCapM\% and \SevereControlLevelCapL\%
+seed-mean pooled macro-F1 (paired contrasts against A5 of
+\SevereControlDiffCapM\ and \SevereControlDiffCapL\ \pp, both intervals
+including zero), whereas on the matched subset the sidecar reaches
+\SevereControlMatchedLevelSidecar\% against
+\SevereControlMatchedLevelAFive\% for A5.
+
+Control~B tests the sidecar's information dependence at inference. B1
+replaces the I/Q branch input with zeros of the same shape; B2 applies a
+fixed random temporal permutation of the 1024 samples within each window,
+identical across the two channels, which preserves the marginal sample
+distribution but destroys modulation temporal structure. Both interventions
+degrade the sidecar substantially, to \SevereControlLevelIqZero\% and
+\SevereControlLevelIqShuffle\%, losses of \SevereControlIqZeroLoss\ and
+\SevereControlIqShuffleLoss\ \pp\ relative to the full sidecar.
+
+Control~C removes the residual side-head contribution
+$\mathrm{classifier}(\mathrm{fused\ embedding})$ and keeps the co-trained
+base spectral logits. The sidecar falls to \SevereControlLevelNoSideHead\%
+(\SevereControlDiffNoSideHead\ \pp\ against A5), below A5 itself, so the
+added fusion and classifier path is necessary for the repair.
+
+\begin{table}[t]
+\centering
+\caption{Frozen-inference attribution controls on the severe-held set
+(post-campaign diagnostic). Seed-mean pooled macro-F1 in \%; the matched
+five-seed subset is used for A5, M, L, and sidecar in Control~A, and the full
+ten seeds for all sidecar conditions in Controls~B and~C.}
+\label{tab:controls}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{llc}
+\toprule
+Condition & Seed-mean pooled macro-F1 & Seeds\\
+\midrule
+A5 & \SevereRepairLevelAFive\% & 10\\
+Capacity M & \SevereControlLevelCapM\% & 5\\
+Capacity L & \SevereControlLevelCapL\% & 5\\
+Sidecar (full) & \SevereRepairLevelSidecar\% & 10\\
+Sidecar, I/Q zeroed (B1) & \SevereControlLevelIqZero\% & 10\\
+Sidecar, I/Q time-shuffled (B2) & \SevereControlLevelIqShuffle\% & 10\\
+Sidecar, side head removed (C1) & \SevereControlLevelNoSideHead\% & 10\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Under the preregistered decision rule---(a) the sidecar exceeds the widest
+capacity tier in pooled seed-mean macro-F1; (b) both information losses are at
+least $1.0$~\pp; (c) the no-head condition retains at least half of the full
+repair contrast---conditions (a) and (b) hold and (c) fails
+(\SevereControlDiffNoSideHead\ \pp\ retained). The recorded pattern is
+therefore mixed: the repair is best interpreted as a joint
+representation-and-fusion intervention rather than an isolated
+I/Q-information effect. These are inference interventions, i.e.\ an
+information-dependence diagnostic, not an architecture ablation or causal
+proof; per-regime levels and paired contrasts are stored as CSV (artifact
+index below).
+
+\section{Preregistration Provenance}
+\label{sec:preregp}
+Table~\ref{tab:preregp} lists the three preregistration documents with their
+SHA-256 digests. The transfer check was frozen before any inference on the
+new held set; the repair preregistration was frozen after the transfer result
+and before any sidecar inference; the control preregistration was frozen
+after the repair result and before any control inference. Each document
+records its primary endpoint and pass/fail rule; the execution logs are kept
+alongside the operation logs under \path{docs/}. No commit-level timestamp
+service was used; the freeze ordering is established by these documents and
+the operation logs rather than asserted beyond that evidence.
+
+\begin{table}[t]
+\centering
+\caption{Preregistration documents and SHA-256 digests. Freeze order: transfer
+check, then repair, then controls; each stage froze before its own inference
+on the shared severe-held set.}
+\label{tab:preregp}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lll}
+\toprule
+Stage & Document & SHA-256 (first 16 hex)\\
+\midrule
+Transfer & \path{docs/S5_A_SEVERE_HELD_PREREG.md} &
+\texttt{2759558b50a046ea}\\
+Repair & \path{docs/S5_R1_PREREG.md} &
+\texttt{058cc76dd693b715}\\
+Controls & \path{docs/S6_SEVERE_HELD_INFERENCE_CONTROLS_PREREG.md} &
+\texttt{be0dc26ccff5b69f}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Artifact Index}
+Every number in this document is derived from the frozen artifact tree rather
+than transcribed from an earlier draft. The relevant entry points are:
+
+\begin{itemize}\setlength{\itemsep}{2pt}
+  \item Cell construction and envelope fits:
+  \path{analysis_zero_compute/outputs/csv/a14_envelope_cells.csv} and
+  \path{a14_v41_envelope_interfered_holdout.csv}.  The V4.4 clean-sentinel
+  31-cell sensitivity is recomputed from the same cell table by
+  \path{analysis_zero_compute/a16_clean_sentinel_sensitivity.py}, writing
+  \path{a16_clean_sentinel_sensitivity.csv} and
+  \path{a16_clean_sentinel_sensitivity.json}.
+  \item Covariate ladder, selector evaluation, and convergence audit:
+  \path{analysis_zero_compute/a17_final_s2_audits.py}, writing
+  \path{a17_covariate_ladder.csv}, \path{a17_selector_evaluation.csv}, and
+  \path{a17_convergence_audit.csv} from the same frozen cell table and the
+  sealed per-seed \path{result.json} training histories.
+  \item Leave-$-15$-dB-out test, paired overlap-increment bootstrap, and
+  selector confusion matrix:
+  \path{analysis_zero_compute/a18_final_s4_audits.py}, writing
+  \path{a18_leave15_out.csv}, \path{a18_overlap_increment_bootstrap.csv},
+  \path{a18_selector_confusion.csv}, and \path{a18_leave15out_selector.csv}
+  from the same frozen cell table and the sealed per-seed predictions.
+  \item Sidecar architecture:
+  \path{analysis_zero_compute/tier2_gpu/run_tier2_experiment.py}
+  (\texttt{LightweightIQSidecarVIMD}); the parameter counts in
+  Table~\ref{tab:sidecar} are verified against the sealed checkpoint state
+  dict under \path{artifacts/tier2_iq_sidecar_v1/models/}.
+  \item Capacity ladder: \path{tier2_capacity_L_v1_vs_S.csv},
+  \path{tier2_capacity_L_v1_vs_M.csv},
+  \path{tier2_capacity_L_v1_vs_iqformer.csv},
+  \path{tier2_capacity_L_v1_vs_mcldnn.csv}, and
+  \path{tier2_capacity_M_v2_vs_a5.csv}, all five-seed matched.
+  \item Tier-2 interventions: \path{tier2_iq_sidecar_v1_vs_a5.csv},
+  \path{tier2_condition_coverage_v1_vs_a0.csv}, and
+  \path{tier2_presence_gated_v1_vs_a5.csv}.
+  \item Comparator fidelity: \path{artifacts/rml2016_10a_fidelity_v3/}, whose
+  \path{run.json} records the dataset SHA-256, the split protocol, the
+  reference-release values, and the environment.
+  \item The overlap covariate is computed at cache-build time, stored as
+  \path{overlap.npy} per split, and SHA-256 checksummed in the sealed cache
+  manifest; it is never an input feature of any model.
+  \item Independent severe held cache:
+  \path{standards/cache_s5_severe_held_v1/}; the manifest records the cache
+  digest and the programmatic source-disjointness assertion against the
+  campaign source pool.
+  \item Severe-held transfer check (Table~\ref{tab:s5a}):
+  \path{analysis_zero_compute/a19_s5_severe_held.py}, writing
+  \path{analysis_zero_compute/outputs/a19_s5_severe_held.json} together with
+  the per-cell CSV files, from the frozen predictions under
+  \path{artifacts/s5_severe_held_v1/}.
+  \item Severe-held repair check:
+  \path{analysis_zero_compute/a20_s5_r1_sidecar_severe_held.py}, writing the
+  sidecar predictions under
+  \path{artifacts/s5_r1_sidecar_severe_held_v1/} and
+  \path{a20_s5_r1_model_levels.csv}, \path{a20_s5_r1_paired_contrasts.csv},
+  \path{a20_s5_r1_per_snr.csv}, \path{a20_s5_r1_per_class.csv},
+  \path{a20_s5_r1_gap_recovery.csv}, and \path{a20_s5_r1_summary.json}; the
+  checkpoint provenance audit is \path{docs/S5_R1_CHECKPOINT_AUDIT.md}.
+  \item Severe-held frozen-inference attribution controls
+  (Section~\ref{sec:controls}):
+  \path{analysis_zero_compute/a21_s6_severe_held_controls.py}, writing the
+  control predictions under \path{artifacts/s6_severe_held_controls_v1/} and
+  \path{a21_control_levels.csv}, \path{a21_control_matched5_levels.csv},
+  \path{a21_control_paired_contrasts.csv}, and
+  \path{a21_s6_controls_summary.json}; the preregistration is
+  \path{docs/S6_SEVERE_HELD_INFERENCE_CONTROLS_PREREG.md}.
+\end{itemize}
+
+The reproduction package released with the paper contains the resolved macros,
+the figure-source CSV files, per-seed aggregates, run configurations, and the
+full provenance manifest.
+
+\end{document}

@@ -1,0 +1,224 @@
+% V1 artifact-audit macros (2026-08-18). Values recomputed from
+% analysis_zero_compute/outputs/csv/a14_envelope_{cells,fit,holdout}.csv,
+% a8_pareto.csv, a12_effect_resolution_ablation.csv, and
+% artifacts/tier2_iq_sidecar_v1/run.json. These are NOT the generated
+% paper_data_layer macros; they are audit-verified constants added for the
+% V1 revision and must be re-derived by the build pipeline before release.
+
+% Envelope fit/holdout counts and covariate structure (a14_envelope_cells.csv)
+\newcommand{\EnvelopeFitCells}{32}% 16 id_test + 16 hard_interference
+\newcommand{\EnvelopeHoldoutNegShareIQ}{0.963}% 78/81 holdout cells negative
+\newcommand{\EnvelopeHoldoutNegShareMC}{0.901}% 73/81 holdout cells negative
+\newcommand{\EnvelopeOccSirPearson}{-0.03}% Pearson r(o,SIR) over all 113 cells
+\newcommand{\EnvelopeOccSirPearsonFit}{-0.003}% Pearson r(o,SIR) over the 32 fitting cells
+\newcommand{\EnvelopeMaxCellOverlap}{0.84}% largest per-cell mean overlap in the campaign
+
+% Trivial-baseline skill. The constant predictor outputs the mean gain over the
+% 32 fitting cells (IQFormer-inspired -8.27 pp, MCLDNN -4.63 pp) and is applied
+% unchanged to the 81 held-regime cells. Recomputed 2026-08-18 directly from
+% a14_envelope_cells.csv (fraction-valued gain columns) and
+% a14_envelope_holdout.csv (pp-valued columns); the previous 15.28/13.29 values
+% mixed the two scales and are withdrawn.
+\newcommand{\EnvelopeConstantRmseIQ}{8.40}
+\newcommand{\EnvelopeConstantRmseMC}{9.63}
+\newcommand{\EnvelopeSkillRTwoIQ}{0.46}
+\newcommand{\EnvelopeSkillRTwoMC}{0.30}
+\newcommand{\EnvelopeFitMeanIQ}{-8.27}
+\newcommand{\EnvelopeFitMeanMC}{-4.63}
+% Oracle-constant reference (mean of the held-regime cells themselves), reported
+% as a disclosure so the skill score is not over-read.
+\newcommand{\EnvelopeOracleConstRmseIQ}{6.03}
+\newcommand{\EnvelopeOracleConstRmseMC}{6.77}
+\newcommand{\EnvelopeOracleSkillIQ}{-0.05}
+\newcommand{\EnvelopeOracleSkillMC}{-0.41}
+
+% A7 vs A5 (a8_pareto.csv, hard_interference macro-F1)
+\newcommand{\ASevenVsAFiveHardDiff}{0.21}
+
+% Sidecar complexity (artifacts/tier2_iq_sidecar_v1/run.json)
+\newcommand{\SidecarParamsAdd}{7294}% 46794 - 39500
+\newcommand{\SidecarParamsPct}{18}
+\newcommand{\SidecarMacsTotal}{43.1}% million, conv-linear MACs excluding STFT
+
+% ---------------------------------------------------------------------------
+% Campaign geometry and implementation constants (V1 revision, 2026-08-18).
+% Sources: src/vimd_amc/data/synthesis.py (SynthesisConfig),
+% src/vimd_amc/standards/cache.py (_SEEN_/_HELDOUT_ grids),
+% src/vimd_amc/models/common.py (ModelConfig), models/spectral.py
+% (ComplexSTFT), src/vimd_amc/losses.py (VIMDLossWeights),
+% src/vimd_amc/training.py (TrainingConfig), and
+% tvt_submission/configs/formal_tvt_recovery_v4r_110plus10.json
+% (scientific_invariants, the executed freeze).
+% ---------------------------------------------------------------------------
+\newcommand{\CarrierGHz}{5.9}
+\newcommand{\SampleRateMHz}{1}
+\newcommand{\WindowSamples}{1024}
+\newcommand{\WindowMicroseconds}{1024}
+\newcommand{\SamplesPerSymbol}{4}
+\newcommand{\RrcRolloff}{0.35}
+\newcommand{\SeenSpeeds}{0, 60, 120, and 150}
+\newcommand{\HeldSpeeds}{180 and 250}
+\newcommand{\MaxDopplerSeenHz}{820}
+\newcommand{\MaxDopplerHeldHz}{1367}
+\newcommand{\SnrGridLow}{-10}
+\newcommand{\SnrGridHigh}{18}
+\newcommand{\SnrGridCount}{eight}
+\newcommand{\NFft}{64}
+\newcommand{\HopLength}{16}
+\newcommand{\StftFrames}{61}
+\newcommand{\StftBins}{64}
+\newcommand{\StftBinHz}{15.6}
+\newcommand{\SpectralChannels}{24}
+\newcommand{\EmbeddingDim}{48}
+\newcommand{\EnvironmentDim}{32}
+\newcommand{\DropoutRate}{0.05}
+\newcommand{\TrainEpochs}{30}
+\newcommand{\TrainBatch}{16}
+\newcommand{\TrainLR}{3\times10^{-4}}
+\newcommand{\TrainWeightDecay}{10^{-2}}
+\newcommand{\TrainPatience}{8}
+\newcommand{\GradClip}{5.0}
+\newcommand{\LossAlpha}{0.50}
+\newcommand{\LossBeta}{0.25}
+\newcommand{\LossGamma}{0.05}
+\newcommand{\LossEta}{0.10}
+\newcommand{\LossOrtho}{0.01}
+\newcommand{\LabelSmoothing}{0.05}
+\newcommand{\ContrastTemp}{0.12}
+\newcommand{\MaskStartEpoch}{2}
+\newcommand{\MaskRampEpochs}{3}
+\newcommand{\ContrastStartEpoch}{5}
+\newcommand{\ContrastRampEpochs}{3}
+\newcommand{\CapacityMSpectral}{40}
+\newcommand{\CapacityMEmbedding}{80}
+\newcommand{\CapacityLSpectral}{64}
+\newcommand{\CapacityLEmbedding}{128}
+
+% ---------------------------------------------------------------------------
+% V3-review audit recomputations (2026-08-19). Sources:
+%   A3/B1/B5: a14_envelope_{cells,holdout}.csv (held-regime RMSE/R^2_skill).
+%   B3/B4: per-seed macro-F1 recomputed from
+%     artifacts/tvt_v4r_headline_composite/models/*/predictions_hard_interference.npz
+%     (seed-resampling percentile bootstrap, 10000 draws, seed 20260819).
+%   A6: tier2_capacity_{L_v1_vs_S,L_v1_vs_iqformer,L_v1_vs_mcldnn}.csv
+%     (five-seed matched-subset absolute macro-F1).
+% ---------------------------------------------------------------------------
+% A3: holdout skill excluding the clean-retention cell (80 cells).
+\newcommand{\EnvelopeNoCleanRmseIQ}{6.23}
+\newcommand{\EnvelopeNoCleanRmseMC}{8.10}
+\newcommand{\EnvelopeNoCleanSkillIQ}{0.45}
+\newcommand{\EnvelopeNoCleanSkillMC}{0.29}
+% B1: three-variable envelope (adds cell mean SNR), 32-cell fit, 81-cell holdout.
+\newcommand{\EnvelopeThreeVarRmseIQ}{6.12}
+\newcommand{\EnvelopeThreeVarRmseMC}{8.00}
+\newcommand{\EnvelopeThreeVarSkillIQ}{0.47}
+\newcommand{\EnvelopeThreeVarSkillMC}{0.31}
+% B3/B4: seed-randomization percentile intervals (pp), seeds as random effect.
+\newcommand{\SeedRandomEffectLow}{4.02}
+\newcommand{\SeedRandomEffectHigh}{5.19}
+\newcommand{\SeedRandomTeacherLow}{-0.15}
+\newcommand{\SeedRandomTeacherHigh}{0.42}
+\newcommand{\SeedRandomRouteLow}{-0.15}
+\newcommand{\SeedRandomRouteHigh}{1.04}
+\newcommand{\ASevenVsAFiveSeedLow}{-0.19}
+\newcommand{\ASevenVsAFiveSeedHigh}{0.62}
+% A6: five-seed matched-subset absolute hard-interference macro-F1.
+\newcommand{\CapacitySFiveSeedAbs}{0.436}
+\newcommand{\CapacityMFiveSeedAbs}{0.455}
+\newcommand{\CapacityLFiveSeedAbs}{0.468}
+\newcommand{\CapacityIQFormerFiveSeedAbs}{0.496}
+\newcommand{\CapacityMCLDNNFiveSeedAbs}{0.454}
+% A6: ten-seed marginal A5 minus IQFormer-inspired (pp) for the gap disclosure.
+\newcommand{\CapacityTenSeedGapRef}{-4.66}
+\newcommand{\CapacityFiveSeedGapRef}{-6.02}
+
+% ---------------------------------------------------------------------------
+% V4.3 capacity-ladder disclosure (2026-08-19). Recomputed from
+% analysis_zero_compute/outputs/csv/tier2_capacity_L_v1_vs_{S,M,iqformer}.csv,
+% all on the same five-seed matched subset.
+% ---------------------------------------------------------------------------
+\newcommand{\CapacityLCleanVsIqformerGap}{18.1}% clean_retention deficit of L vs IQFormer-insp.
+
+% ---------------------------------------------------------------------------
+% FINAL-S2 zero-compute audits (2026-08-20). Source:
+% analysis_zero_compute/a17_final_s2_audits.py, outputs
+% analysis_zero_compute/outputs/csv/a17_covariate_ladder.csv,
+% a17_selector_evaluation.csv, a17_convergence_audit.csv. Same 32 fitting /
+% 80 held finite-SIR interfered cells as the primary envelope. Exploratory;
+% nothing here changes a sealed conclusion.
+% ---------------------------------------------------------------------------
+% Covariate ladder, held-regime RMSE in pp (R^2_skill: M1 0.33/0.18,
+% M2 0.20/0.19, M3 0.45/0.29, M4 0.46/0.30 for IQFormer/MCLDNN).
+\newcommand{\LadderSirOnlyRmseIQ}{6.84}
+\newcommand{\LadderSirOnlyRmseMC}{8.71}
+\newcommand{\LadderOverlapOnlyRmseIQ}{7.46}
+\newcommand{\LadderOverlapOnlyRmseMC}{8.68}
+\newcommand{\LadderOverlapIncrementPp}{0.61}% RMSE reduction overlap|SIR, equal for both references
+% Selector evaluation on the 80 held cells (sign selectors use coefficients
+% fitted on the 32 fitting cells only; the oracle is hindsight).
+\newcommand{\SelectorOverlapSirCells}{5}% held cells where the overlap+SIR rule picks A5
+\newcommand{\SelectorOracleCells}{3}% held cells where the hindsight oracle picks A5
+\newcommand{\SelectorRegretPp}{0.36}% overlap+SIR selector regret vs the oracle
+\newcommand{\SelectorMacSavingPct}{5.5}% expected MAC saving vs always IQFormer (41.8M vs 355.6M)
+\newcommand{\SelectorRealizedFTradePp}{0.22}% realized macro-F1 cost vs always IQFormer: 0.5894-0.5872 (FINAL-S3)
+% Comparator convergence audit over the ten sealed training histories.
+\newcommand{\ConvMcldnnMedianEpoch}{13}% range 11--16, 10/10 seeds early-stopped
+\newcommand{\ConvIqformerMedianEpoch}{27}% range 24--30, 10/10 seeds ran the full budget
+\newcommand{\ConvCsslMedianEpoch}{29}% range 26--30, 10/10 seeds ran the full budget
+\newcommand{\ConvAFiveMedianEpoch}{29.5}% range 27--30, 10/10 seeds ran the full budget
+\newcommand{\ConvAZeroMedianEpoch}{30}% range 28--30, 10/10 seeds ran the full budget (FINAL-S4)
+
+% ---------------------------------------------------------------------------
+% FINAL-S4 zero-compute audits (2026-08-20). Source:
+% analysis_zero_compute/a18_final_s4_audits.py, outputs
+% analysis_zero_compute/outputs/csv/a18_leave15_out.csv,
+% a18_overlap_increment_bootstrap.csv, a18_selector_confusion.csv.
+% Same sealed cell table as a14/a17. Exploratory; nothing here changes a
+% sealed conclusion.
+% ---------------------------------------------------------------------------
+% Leave-one-SIR-stratum-out test: refit on the 28 fitting cells excluding the
+% four hard_interference SIR=-15 dB cells, predict those four cells. RMSE pp.
+\newcommand{\LeaveFifteenRmseConstIQ}{21.34}
+\newcommand{\LeaveFifteenRmseSirIQ}{12.15}
+\newcommand{\LeaveFifteenRmseFullIQ}{12.69}
+\newcommand{\LeaveFifteenRmseConstMC}{16.43}
+\newcommand{\LeaveFifteenRmseSirMC}{7.87}
+\newcommand{\LeaveFifteenRmseFullMC}{6.84}
+% Block-paired bootstrap of the overlap increment beyond SIR over the 80 held
+% cells (20 held-regime x SIR blocks, B=10000, seed 20260820). d_i is the
+% paired squared-error difference SIR-only minus overlap+SIR; values in pp^2.
+\newcommand{\BootDmseMeanIQ}{7.97}
+\newcommand{\BootDmseCiLowIQ}{-2.06}
+\newcommand{\BootDmseCiHighIQ}{18.18}
+\newcommand{\BootProbPosIQ}{0.94}
+\newcommand{\BootDmseMeanMC}{10.18}
+\newcommand{\BootDmseCiLowMC}{-8.29}
+\newcommand{\BootDmseCiHighMC}{29.84}
+\newcommand{\BootProbPosMC}{0.85}
+% Fusion seed-ensemble controls are now emitted by the paper data layer from
+% the direct a5_fusion.csv artifact, including unrounded excess gains.
+
+% ---------------------------------------------------------------------------
+% V5.3 figure/table rebalance disclosures (2026-08-22). Sources:
+%   Regime skill: analysis_zero_compute/outputs/csv/
+%     a14_v41_envelope_interfered_holdout.csv (per-regime rows; same values as
+%     Supplement Table II, rounded to two decimals).
+%   Capacity L minus S at SIR=-15 dB: analysis_zero_compute/outputs/csv/
+%     tier2_capacity_L_v1_vs_S.csv (hard_interference_sir_minus15 row;
+%     same values as Supplement Table V).
+% ---------------------------------------------------------------------------
+% Held-regime envelope skill (R^2_skill) by regime, IQFormer-inspired reference.
+\newcommand{\RegimeSkillIqSpeed}{0.75}
+\newcommand{\RegimeSkillIqChannel}{0.59}
+\newcommand{\RegimeSkillIqJammer}{0.20}
+\newcommand{\RegimeSkillIqOod}{0.34}
+% Held-regime envelope skill (R^2_skill) by regime, MCLDNN reference.
+\newcommand{\RegimeSkillMcSpeed}{0.72}
+\newcommand{\RegimeSkillMcChannel}{0.64}
+\newcommand{\RegimeSkillMcJammer}{-0.02}
+\newcommand{\RegimeSkillMcOod}{0.01}
+% Capacity L minus sealed tier S on the SIR=-15 dB hard-interference stratum
+% (fraction-scale macro-F1 difference, five-seed matched subset).
+\newcommand{\CapacityLSevereVsSDiff}{4.96}
+\newcommand{\CapacityLSevereVsSLow}{3.48}
+\newcommand{\CapacityLSevereVsSHigh}{6.48}

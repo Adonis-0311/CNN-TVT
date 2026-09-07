@@ -1,0 +1,24 @@
+{
+  "schema_version": "vimd_amc.tvt.formal_freeze.v3_8gb",
+  "status": "preregistered_not_executed",
+  "created_date": "2026-08-02",
+  "supersedes_for_future_execution": "tvt_submission/configs/formal_tvt_freeze_v2.json",
+  "base_freeze": "tvt_submission/configs/formal_tvt_freeze_v2.json",
+  "base_freeze_sha256": "926e8eebdfadaab7876686f4762ec9bf2ffbb564a3e013b46932598f0a25b423",
+  "eligible_formal_v2_artifacts_observed_before_amendment": false,
+  "amendment_reason": "The available NVIDIA GeForce RTX 5060 Ti has 8 GiB total VRAM; the v2 7000 MiB idle-reservation threshold is infeasible while retaining a safe display/runtime reserve.",
+  "amendment_scope": "execution-resource amendment only: data, model architecture, seed grid, statistical design, and scientific gates are inherited byte-for-byte from the v2 base freeze; no formal result was inspected before this amendment.",
+  "cuda_execution": {
+    "minimum_free_gpu_mib": 6000,
+    "per_device_batch_size": 32,
+    "use_amp": true,
+    "allocator_configuration": "expandable_segments:True,max_split_size_mb:128,garbage_collection_threshold:0.8",
+    "cuda_fit_concurrency": 1,
+    "oom_policy": "fail_closed_no_adaptive_batch_resize_or_model_change"
+  },
+  "effective_experiment": {
+    "run_id": "tvt_headline_1024_10seed_v3_8gb",
+    "expected_run_directory": "artifacts/tvt_headline_1024_10seed_v3_8gb",
+    "learning_curve_protocol_tag": "v3_8gb"
+  }
+}

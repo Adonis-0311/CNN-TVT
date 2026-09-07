@@ -1,0 +1,5 @@
+model,median_selected_epoch,selected_epoch_min,selected_epoch_max,seeds_at_epoch_budget,seeds_selected_inside_budget,early_stopped_seeds,median_epochs_completed
+MCLDNN,13.0,11,16,0,10,10,21.0
+IQFormer,27.0,24,30,10,9,0,30.0
+CSSL,29.0,26,30,10,9,0,30.0
+A5-VIMD,29.5,27,30,10,5,0,30.0

@@ -1,0 +1,18 @@
+{
+  "train_classes_with_zero_jammer_free_windows": [
+    "BPSK",
+    "QPSK",
+    "16QAM",
+    "64QAM",
+    "GMSK",
+    "4FSK"
+  ],
+  "train_classes_with_jammer_free_windows": [
+    "PI2BPSK",
+    "8PSK",
+    "256QAM",
+    "CPFSK"
+  ],
+  "clean_retention_classes": 10,
+  "interpretation": "clean_retention evaluates all 10 modulations without interference, while training presents only the listed classes in that condition; for the remaining classes the jammer-free condition is out of distribution by construction of the frozen cache."
+}

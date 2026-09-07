@@ -1,0 +1,3 @@
+contrast,a5_macro_f1,sidecar_macro_f1,reference_macro_f1,delta_repair_pp,reference_gap_pp,recovery_ratio,note
+sidecar_vs_IQFormer,0.20717115253207216,0.25087584846050537,0.2329401105611871,4.370469592843321,2.576895802911494,1.6960210761744288,descriptive normalized gap recovery; defined only when the reference beats A5; not a causal effect size
+sidecar_vs_MCLDNN,0.20717115253207216,0.25087584846050537,0.33748072074810626,4.370469592843321,13.030956821603409,0.3353913033920675,descriptive normalized gap recovery; defined only when the reference beats A5; not a causal effect size

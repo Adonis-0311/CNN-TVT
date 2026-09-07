@@ -1,0 +1,14 @@
+model,model_short,parameters,evidence_class,seed_count,macro_f1_mean,macro_f1_std
+a0_backbone,A0,8458,sealed_matched_subset,5,0.39409848547075843,0.0024819541168916233
+a1_single_mask,a1_single_mask,24555,sealed_matched_subset,5,0.43189119854604047,0.007213579204673679
+a2_tri_no_teacher,a2_tri_no_teacher,39500,sealed_matched_subset,5,0.43254570963151673,0.011663281315454811
+a3_tri_teacher,A3,39500,sealed_matched_subset,5,0.4316800995905794,0.011834920913778978
+a3p_tri_proportional_teacher,A3p,39500,sealed_matched_subset,5,0.43060255228201133,0.01794432223720631
+a4_tri_teacher_mtl,a4_tri_teacher_mtl,39500,sealed_matched_subset,5,0.43269393496976133,0.009197401608571576
+a5_vimd_full,A5-VIMD,39500,sealed_matched_subset,5,0.4359411703132182,0.004706650025962082
+a6_dual_full,A6,39442,sealed_matched_subset,5,0.43486846363351905,0.00654743090651575
+a7_vimd_no_residual,A7,39500,sealed_matched_subset,5,0.437318518727008,0.011936958739188189
+cssl_amc_supervised_adaptation,CSSL,8631948,sealed_matched_subset,5,0.39192602160808143,0.004736610847581441
+iqformer_inspired,IQFormer,354984,sealed_matched_subset,5,0.4961375159018795,0.01469355807577383
+mcldnn_reimplementation,MCLDNN,406070,sealed_matched_subset,5,0.45406718427539045,0.00919471288911554
+tier2_h2_f2_iq_sidecar,I/Q sidecar,46794,exploratory_matched_subset,5,0.4834725960904159,0.004878532219671283

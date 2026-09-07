@@ -1,0 +1,366 @@
+regime,stratum_type,stratum,model,model_short,row_count,macro_f1_mean,macro_f1_std
+combined_ood,jammer_family,pulse,a0_backbone,A0,2519,0.4551498792464249,0.013644997172198
+combined_ood,jammer_family,pulse,a5_vimd_full,A5-VIMD,2519,0.500061866038721,0.0077596255439958
+combined_ood,jammer_family,pulse,cssl_amc_supervised_adaptation,CSSL,2519,0.5493871543917719,0.0049339414788154
+combined_ood,jammer_family,pulse,mcldnn_reimplementation,MCLDNN,2519,0.6479908510546635,0.0105936657015849
+combined_ood,jammer_family,pulse,iqformer_inspired,IQFormer,2519,0.6753759317359341,0.0177503598384207
+combined_ood,jammer_family,ofdm_like,a0_backbone,A0,2481,0.3736462932547374,0.0129366466608552
+combined_ood,jammer_family,ofdm_like,a5_vimd_full,A5-VIMD,2481,0.4003617376848624,0.011612626139247
+combined_ood,jammer_family,ofdm_like,cssl_amc_supervised_adaptation,CSSL,2481,0.4386466634247684,0.009201124794616
+combined_ood,jammer_family,ofdm_like,mcldnn_reimplementation,MCLDNN,2481,0.5306438461683979,0.0150834911168624
+combined_ood,jammer_family,ofdm_like,iqformer_inspired,IQFormer,2481,0.548710873945099,0.0157885002218218
+combined_ood,target_profile_index,1,a0_backbone,A0,2461,0.4095817997825419,0.0106552939330267
+combined_ood,target_profile_index,1,a5_vimd_full,A5-VIMD,2461,0.448310544311902,0.0092870227041882
+combined_ood,target_profile_index,1,cssl_amc_supervised_adaptation,CSSL,2461,0.4881669318232255,0.0078490453270373
+combined_ood,target_profile_index,1,mcldnn_reimplementation,MCLDNN,2461,0.59816720749667,0.0104937216473487
+combined_ood,target_profile_index,1,iqformer_inspired,IQFormer,2461,0.6209945368616376,0.0159880159928105
+combined_ood,target_profile_index,4,a0_backbone,A0,2539,0.4213246582638133,0.0088422877859523
+combined_ood,target_profile_index,4,a5_vimd_full,A5-VIMD,2539,0.4564658478036845,0.0104861579509163
+combined_ood,target_profile_index,4,cssl_amc_supervised_adaptation,CSSL,2539,0.4991159476951563,0.0074433697142797
+combined_ood,target_profile_index,4,mcldnn_reimplementation,MCLDNN,2539,0.5835252454215732,0.0105760271917891
+combined_ood,target_profile_index,4,iqformer_inspired,IQFormer,2539,0.6080459608948466,0.0142269025569336
+combined_ood,speed_kmh,180,a0_backbone,A0,2495,0.4151498958462058,0.007739576827529
+combined_ood,speed_kmh,180,a5_vimd_full,A5-VIMD,2495,0.4554840357825584,0.0102574392759928
+combined_ood,speed_kmh,180,cssl_amc_supervised_adaptation,CSSL,2495,0.4910295528365981,0.0073497909165381
+combined_ood,speed_kmh,180,mcldnn_reimplementation,MCLDNN,2495,0.5869326478933266,0.0101277492373065
+combined_ood,speed_kmh,180,iqformer_inspired,IQFormer,2495,0.6124204050528071,0.0148353812033825
+combined_ood,speed_kmh,250,a0_backbone,A0,2505,0.4158584332659071,0.0121400965637727
+combined_ood,speed_kmh,250,a5_vimd_full,A5-VIMD,2505,0.4494135772975501,0.0086724427635416
+combined_ood,speed_kmh,250,cssl_amc_supervised_adaptation,CSSL,2505,0.4959836124747488,0.0053412053672678
+combined_ood,speed_kmh,250,mcldnn_reimplementation,MCLDNN,2505,0.5946617384719171,0.0109907837860984
+combined_ood,speed_kmh,250,iqformer_inspired,IQFormer,2505,0.6164078772633158,0.0145933030700772
+combined_ood,occupancy_quartile,"Q1 [0.000,0.032]",a0_backbone,A0,1250,0.4661973636649625,0.0118124565899442
+combined_ood,occupancy_quartile,"Q1 [0.000,0.032]",a5_vimd_full,A5-VIMD,1250,0.5045705956992717,0.0136833944379919
+combined_ood,occupancy_quartile,"Q1 [0.000,0.032]",cssl_amc_supervised_adaptation,CSSL,1250,0.5749150236193596,0.0074784723532367
+combined_ood,occupancy_quartile,"Q1 [0.000,0.032]",mcldnn_reimplementation,MCLDNN,1250,0.6578762352764829,0.0121375629845902
+combined_ood,occupancy_quartile,"Q1 [0.000,0.032]",iqformer_inspired,IQFormer,1250,0.6960934439415419,0.0164948679423088
+combined_ood,occupancy_quartile,"Q2 [0.032,0.135]",a0_backbone,A0,1250,0.3758408850365113,0.0139951302230871
+combined_ood,occupancy_quartile,"Q2 [0.032,0.135]",a5_vimd_full,A5-VIMD,1250,0.4057494891613899,0.0143819294959509
+combined_ood,occupancy_quartile,"Q2 [0.032,0.135]",cssl_amc_supervised_adaptation,CSSL,1250,0.4450898812597201,0.0128208845488076
+combined_ood,occupancy_quartile,"Q2 [0.032,0.135]",mcldnn_reimplementation,MCLDNN,1250,0.5542237831165373,0.0161567095966904
+combined_ood,occupancy_quartile,"Q2 [0.032,0.135]",iqformer_inspired,IQFormer,1250,0.5655517532303425,0.0147753982401594
+combined_ood,occupancy_quartile,"Q3 [0.135,0.214]",a0_backbone,A0,1250,0.3256824973848376,0.0164388048592682
+combined_ood,occupancy_quartile,"Q3 [0.135,0.214]",a5_vimd_full,A5-VIMD,1250,0.3491957851016767,0.0150409612187817
+combined_ood,occupancy_quartile,"Q3 [0.135,0.214]",cssl_amc_supervised_adaptation,CSSL,1250,0.3698828539962303,0.0082825386631545
+combined_ood,occupancy_quartile,"Q3 [0.135,0.214]",mcldnn_reimplementation,MCLDNN,1250,0.4487074035523147,0.0177472495472412
+combined_ood,occupancy_quartile,"Q3 [0.135,0.214]",iqformer_inspired,IQFormer,1250,0.4826996523155741,0.0123329872666522
+combined_ood,occupancy_quartile,"Q4 [0.214,0.995]",a0_backbone,A0,1250,0.4001820507450849,0.0165082280535633
+combined_ood,occupancy_quartile,"Q4 [0.214,0.995]",a5_vimd_full,A5-VIMD,1250,0.4519465896273585,0.0050965635621265
+combined_ood,occupancy_quartile,"Q4 [0.214,0.995]",cssl_amc_supervised_adaptation,CSSL,1250,0.4801353628915351,0.0112242759126698
+combined_ood,occupancy_quartile,"Q4 [0.214,0.995]",mcldnn_reimplementation,MCLDNN,1250,0.5999774947905291,0.0120079983528192
+combined_ood,occupancy_quartile,"Q4 [0.214,0.995]",iqformer_inspired,IQFormer,1250,0.6094160904559908,0.0207885666348045
+id_test,jammer_family,tone,a0_backbone,A0,643,0.5256250727334812,0.0175538789514006
+id_test,jammer_family,tone,a5_vimd_full,A5-VIMD,643,0.571302201797059,0.015785939397753
+id_test,jammer_family,tone,cssl_amc_supervised_adaptation,CSSL,643,0.5400783570219716,0.0159798178184338
+id_test,jammer_family,tone,mcldnn_reimplementation,MCLDNN,643,0.6511193059540414,0.0183370407802749
+id_test,jammer_family,tone,iqformer_inspired,IQFormer,643,0.7134833906211215,0.0141365932203037
+id_test,jammer_family,multitone,a0_backbone,A0,688,0.4560937446492823,0.015119035065143
+id_test,jammer_family,multitone,a5_vimd_full,A5-VIMD,688,0.5054711080044706,0.0145412939816436
+id_test,jammer_family,multitone,cssl_amc_supervised_adaptation,CSSL,688,0.5051207475983158,0.0124136630770202
+id_test,jammer_family,multitone,mcldnn_reimplementation,MCLDNN,688,0.608923283378828,0.0163993218433371
+id_test,jammer_family,multitone,iqformer_inspired,IQFormer,688,0.6500420119532603,0.0250363568234231
+id_test,jammer_family,chirp,a0_backbone,A0,664,0.5298938806890232,0.0177656758425602
+id_test,jammer_family,chirp,a5_vimd_full,A5-VIMD,664,0.5546277125850442,0.0123763957291045
+id_test,jammer_family,chirp,cssl_amc_supervised_adaptation,CSSL,664,0.5714867270119723,0.0082259143790575
+id_test,jammer_family,chirp,mcldnn_reimplementation,MCLDNN,664,0.668567015117614,0.0200106552905691
+id_test,jammer_family,chirp,iqformer_inspired,IQFormer,664,0.7216597676431944,0.0141617863937914
+id_test,jammer_family,sweep,a0_backbone,A0,694,0.4918542328152241,0.0087152346824487
+id_test,jammer_family,sweep,a5_vimd_full,A5-VIMD,694,0.5402070153712595,0.0104417316806129
+id_test,jammer_family,sweep,cssl_amc_supervised_adaptation,CSSL,694,0.586099784601311,0.012506385077772
+id_test,jammer_family,sweep,mcldnn_reimplementation,MCLDNN,694,0.6803493471133313,0.0200284600352219
+id_test,jammer_family,sweep,iqformer_inspired,IQFormer,694,0.7380714106107658,0.0110769023510293
+id_test,jammer_family,partial_band,a0_backbone,A0,642,0.4421745102923046,0.009685880690617
+id_test,jammer_family,partial_band,a5_vimd_full,A5-VIMD,642,0.4895849398891331,0.0149257139506732
+id_test,jammer_family,partial_band,cssl_amc_supervised_adaptation,CSSL,642,0.4881078746359431,0.0159671941147691
+id_test,jammer_family,partial_band,mcldnn_reimplementation,MCLDNN,642,0.5993473520731303,0.0175202686504466
+id_test,jammer_family,partial_band,iqformer_inspired,IQFormer,642,0.6356033699426799,0.0140523719146462
+id_test,jammer_family,comb,a0_backbone,A0,669,0.4403076325916745,0.010735496444541
+id_test,jammer_family,comb,a5_vimd_full,A5-VIMD,669,0.5239668837630678,0.0179859538307022
+id_test,jammer_family,comb,cssl_amc_supervised_adaptation,CSSL,669,0.4319473425436092,0.016014014194481
+id_test,jammer_family,comb,mcldnn_reimplementation,MCLDNN,669,0.5199539078037307,0.0177295508023367
+id_test,jammer_family,comb,iqformer_inspired,IQFormer,669,0.5727377143942189,0.0229066958850261
+id_test,jammer_family,none,a0_backbone,A0,1000,0.7714608442141958,0.0174660327511501
+id_test,jammer_family,none,a5_vimd_full,A5-VIMD,1000,0.8396634179468121,0.0199599518367804
+id_test,jammer_family,none,cssl_amc_supervised_adaptation,CSSL,1000,0.7054998528373267,0.0182789571877518
+id_test,jammer_family,none,mcldnn_reimplementation,MCLDNN,1000,0.8957888950090668,0.0184821560876251
+id_test,jammer_family,none,iqformer_inspired,IQFormer,1000,0.9019010927422872,0.0300093458976525
+id_test,target_profile_index,0,a0_backbone,A0,1566,0.5098842639340667,0.007165468162338
+id_test,target_profile_index,0,a5_vimd_full,A5-VIMD,1566,0.566052091596592,0.0067054275663798
+id_test,target_profile_index,0,cssl_amc_supervised_adaptation,CSSL,1566,0.5169864432310703,0.0094622435411096
+id_test,target_profile_index,0,mcldnn_reimplementation,MCLDNN,1566,0.6502905248717502,0.0126505459448112
+id_test,target_profile_index,0,iqformer_inspired,IQFormer,1566,0.6971465190501639,0.0121006332484634
+id_test,target_profile_index,2,a0_backbone,A0,1760,0.5124247204766917,0.0120247180269586
+id_test,target_profile_index,2,a5_vimd_full,A5-VIMD,1760,0.5706606669354886,0.0059711166651278
+id_test,target_profile_index,2,cssl_amc_supervised_adaptation,CSSL,1760,0.5186405952688804,0.0120851326597332
+id_test,target_profile_index,2,mcldnn_reimplementation,MCLDNN,1760,0.6443777999184027,0.0165966847706519
+id_test,target_profile_index,2,iqformer_inspired,IQFormer,1760,0.6890239486102295,0.0159926478468823
+id_test,target_profile_index,3,a0_backbone,A0,1674,0.5071219600606531,0.0067170033535716
+id_test,target_profile_index,3,a5_vimd_full,A5-VIMD,1674,0.5575076448272409,0.0090364175390593
+id_test,target_profile_index,3,cssl_amc_supervised_adaptation,CSSL,1674,0.5104079796255523,0.0110923757522035
+id_test,target_profile_index,3,mcldnn_reimplementation,MCLDNN,1674,0.6360938649959669,0.0159076239295512
+id_test,target_profile_index,3,iqformer_inspired,IQFormer,1674,0.6769499050610067,0.0211089292817437
+id_test,speed_kmh,0,a0_backbone,A0,1244,0.4982782862378968,0.0110875645221364
+id_test,speed_kmh,0,a5_vimd_full,A5-VIMD,1244,0.5611775392246161,0.006990900008195
+id_test,speed_kmh,0,cssl_amc_supervised_adaptation,CSSL,1244,0.5175112260440727,0.0102710813236664
+id_test,speed_kmh,0,mcldnn_reimplementation,MCLDNN,1244,0.6298750580784085,0.0169037135019492
+id_test,speed_kmh,0,iqformer_inspired,IQFormer,1244,0.6712899942086814,0.020454976914652
+id_test,speed_kmh,60,a0_backbone,A0,1214,0.5118323524510396,0.0076876545384697
+id_test,speed_kmh,60,a5_vimd_full,A5-VIMD,1214,0.5661050342035686,0.0083316563697684
+id_test,speed_kmh,60,cssl_amc_supervised_adaptation,CSSL,1214,0.5095378231294314,0.0112526336528857
+id_test,speed_kmh,60,mcldnn_reimplementation,MCLDNN,1214,0.6344300024102216,0.0155282666521812
+id_test,speed_kmh,60,iqformer_inspired,IQFormer,1214,0.6813237881680738,0.0122907546412301
+id_test,speed_kmh,120,a0_backbone,A0,1273,0.5125525778754882,0.0093200026226062
+id_test,speed_kmh,120,a5_vimd_full,A5-VIMD,1273,0.5522410336051977,0.0065533499699353
+id_test,speed_kmh,120,cssl_amc_supervised_adaptation,CSSL,1273,0.5066849416994094,0.0131964462659906
+id_test,speed_kmh,120,mcldnn_reimplementation,MCLDNN,1273,0.6424903261406774,0.0111959818505138
+id_test,speed_kmh,120,iqformer_inspired,IQFormer,1273,0.6806336602156104,0.0183749908445663
+id_test,speed_kmh,150,a0_backbone,A0,1269,0.5143465950107908,0.010146516599491
+id_test,speed_kmh,150,a5_vimd_full,A5-VIMD,1269,0.5784143980756947,0.010477692460078
+id_test,speed_kmh,150,cssl_amc_supervised_adaptation,CSSL,1269,0.5258034314965352,0.0122467253179903
+id_test,speed_kmh,150,mcldnn_reimplementation,MCLDNN,1269,0.6646642504038842,0.0155106123633018
+id_test,speed_kmh,150,iqformer_inspired,IQFormer,1269,0.7159005364638114,0.0159381773907098
+id_test,occupancy_quartile,"Q1 [0.000,0.000]",a0_backbone,A0,1250,0.5032002068196981,0.015729794231719
+id_test,occupancy_quartile,"Q1 [0.000,0.000]",a5_vimd_full,A5-VIMD,1250,0.5503365065651409,0.0215475800624314
+id_test,occupancy_quartile,"Q1 [0.000,0.000]",cssl_amc_supervised_adaptation,CSSL,1250,0.4426544948193573,0.0152284654045226
+id_test,occupancy_quartile,"Q1 [0.000,0.000]",mcldnn_reimplementation,MCLDNN,1250,0.6277713182295166,0.0281063132033682
+id_test,occupancy_quartile,"Q1 [0.000,0.000]",iqformer_inspired,IQFormer,1250,0.6504042873827748,0.0394775754098983
+id_test,occupancy_quartile,"Q2 [0.000,0.126]",a0_backbone,A0,1250,0.516955851391901,0.0107263801248047
+id_test,occupancy_quartile,"Q2 [0.000,0.126]",a5_vimd_full,A5-VIMD,1250,0.557963502240265,0.0098951865016856
+id_test,occupancy_quartile,"Q2 [0.000,0.126]",cssl_amc_supervised_adaptation,CSSL,1250,0.6229149113653296,0.0103620338384007
+id_test,occupancy_quartile,"Q2 [0.000,0.126]",mcldnn_reimplementation,MCLDNN,1250,0.699626863207563,0.0144520296286052
+id_test,occupancy_quartile,"Q2 [0.000,0.126]",iqformer_inspired,IQFormer,1250,0.7505578817647691,0.0171812027093772
+id_test,occupancy_quartile,"Q3 [0.126,0.454]",a0_backbone,A0,1250,0.4795916225499397,0.0081007866523936
+id_test,occupancy_quartile,"Q3 [0.126,0.454]",a5_vimd_full,A5-VIMD,1250,0.5347419860234999,0.0094598979864318
+id_test,occupancy_quartile,"Q3 [0.126,0.454]",cssl_amc_supervised_adaptation,CSSL,1250,0.5207593448528173,0.0109064097930613
+id_test,occupancy_quartile,"Q3 [0.126,0.454]",mcldnn_reimplementation,MCLDNN,1250,0.6355857032771611,0.017864699295841
+id_test,occupancy_quartile,"Q3 [0.126,0.454]",iqformer_inspired,IQFormer,1250,0.6807496370226117,0.0129092380209973
+id_test,occupancy_quartile,"Q4 [0.454,1.000]",a0_backbone,A0,1250,0.4215755225623182,0.0072766917115278
+id_test,occupancy_quartile,"Q4 [0.454,1.000]",a5_vimd_full,A5-VIMD,1250,0.4772000446820129,0.0172584352919479
+id_test,occupancy_quartile,"Q4 [0.454,1.000]",cssl_amc_supervised_adaptation,CSSL,1250,0.3689168987195325,0.011918695010217
+id_test,occupancy_quartile,"Q4 [0.454,1.000]",mcldnn_reimplementation,MCLDNN,1250,0.4848616003595795,0.0165835974793252
+id_test,occupancy_quartile,"Q4 [0.454,1.000]",iqformer_inspired,IQFormer,1250,0.5419136997745475,0.0160141113089599
+unseen_speed,jammer_family,tone,a0_backbone,A0,795,0.4802584227284679,0.0112674523772856
+unseen_speed,jammer_family,tone,a5_vimd_full,A5-VIMD,795,0.5228710009457636,0.0116579480906037
+unseen_speed,jammer_family,tone,cssl_amc_supervised_adaptation,CSSL,795,0.4679579445664732,0.0119880418931783
+unseen_speed,jammer_family,tone,mcldnn_reimplementation,MCLDNN,795,0.5851730124857604,0.0163397600745985
+unseen_speed,jammer_family,tone,iqformer_inspired,IQFormer,795,0.6379950535798138,0.0180818331363178
+unseen_speed,jammer_family,multitone,a0_backbone,A0,887,0.4301241848912547,0.0099376901153995
+unseen_speed,jammer_family,multitone,a5_vimd_full,A5-VIMD,887,0.4783081833536309,0.0113479350307064
+unseen_speed,jammer_family,multitone,cssl_amc_supervised_adaptation,CSSL,887,0.4484284087027904,0.0084801238674444
+unseen_speed,jammer_family,multitone,mcldnn_reimplementation,MCLDNN,887,0.5508535539163125,0.0156665927701407
+unseen_speed,jammer_family,multitone,iqformer_inspired,IQFormer,887,0.5938002994750218,0.0152626679773469
+unseen_speed,jammer_family,chirp,a0_backbone,A0,841,0.4708769715213844,0.0112838723534313
+unseen_speed,jammer_family,chirp,a5_vimd_full,A5-VIMD,841,0.4995068631188673,0.0134619860472179
+unseen_speed,jammer_family,chirp,cssl_amc_supervised_adaptation,CSSL,841,0.5190391020370522,0.012641389458548
+unseen_speed,jammer_family,chirp,mcldnn_reimplementation,MCLDNN,841,0.6099431034613083,0.0129730775925903
+unseen_speed,jammer_family,chirp,iqformer_inspired,IQFormer,841,0.6393846951524239,0.0133802034446367
+unseen_speed,jammer_family,sweep,a0_backbone,A0,836,0.4695853233667571,0.0114602832867938
+unseen_speed,jammer_family,sweep,a5_vimd_full,A5-VIMD,836,0.5151037759708922,0.0069670891018934
+unseen_speed,jammer_family,sweep,cssl_amc_supervised_adaptation,CSSL,836,0.5474972532291813,0.009168697903105
+unseen_speed,jammer_family,sweep,mcldnn_reimplementation,MCLDNN,836,0.6441069690059962,0.0138972121000821
+unseen_speed,jammer_family,sweep,iqformer_inspired,IQFormer,836,0.6768511249377603,0.0184559374634883
+unseen_speed,jammer_family,partial_band,a0_backbone,A0,771,0.4092115329871827,0.0139844708825451
+unseen_speed,jammer_family,partial_band,a5_vimd_full,A5-VIMD,771,0.4502729110093443,0.0080515456347821
+unseen_speed,jammer_family,partial_band,cssl_amc_supervised_adaptation,CSSL,771,0.4542101492150694,0.0140522356023927
+unseen_speed,jammer_family,partial_band,mcldnn_reimplementation,MCLDNN,771,0.5750806437392746,0.0157242108355965
+unseen_speed,jammer_family,partial_band,iqformer_inspired,IQFormer,771,0.5971117045958637,0.0113312069598244
+unseen_speed,jammer_family,comb,a0_backbone,A0,870,0.4300786567151279,0.0113653569718598
+unseen_speed,jammer_family,comb,a5_vimd_full,A5-VIMD,870,0.4815383135358389,0.0152176828146376
+unseen_speed,jammer_family,comb,cssl_amc_supervised_adaptation,CSSL,870,0.4188161137278923,0.0130982664178469
+unseen_speed,jammer_family,comb,mcldnn_reimplementation,MCLDNN,870,0.5400986516801816,0.0167207343837102
+unseen_speed,jammer_family,comb,iqformer_inspired,IQFormer,870,0.5631565219833395,0.0144393042931955
+unseen_speed,target_profile_index,0,a0_backbone,A0,1699,0.4482591812762118,0.0059567993438703
+unseen_speed,target_profile_index,0,a5_vimd_full,A5-VIMD,1699,0.4953533849679914,0.00939646772595
+unseen_speed,target_profile_index,0,cssl_amc_supervised_adaptation,CSSL,1699,0.4856265325162986,0.0071573157250592
+unseen_speed,target_profile_index,0,mcldnn_reimplementation,MCLDNN,1699,0.6042116526220096,0.0116733686819159
+unseen_speed,target_profile_index,0,iqformer_inspired,IQFormer,1699,0.6307386924997028,0.0143896344846046
+unseen_speed,target_profile_index,2,a0_backbone,A0,1676,0.4471513808415347,0.0092325805605655
+unseen_speed,target_profile_index,2,a5_vimd_full,A5-VIMD,1676,0.4885572738083538,0.0098191053951423
+unseen_speed,target_profile_index,2,cssl_amc_supervised_adaptation,CSSL,1676,0.465963144328276,0.0076970500374327
+unseen_speed,target_profile_index,2,mcldnn_reimplementation,MCLDNN,1676,0.57969468326929,0.0130753138648513
+unseen_speed,target_profile_index,2,iqformer_inspired,IQFormer,1676,0.6170234674619687,0.0143924087013529
+unseen_speed,target_profile_index,3,a0_backbone,A0,1625,0.4531078885663726,0.0088197181410198
+unseen_speed,target_profile_index,3,a5_vimd_full,A5-VIMD,1625,0.4921451945921326,0.0066440160139907
+unseen_speed,target_profile_index,3,cssl_amc_supervised_adaptation,CSSL,1625,0.4786115630103505,0.0070465284894316
+unseen_speed,target_profile_index,3,mcldnn_reimplementation,MCLDNN,1625,0.56963665622044,0.0148976024817018
+unseen_speed,target_profile_index,3,iqformer_inspired,IQFormer,1625,0.6062753048122548,0.0137598030400733
+unseen_speed,speed_kmh,180,a0_backbone,A0,2507,0.44983103198539,0.0057339693469738
+unseen_speed,speed_kmh,180,a5_vimd_full,A5-VIMD,2507,0.4914730050459462,0.006430943975675
+unseen_speed,speed_kmh,180,cssl_amc_supervised_adaptation,CSSL,2507,0.4792895140806076,0.0078980352594413
+unseen_speed,speed_kmh,180,mcldnn_reimplementation,MCLDNN,2507,0.5845332634751864,0.0135172325362687
+unseen_speed,speed_kmh,180,iqformer_inspired,IQFormer,2507,0.61617370410426,0.0126242278125345
+unseen_speed,speed_kmh,250,a0_backbone,A0,2493,0.4499804033284902,0.0088496197764652
+unseen_speed,speed_kmh,250,a5_vimd_full,A5-VIMD,2493,0.4933893125208467,0.0070528411019311
+unseen_speed,speed_kmh,250,cssl_amc_supervised_adaptation,CSSL,2493,0.4745249959997621,0.0078612770524905
+unseen_speed,speed_kmh,250,mcldnn_reimplementation,MCLDNN,2493,0.5854060011001183,0.0113104390542776
+unseen_speed,speed_kmh,250,iqformer_inspired,IQFormer,2493,0.620744313479386,0.0146302658413572
+unseen_speed,occupancy_quartile,"Q1 [0.000,0.000]",a0_backbone,A0,1250,0.4841064822967391,0.0067763933839982
+unseen_speed,occupancy_quartile,"Q1 [0.000,0.000]",a5_vimd_full,A5-VIMD,1250,0.5167596415513657,0.0111451920560653
+unseen_speed,occupancy_quartile,"Q1 [0.000,0.000]",cssl_amc_supervised_adaptation,CSSL,1250,0.5820785992236723,0.0103948908099892
+unseen_speed,occupancy_quartile,"Q1 [0.000,0.000]",mcldnn_reimplementation,MCLDNN,1250,0.6529894563351161,0.0121536541194789
+unseen_speed,occupancy_quartile,"Q1 [0.000,0.000]",iqformer_inspired,IQFormer,1250,0.6899674212863701,0.0204642891678765
+unseen_speed,occupancy_quartile,"Q2 [0.000,0.292]",a0_backbone,A0,1250,0.476703773979953,0.0103992493927286
+unseen_speed,occupancy_quartile,"Q2 [0.000,0.292]",a5_vimd_full,A5-VIMD,1250,0.508560532673639,0.0074847944399099
+unseen_speed,occupancy_quartile,"Q2 [0.000,0.292]",cssl_amc_supervised_adaptation,CSSL,1250,0.5406147934738382,0.0087403786853973
+unseen_speed,occupancy_quartile,"Q2 [0.000,0.292]",mcldnn_reimplementation,MCLDNN,1250,0.646861437522407,0.0138342356393696
+unseen_speed,occupancy_quartile,"Q2 [0.000,0.292]",iqformer_inspired,IQFormer,1250,0.6689240843530195,0.0142430126566301
+unseen_speed,occupancy_quartile,"Q3 [0.292,0.539]",a0_backbone,A0,1250,0.4328214873402674,0.0083861295285263
+unseen_speed,occupancy_quartile,"Q3 [0.292,0.539]",a5_vimd_full,A5-VIMD,1250,0.4857583103432999,0.0112979845999341
+unseen_speed,occupancy_quartile,"Q3 [0.292,0.539]",cssl_amc_supervised_adaptation,CSSL,1250,0.4453603197091477,0.0082519812062754
+unseen_speed,occupancy_quartile,"Q3 [0.292,0.539]",mcldnn_reimplementation,MCLDNN,1250,0.5707063378321482,0.0125426290482864
+unseen_speed,occupancy_quartile,"Q3 [0.292,0.539]",iqformer_inspired,IQFormer,1250,0.5948097972241346,0.0163583578630217
+unseen_speed,occupancy_quartile,"Q4 [0.539,1.000]",a0_backbone,A0,1250,0.391366512162096,0.010197038225549
+unseen_speed,occupancy_quartile,"Q4 [0.539,1.000]",a5_vimd_full,A5-VIMD,1250,0.4467705236318685,0.0098384774020314
+unseen_speed,occupancy_quartile,"Q4 [0.539,1.000]",cssl_amc_supervised_adaptation,CSSL,1250,0.3158261991270705,0.0097606027305681
+unseen_speed,occupancy_quartile,"Q4 [0.539,1.000]",mcldnn_reimplementation,MCLDNN,1250,0.448067330096613,0.013740329118334
+unseen_speed,occupancy_quartile,"Q4 [0.539,1.000]",iqformer_inspired,IQFormer,1250,0.5038113541987326,0.012967261175781
+hard_interference,jammer_family,tone,a0_backbone,A0,842,0.4554979466747023,0.0129179871761319
+hard_interference,jammer_family,tone,a5_vimd_full,A5-VIMD,842,0.4844411587853056,0.0094953840571359
+hard_interference,jammer_family,tone,cssl_amc_supervised_adaptation,CSSL,842,0.410312080477308,0.0156756993775114
+hard_interference,jammer_family,tone,mcldnn_reimplementation,MCLDNN,842,0.4780298594648428,0.0176812927325089
+hard_interference,jammer_family,tone,iqformer_inspired,IQFormer,842,0.5348349480339739,0.0225664185327687
+hard_interference,jammer_family,multitone,a0_backbone,A0,814,0.3873997742134246,0.0109105058483259
+hard_interference,jammer_family,multitone,a5_vimd_full,A5-VIMD,814,0.4401332803545716,0.0159188534335312
+hard_interference,jammer_family,multitone,cssl_amc_supervised_adaptation,CSSL,814,0.3669847068573511,0.0076269799266333
+hard_interference,jammer_family,multitone,mcldnn_reimplementation,MCLDNN,814,0.4312099260525915,0.0198652458732752
+hard_interference,jammer_family,multitone,iqformer_inspired,IQFormer,814,0.4415138356272051,0.023472976535415
+hard_interference,jammer_family,chirp,a0_backbone,A0,800,0.4568296936546046,0.0095987411348116
+hard_interference,jammer_family,chirp,a5_vimd_full,A5-VIMD,800,0.491011009139549,0.0079455877152034
+hard_interference,jammer_family,chirp,cssl_amc_supervised_adaptation,CSSL,800,0.449235425277268,0.0081337404138053
+hard_interference,jammer_family,chirp,mcldnn_reimplementation,MCLDNN,800,0.5216507672994599,0.0134662576122337
+hard_interference,jammer_family,chirp,iqformer_inspired,IQFormer,800,0.5504487027592879,0.0234753695903269
+hard_interference,jammer_family,sweep,a0_backbone,A0,865,0.4180380465101917,0.0089150355119583
+hard_interference,jammer_family,sweep,a5_vimd_full,A5-VIMD,865,0.4661269274691005,0.0147460592566399
+hard_interference,jammer_family,sweep,cssl_amc_supervised_adaptation,CSSL,865,0.5007756427065384,0.0133059939005662
+hard_interference,jammer_family,sweep,mcldnn_reimplementation,MCLDNN,865,0.5673283802148437,0.013326003400638
+hard_interference,jammer_family,sweep,iqformer_inspired,IQFormer,865,0.5697984562767722,0.0309160185783025
+hard_interference,jammer_family,partial_band,a0_backbone,A0,854,0.3262066816522028,0.0142749729461052
+hard_interference,jammer_family,partial_band,a5_vimd_full,A5-VIMD,854,0.3645377759745939,0.009238241789501
+hard_interference,jammer_family,partial_band,cssl_amc_supervised_adaptation,CSSL,854,0.3503748342164449,0.0118646498002883
+hard_interference,jammer_family,partial_band,mcldnn_reimplementation,MCLDNN,854,0.4173515685902244,0.0106832297035919
+hard_interference,jammer_family,partial_band,iqformer_inspired,IQFormer,854,0.4463678001539085,0.0192250643721176
+hard_interference,jammer_family,comb,a0_backbone,A0,825,0.3211879403181859,0.0088193098666856
+hard_interference,jammer_family,comb,a5_vimd_full,A5-VIMD,825,0.3986232030301887,0.0151992592446546
+hard_interference,jammer_family,comb,cssl_amc_supervised_adaptation,CSSL,825,0.2670410151707439,0.0114684149169751
+hard_interference,jammer_family,comb,mcldnn_reimplementation,MCLDNN,825,0.3354739358889549,0.0085608406210016
+hard_interference,jammer_family,comb,iqformer_inspired,IQFormer,825,0.3719053438895902,0.0212306727012396
+hard_interference,target_profile_index,0,a0_backbone,A0,1728,0.3977176933650789,0.011015395821956
+hard_interference,target_profile_index,0,a5_vimd_full,A5-VIMD,1728,0.4460853211406078,0.0107952314820472
+hard_interference,target_profile_index,0,cssl_amc_supervised_adaptation,CSSL,1728,0.384631903356491,0.0096033788124094
+hard_interference,target_profile_index,0,mcldnn_reimplementation,MCLDNN,1728,0.4591695543872524,0.0124232813113193
+hard_interference,target_profile_index,0,iqformer_inspired,IQFormer,1728,0.4856983783235554,0.0204470574398904
+hard_interference,target_profile_index,2,a0_backbone,A0,1677,0.3976259433767649,0.0081527645706724
+hard_interference,target_profile_index,2,a5_vimd_full,A5-VIMD,1677,0.440224136606119,0.0084655918120785
+hard_interference,target_profile_index,2,cssl_amc_supervised_adaptation,CSSL,1677,0.4044688081472365,0.0082866866729302
+hard_interference,target_profile_index,2,mcldnn_reimplementation,MCLDNN,1677,0.4668466399070105,0.0106169064617623
+hard_interference,target_profile_index,2,iqformer_inspired,IQFormer,1677,0.4962908558640141,0.0209614756835931
+hard_interference,target_profile_index,3,a0_backbone,A0,1595,0.386772877738437,0.0061185442681169
+hard_interference,target_profile_index,3,a5_vimd_full,A5-VIMD,1595,0.4323602503249809,0.0087194671645116
+hard_interference,target_profile_index,3,cssl_amc_supervised_adaptation,CSSL,1595,0.3834359200316934,0.0097507601227183
+hard_interference,target_profile_index,3,mcldnn_reimplementation,MCLDNN,1595,0.4515442972119307,0.0137029739467165
+hard_interference,target_profile_index,3,iqformer_inspired,IQFormer,1595,0.4776927152243152,0.0264259377695188
+hard_interference,speed_kmh,0,a0_backbone,A0,1262,0.3776868137177684,0.0104791289327596
+hard_interference,speed_kmh,0,a5_vimd_full,A5-VIMD,1262,0.4301824652641199,0.0063332603027164
+hard_interference,speed_kmh,0,cssl_amc_supervised_adaptation,CSSL,1262,0.3859131797044194,0.0060894198660866
+hard_interference,speed_kmh,0,mcldnn_reimplementation,MCLDNN,1262,0.42678290008975,0.0098592235751058
+hard_interference,speed_kmh,0,iqformer_inspired,IQFormer,1262,0.4629458196764875,0.0216209106424558
+hard_interference,speed_kmh,60,a0_backbone,A0,1289,0.3964992031495964,0.0093185179726206
+hard_interference,speed_kmh,60,a5_vimd_full,A5-VIMD,1289,0.4325152844832192,0.0157003774724746
+hard_interference,speed_kmh,60,cssl_amc_supervised_adaptation,CSSL,1289,0.3883659267163538,0.0096498753272829
+hard_interference,speed_kmh,60,mcldnn_reimplementation,MCLDNN,1289,0.4541904496388347,0.0112303139238156
+hard_interference,speed_kmh,60,iqformer_inspired,IQFormer,1289,0.4754901041373601,0.0207661550833111
+hard_interference,speed_kmh,120,a0_backbone,A0,1196,0.401764583265737,0.0087391700377878
+hard_interference,speed_kmh,120,a5_vimd_full,A5-VIMD,1196,0.4466671743396607,0.0085577945507519
+hard_interference,speed_kmh,120,cssl_amc_supervised_adaptation,CSSL,1196,0.3842498288017412,0.0079083422358572
+hard_interference,speed_kmh,120,mcldnn_reimplementation,MCLDNN,1196,0.4651179343945185,0.0165611208957807
+hard_interference,speed_kmh,120,iqformer_inspired,IQFormer,1196,0.4955903816477646,0.0221618637517605
+hard_interference,speed_kmh,150,a0_backbone,A0,1253,0.4025839791121621,0.0067604487785611
+hard_interference,speed_kmh,150,a5_vimd_full,A5-VIMD,1253,0.4524681470082128,0.0087463541477887
+hard_interference,speed_kmh,150,cssl_amc_supervised_adaptation,CSSL,1253,0.4061262336271786,0.014076835889425
+hard_interference,speed_kmh,150,mcldnn_reimplementation,MCLDNN,1253,0.4899414232556373,0.0126824662175158
+hard_interference,speed_kmh,150,iqformer_inspired,IQFormer,1253,0.511986364784563,0.0265239186552222
+hard_interference,occupancy_quartile,"Q1 [0.000,0.000]",a0_backbone,A0,1250,0.4580129571689555,0.0084809636868488
+hard_interference,occupancy_quartile,"Q1 [0.000,0.000]",a5_vimd_full,A5-VIMD,1250,0.4944593869921771,0.0136848180335058
+hard_interference,occupancy_quartile,"Q1 [0.000,0.000]",cssl_amc_supervised_adaptation,CSSL,1250,0.561922733302084,0.0079957650489936
+hard_interference,occupancy_quartile,"Q1 [0.000,0.000]",mcldnn_reimplementation,MCLDNN,1250,0.5844680399419839,0.0201370450140934
+hard_interference,occupancy_quartile,"Q1 [0.000,0.000]",iqformer_inspired,IQFormer,1250,0.6055737841916187,0.0360782414585066
+hard_interference,occupancy_quartile,"Q2 [0.000,0.299]",a0_backbone,A0,1250,0.4116299928586334,0.007661470141837
+hard_interference,occupancy_quartile,"Q2 [0.000,0.299]",a5_vimd_full,A5-VIMD,1250,0.4511109623484,0.0083799426622554
+hard_interference,occupancy_quartile,"Q2 [0.000,0.299]",cssl_amc_supervised_adaptation,CSSL,1250,0.460653897840347,0.011265835379089
+hard_interference,occupancy_quartile,"Q2 [0.000,0.299]",mcldnn_reimplementation,MCLDNN,1250,0.5263044517552204,0.0102769308653807
+hard_interference,occupancy_quartile,"Q2 [0.000,0.299]",iqformer_inspired,IQFormer,1250,0.5313486983243851,0.0201518802699851
+hard_interference,occupancy_quartile,"Q3 [0.299,0.559]",a0_backbone,A0,1250,0.3654682912447774,0.0093992419906716
+hard_interference,occupancy_quartile,"Q3 [0.299,0.559]",a5_vimd_full,A5-VIMD,1250,0.4283257504527443,0.013386083565583
+hard_interference,occupancy_quartile,"Q3 [0.299,0.559]",cssl_amc_supervised_adaptation,CSSL,1250,0.3583193519871718,0.0114137632494921
+hard_interference,occupancy_quartile,"Q3 [0.299,0.559]",mcldnn_reimplementation,MCLDNN,1250,0.4387785618102809,0.0096807375938791
+hard_interference,occupancy_quartile,"Q3 [0.299,0.559]",iqformer_inspired,IQFormer,1250,0.4569215159930027,0.0209127227423042
+hard_interference,occupancy_quartile,"Q4 [0.559,1.000]",a0_backbone,A0,1250,0.3275544903115064,0.0127435555348769
+hard_interference,occupancy_quartile,"Q4 [0.559,1.000]",a5_vimd_full,A5-VIMD,1250,0.3704645867588941,0.0109772767509763
+hard_interference,occupancy_quartile,"Q4 [0.559,1.000]",cssl_amc_supervised_adaptation,CSSL,1250,0.1614694747455961,0.0057881944560058
+hard_interference,occupancy_quartile,"Q4 [0.559,1.000]",mcldnn_reimplementation,MCLDNN,1250,0.2673513675278352,0.0113790537347174
+hard_interference,occupancy_quartile,"Q4 [0.559,1.000]",iqformer_inspired,IQFormer,1250,0.3401463829775202,0.0181358293191333
+unseen_jammer,jammer_family,pulse,a0_backbone,A0,2506,0.4677012248978062,0.0146604517118528
+unseen_jammer,jammer_family,pulse,a5_vimd_full,A5-VIMD,2506,0.5074903622054248,0.0066103144950012
+unseen_jammer,jammer_family,pulse,cssl_amc_supervised_adaptation,CSSL,2506,0.5502960732060915,0.0072791905525093
+unseen_jammer,jammer_family,pulse,mcldnn_reimplementation,MCLDNN,2506,0.6487370459024195,0.0060279387693606
+unseen_jammer,jammer_family,pulse,iqformer_inspired,IQFormer,2506,0.6731803665023299,0.0148453925508089
+unseen_jammer,jammer_family,ofdm_like,a0_backbone,A0,2494,0.3673341097893224,0.0093292850215789
+unseen_jammer,jammer_family,ofdm_like,a5_vimd_full,A5-VIMD,2494,0.3960491765293213,0.0125895687006378
+unseen_jammer,jammer_family,ofdm_like,cssl_amc_supervised_adaptation,CSSL,2494,0.4433735166351428,0.0121312923074849
+unseen_jammer,jammer_family,ofdm_like,mcldnn_reimplementation,MCLDNN,2494,0.5237137160104324,0.0125864749491546
+unseen_jammer,jammer_family,ofdm_like,iqformer_inspired,IQFormer,2494,0.5363147354027553,0.011188746191214
+unseen_jammer,target_profile_index,0,a0_backbone,A0,1697,0.4169376621781875,0.0126334086440763
+unseen_jammer,target_profile_index,0,a5_vimd_full,A5-VIMD,1697,0.4483614095962946,0.0080530222565505
+unseen_jammer,target_profile_index,0,cssl_amc_supervised_adaptation,CSSL,1697,0.4866827080886651,0.0141372245391839
+unseen_jammer,target_profile_index,0,mcldnn_reimplementation,MCLDNN,1697,0.5893550670248061,0.0088689211317177
+unseen_jammer,target_profile_index,0,iqformer_inspired,IQFormer,1697,0.6119222926955368,0.0096453141393528
+unseen_jammer,target_profile_index,2,a0_backbone,A0,1711,0.4263265372419674,0.0121193707264207
+unseen_jammer,target_profile_index,2,a5_vimd_full,A5-VIMD,1711,0.4664259657517197,0.0093628252455438
+unseen_jammer,target_profile_index,2,cssl_amc_supervised_adaptation,CSSL,1711,0.4999493738360175,0.0078919805385869
+unseen_jammer,target_profile_index,2,mcldnn_reimplementation,MCLDNN,1711,0.5970682632265325,0.0072080489214266
+unseen_jammer,target_profile_index,2,iqformer_inspired,IQFormer,1711,0.6179167208266911,0.0139024896403524
+unseen_jammer,target_profile_index,3,a0_backbone,A0,1592,0.4133453479066196,0.0107932341405942
+unseen_jammer,target_profile_index,3,a5_vimd_full,A5-VIMD,1592,0.4488067814546533,0.011860099345006
+unseen_jammer,target_profile_index,3,cssl_amc_supervised_adaptation,CSSL,1592,0.5014065281423885,0.0109275489315109
+unseen_jammer,target_profile_index,3,mcldnn_reimplementation,MCLDNN,1592,0.5711979070837456,0.0108976163420022
+unseen_jammer,target_profile_index,3,iqformer_inspired,IQFormer,1592,0.5870451537260776,0.0127758254147023
+unseen_jammer,speed_kmh,0,a0_backbone,A0,1201,0.4088305430842757,0.0108916281477525
+unseen_jammer,speed_kmh,0,a5_vimd_full,A5-VIMD,1201,0.4357133650211081,0.0093746594566333
+unseen_jammer,speed_kmh,0,cssl_amc_supervised_adaptation,CSSL,1201,0.5024532547363908,0.0149366395490265
+unseen_jammer,speed_kmh,0,mcldnn_reimplementation,MCLDNN,1201,0.5566740478862012,0.0113000067669856
+unseen_jammer,speed_kmh,0,iqformer_inspired,IQFormer,1201,0.5863260617791042,0.0119310982590634
+unseen_jammer,speed_kmh,60,a0_backbone,A0,1278,0.4191376532149665,0.0102523113855567
+unseen_jammer,speed_kmh,60,a5_vimd_full,A5-VIMD,1278,0.4613964442651691,0.01098693262439
+unseen_jammer,speed_kmh,60,cssl_amc_supervised_adaptation,CSSL,1278,0.4985829911041392,0.0074300865388834
+unseen_jammer,speed_kmh,60,mcldnn_reimplementation,MCLDNN,1278,0.5943128441649908,0.0056027984680894
+unseen_jammer,speed_kmh,60,iqformer_inspired,IQFormer,1278,0.6165542017556354,0.0121007967729535
+unseen_jammer,speed_kmh,120,a0_backbone,A0,1261,0.4136335745156499,0.0106424999967461
+unseen_jammer,speed_kmh,120,a5_vimd_full,A5-VIMD,1261,0.4527528856679115,0.0105962288901393
+unseen_jammer,speed_kmh,120,cssl_amc_supervised_adaptation,CSSL,1261,0.4921171302831829,0.0160720168149001
+unseen_jammer,speed_kmh,120,mcldnn_reimplementation,MCLDNN,1261,0.5957896242314014,0.0126034703894897
+unseen_jammer,speed_kmh,120,iqformer_inspired,IQFormer,1261,0.6048829754335626,0.0122731446312345
+unseen_jammer,speed_kmh,150,a0_backbone,A0,1260,0.4340032366503338,0.0150543400860822
+unseen_jammer,speed_kmh,150,a5_vimd_full,A5-VIMD,1260,0.4676995699979051,0.0112017984806657
+unseen_jammer,speed_kmh,150,cssl_amc_supervised_adaptation,CSSL,1260,0.49118111947125,0.0111792863628606
+unseen_jammer,speed_kmh,150,mcldnn_reimplementation,MCLDNN,1260,0.5973515843650492,0.0088980983742529
+unseen_jammer,speed_kmh,150,iqformer_inspired,IQFormer,1260,0.6169279836884354,0.012054032356221
+unseen_jammer,occupancy_quartile,"Q1 [0.000,0.031]",a0_backbone,A0,1250,0.4731810436610556,0.0114867869092447
+unseen_jammer,occupancy_quartile,"Q1 [0.000,0.031]",a5_vimd_full,A5-VIMD,1250,0.5125405693162842,0.0101619953093462
+unseen_jammer,occupancy_quartile,"Q1 [0.000,0.031]",cssl_amc_supervised_adaptation,CSSL,1250,0.5770553781441347,0.0118378697747145
+unseen_jammer,occupancy_quartile,"Q1 [0.000,0.031]",mcldnn_reimplementation,MCLDNN,1250,0.6615174210813073,0.0113262151439967
+unseen_jammer,occupancy_quartile,"Q1 [0.000,0.031]",iqformer_inspired,IQFormer,1250,0.6977455524668862,0.0145929371241852
+unseen_jammer,occupancy_quartile,"Q2 [0.031,0.134]",a0_backbone,A0,1250,0.3869058473958104,0.013497448129948
+unseen_jammer,occupancy_quartile,"Q2 [0.031,0.134]",a5_vimd_full,A5-VIMD,1250,0.420482649159607,0.0124615554996746
+unseen_jammer,occupancy_quartile,"Q2 [0.031,0.134]",cssl_amc_supervised_adaptation,CSSL,1250,0.4510676304128742,0.0136373613710061
+unseen_jammer,occupancy_quartile,"Q2 [0.031,0.134]",mcldnn_reimplementation,MCLDNN,1250,0.5482148420203382,0.0129249116040602
+unseen_jammer,occupancy_quartile,"Q2 [0.031,0.134]",iqformer_inspired,IQFormer,1250,0.5569610519568509,0.0133330106682752
+unseen_jammer,occupancy_quartile,"Q3 [0.134,0.205]",a0_backbone,A0,1250,0.3330300624617456,0.0152487127271061
+unseen_jammer,occupancy_quartile,"Q3 [0.134,0.205]",a5_vimd_full,A5-VIMD,1250,0.3459048189699829,0.0143907695962017
+unseen_jammer,occupancy_quartile,"Q3 [0.134,0.205]",cssl_amc_supervised_adaptation,CSSL,1250,0.3948792949745676,0.0116415604504215
+unseen_jammer,occupancy_quartile,"Q3 [0.134,0.205]",mcldnn_reimplementation,MCLDNN,1250,0.4926734385682303,0.0227432455899149
+unseen_jammer,occupancy_quartile,"Q3 [0.134,0.205]",iqformer_inspired,IQFormer,1250,0.4927286844602057,0.0147787107795215
+unseen_jammer,occupancy_quartile,"Q4 [0.205,0.995]",a0_backbone,A0,1250,0.4062883401209888,0.0186090104662164
+unseen_jammer,occupancy_quartile,"Q4 [0.205,0.995]",a5_vimd_full,A5-VIMD,1250,0.45092313960031,0.0079306888715796
+unseen_jammer,occupancy_quartile,"Q4 [0.205,0.995]",cssl_amc_supervised_adaptation,CSSL,1250,0.4756045648704928,0.009908187184528
+unseen_jammer,occupancy_quartile,"Q4 [0.205,0.995]",mcldnn_reimplementation,MCLDNN,1250,0.5882223493896037,0.00944162454249
+unseen_jammer,occupancy_quartile,"Q4 [0.205,0.995]",iqformer_inspired,IQFormer,1250,0.6019305105796071,0.0151091126116624

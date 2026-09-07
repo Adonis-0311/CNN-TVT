@@ -1,0 +1,6 @@
+split,model,model_short,predicted_share_max_mean,predicted_share_entropy_mean,predicted_share_entropy_max,dominant_predicted_class
+clean_retention,a0_backbone,A0,0.25450000000000006,1.8828533508001424,2.302585092994046,8PSK
+clean_retention,a5_vimd_full,A5-VIMD,0.25773999999999997,1.8943549496917655,2.302585092994046,256QAM
+clean_retention,cssl_amc_supervised_adaptation,CSSL,0.13521999999999998,2.2855233349589263,2.302585092994046,256QAM
+clean_retention,mcldnn_reimplementation,MCLDNN,0.2407,2.091487620105265,2.302585092994046,256QAM
+clean_retention,iqformer_inspired,IQFormer,0.20753999999999997,2.151599630466983,2.302585092994046,256QAM

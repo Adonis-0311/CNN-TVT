@@ -1,0 +1,44 @@
+{
+  "schema": "vimd_amc.a18_final_s4_audits.v1",
+  "evidence_class": "exploratory_zero_compute_reanalysis_of_sealed_predictions",
+  "sources": {
+    "cells": "analysis_zero_compute/outputs/csv/a14_envelope_cells.csv",
+    "predictions": "artifacts/tvt_v4r_headline_composite/models/*/predictions_*.npz"
+  },
+  "leave15out": {
+    "fit_cells": 28,
+    "test_cells": 4,
+    "references": {
+      "IQFormer": {
+        "beta0_intercept_fraction": -0.17916912525209971,
+        "beta1_overlap_fraction_per_unit": 0.15928358866754702,
+        "beta2_sir_fraction_per_db": -0.007176232768978774
+      },
+      "MCLDNN": {
+        "beta0_intercept_fraction": -0.14989354885721407,
+        "beta1_overlap_fraction_per_unit": 0.19949941845841127,
+        "beta2_sir_fraction_per_db": -0.007210211674375494
+      }
+    }
+  },
+  "bootstrap": {
+    "blocks": 20,
+    "draws": 10000,
+    "seed": 20260820
+  },
+  "selector_confusion": {
+    "note": "sign rule fitted on the 32 fitting cells (gain vs IQFormer-inspired); truth uses the ten-seed held-cell gains; the oracle baseline is hindsight"
+  },
+  "leave15out_selector": {
+    "cells": 4,
+    "hindsight_a5_favoring_cells": 4,
+    "selected_a5_cells": 1,
+    "sign_accuracy": 0.25,
+    "realized_cell_mean_macro_f1": 0.28531948521323064,
+    "oracle_cell_mean_macro_f1": 0.3609310753667625,
+    "regret_vs_oracle_pp": 7.561159015353186,
+    "expected_macs_million": 277.15000000000003,
+    "mac_saving_vs_always_iqformer": 0.2206130483689538,
+    "note": "ten-seed cell-level aggregates at SIR=-15 dB; the 28-cell sign rule never sees these cells; same MAC cost model as the 80-cell selector audit"
+  }
+}

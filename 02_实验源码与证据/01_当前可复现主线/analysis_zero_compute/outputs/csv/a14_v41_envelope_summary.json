@@ -1,0 +1,161 @@
+{
+  "schema": "vimd_amc.envelope_v41_interfered_holdout.v1",
+  "evidence_class": "exploratory_zero_compute_reanalysis_of_sealed_predictions",
+  "source_cells": "analysis_zero_compute/outputs/csv/a14_envelope_cells.csv",
+  "fit_definition": {
+    "cell_count": 32,
+    "splits": [
+      "id_test",
+      "hard_interference"
+    ],
+    "historical_definition": "split x SIR x overlap quartile; retained without relabelling"
+  },
+  "primary_held_definition": {
+    "cell_count": 80,
+    "splits": [
+      "unseen_jammer",
+      "unseen_speed",
+      "heldout_channel",
+      "combined_ood"
+    ],
+    "excluded": "clean_retention: jammer-free cell has no physical finite SIR"
+  },
+  "references": {
+    "IQFormer": {
+      "fit_mean_gain_pp": -8.26695869109014,
+      "two_variable_coefficients": {
+        "intercept_pp": -17.076554740158684,
+        "overlap_pp_per_unit": 14.37567417374658,
+        "sir_pp_per_db": -1.0355802547536515
+      },
+      "three_variable_coefficients": {
+        "intercept_pp": -12.392831157414225,
+        "overlap_pp_per_unit": 14.367061335759596,
+        "sir_pp_per_db": -1.0184804826576632,
+        "snr_pp_per_db": -1.1623500507845304
+      },
+      "interfered_80_cell_primary": {
+        "rmse_pp": 6.230341912558914,
+        "constant_rmse_pp": 8.368064220308474,
+        "r_squared_skill": 0.44566314625239034,
+        "oracle_constant_rmse_pp": 6.0442136783192675,
+        "sign_agreement": 0.975,
+        "negative_gain_share": 0.9625
+      },
+      "three_variable_sensitivity": {
+        "rmse_pp": 6.153186480539117,
+        "constant_rmse_pp": 8.368064220308474,
+        "r_squared_skill": 0.45930774920618256,
+        "oracle_constant_rmse_pp": 6.0442136783192675,
+        "sign_agreement": 0.975,
+        "negative_gain_share": 0.9625
+      },
+      "by_regime": {
+        "unseen_jammer": {
+          "cells": 20,
+          "rmse_pp": 7.739361018590819,
+          "constant_rmse_pp": 8.674740960239168,
+          "r_squared_skill": 0.20402911694199966,
+          "oracle_constant_rmse_pp": 3.828534781277157,
+          "sign_agreement": 0.95,
+          "negative_gain_share": 1.0
+        },
+        "unseen_speed": {
+          "cells": 20,
+          "rmse_pp": 3.9351740846461967,
+          "constant_rmse_pp": 7.870741502529083,
+          "r_squared_skill": 0.7500249864265219,
+          "oracle_constant_rmse_pp": 6.70899898093966,
+          "sign_agreement": 1.0,
+          "negative_gain_share": 0.95
+        },
+        "heldout_channel": {
+          "cells": 20,
+          "rmse_pp": 4.856705121406353,
+          "constant_rmse_pp": 7.592758403852,
+          "r_squared_skill": 0.5908483478580902,
+          "oracle_constant_rmse_pp": 6.95435989301763,
+          "sign_agreement": 1.0,
+          "negative_gain_share": 0.9
+        },
+        "combined_ood": {
+          "cells": 20,
+          "rmse_pp": 7.503182838016424,
+          "constant_rmse_pp": 9.233001271237724,
+          "r_squared_skill": 0.3396027315211998,
+          "oracle_constant_rmse_pp": 4.240296216097426,
+          "sign_agreement": 0.95,
+          "negative_gain_share": 1.0
+        }
+      }
+    },
+    "MCLDNN": {
+      "fit_mean_gain_pp": -4.633700672711487,
+      "two_variable_coefficients": {
+        "intercept_pp": -14.551350748328218,
+        "overlap_pp_per_unit": 19.160727594914174,
+        "sir_pp_per_db": -0.8938043943128082
+      },
+      "three_variable_coefficients": {
+        "intercept_pp": -11.224324936134709,
+        "overlap_pp_per_unit": 19.154609570698472,
+        "sir_pp_per_db": -0.8816577801625647,
+        "snr_pp_per_db": -0.8256611547299203
+      },
+      "interfered_80_cell_primary": {
+        "rmse_pp": 8.101174991763637,
+        "constant_rmse_pp": 9.634736423162218,
+        "r_squared_skill": 0.29300498701219857,
+        "oracle_constant_rmse_pp": 6.808797545016293,
+        "sign_agreement": 0.95,
+        "negative_gain_share": 0.9
+      },
+      "three_variable_sensitivity": {
+        "rmse_pp": 8.050365324201715,
+        "constant_rmse_pp": 9.634736423162218,
+        "r_squared_skill": 0.30184556425009723,
+        "oracle_constant_rmse_pp": 6.808797545016293,
+        "sign_agreement": 0.95,
+        "negative_gain_share": 0.9
+      },
+      "by_regime": {
+        "unseen_jammer": {
+          "cells": 20,
+          "rmse_pp": 10.338194179414797,
+          "constant_rmse_pp": 10.238210687943758,
+          "r_squared_skill": -0.019626807825774195,
+          "oracle_constant_rmse_pp": 3.2343576245720413,
+          "sign_agreement": 0.9,
+          "negative_gain_share": 1.0
+        },
+        "unseen_speed": {
+          "cells": 20,
+          "rmse_pp": 4.657817907442125,
+          "constant_rmse_pp": 8.879635504101934,
+          "r_squared_skill": 0.7248466945064121,
+          "oracle_constant_rmse_pp": 7.7754126366900085,
+          "sign_agreement": 1.0,
+          "negative_gain_share": 0.8
+        },
+        "heldout_channel": {
+          "cells": 20,
+          "rmse_pp": 5.409826208402033,
+          "constant_rmse_pp": 9.057428051248955,
+          "r_squared_skill": 0.6432558654108687,
+          "oracle_constant_rmse_pp": 8.414074879205149,
+          "sign_agreement": 1.0,
+          "negative_gain_share": 0.8
+        },
+        "combined_ood": {
+          "cells": 20,
+          "rmse_pp": 10.23114846111707,
+          "constant_rmse_pp": 10.276511864210052,
+          "r_squared_skill": 0.008809074577929343,
+          "oracle_constant_rmse_pp": 2.7124605639860504,
+          "sign_agreement": 0.9,
+          "negative_gain_share": 1.0
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,745 @@
+=== PAGE 1 ===
+1
+An Occupancy-Indexed Operating Envelope for Compact
+Physics-Guided Automatic Modulation Classification under
+Structured Interference
+Anonymous Author(s)
+Abstract—Uniform model rankings hide a central design ques-
+tion in automatic modulation classification (AMC): when does a
+compact physics-guided representation beat a much larger I/Q-
+domain classifier under structured interference? We study this
+question in source-disjoint 3GPP TR 38.901 TDL-profile simula-
+tions using VIMD-Net, a 39500-parameter spectral network with
+a simulation-component teacher, three soft allocation routes, and
+exact-source cross-condition training. A two-variable empirical
+envelope fitted only on in-distribution and hard-interference cells
+relates its gain to jammer spectral occupancy and signal-to-
+interference ratio (SIR). Against an IQFormer-inspired reference,
+the envelope attains 0.975 sign agreement over 81 cells from
+unseen regimes. At SIR=−15dB, the compact model gains 9.74
+percentage points over MCLDNN and 10.46 percentage points
+over IQFormer-inspired, with positive paired intervals and the
+same direction in every seed. The sealed confirmatory method
+effect over the shared backbone is 4.57 percentage points with a
+simultaneous interval of[3.65,5.49]percentage points; however,
+the confirmatory family gate and the clean-retention gate did not
+pass. Frozen-checkpoint probes and prospective Tier-2 experi-
+ments localize the clean boundary to a repairable representation
+gap: adding a 46794-parameter received-I/Q sidecar improves
+clean macro-F1 by 11.77 percentage points and hard-interference
+macro-F1 by 4.37 percentage points. These Tier-2 results are
+exploratory, outside the frozen confirmatory family. The paper
+therefore reports a simulation-only operating envelope and a
+repair path, not uniform superiority.
+Index Terms—Automatic modulation classification, structured
+interference, vehicular Doppler, operating envelope, representa-
+tion allocation, compact neural networks.
+Evidence status.The sealed primary method contrast is positive, but
+the confirmatory family gate and clean-retention gate did not pass.
+Post-hoc stratification is explicitly labeled. Tier-2 probe, repair, and
+capacity results are exploratory and outside the frozen confirmatory
+family. Every numerical value is generated from a source artifact; the
+scope is simulation only.
+I. INTRODUCTION
+A
+UTOMATIC modulation classification supports spectrum
+monitoring and blind receiver configuration by inferring
+a waveform’s modulation from received samples. Deep AMC
+has progressed from convolutional I/Q classifiers [1], [2] to
+complex-valued, multi-stream, recurrent, and Transformer-like
+representations [3]–[7]. Compact architectures remain attrac-
+tive when inference cost matters [8], but average accuracy
+alone does not say where a compact representation is prefer-
+able.
+Structured interference makes that omission consequential.
+A sweep, tone, pulse, partial-band process, or modulated
+Internal integration manuscript. Author identities, affiliations, funding,
+conflicts, and the final data-availability statement require human verification
+before submission.
+out-of-taxonomy emitter may overlap the target in time and
+frequency. The same model can trail a high-capacity I/Q
+classifier in weak or narrowband interference yet lead it in
+a severe, spectrally occupied corner. Averaging these regimes
+produces a ranking but erases the design rule.
+This paper asks a narrower question:can the sign and size
+of the compact-model advantage be indexed by physical con-
+dition variables, and can the boundary revealed by that index
+be repaired?We answer using a frozen source-disjoint simu-
+lation campaign, artifact-only post-hoc analysis, and prospec-
+tive Tier-2 experiments. The base model, VIMD-Net, maps
+a complex STFT to target-dominant, jammer-dominant, and
+unexplained-or-ambiguous routes. Its teacher is available only
+during simulation training and is derived from independently
+tracked target, jammer, and residual components.
+The contributions are:
+•an occupancy–SIR operating envelope that unifies gains
+and losses and predicts their sign outside the regimes used
+to fit it;
+•a statistically reinforced severe-interference result in
+which the 39500-parameter model exceeds 354984–
+406070-parameter baselines, together with full-region
+maps that prevent selective reporting;
+•a sealed confirmatory backbone-relative effect and an
+honest bounded conclusion for component-level interven-
+tions whose joint family gate did not pass;
+•a condition-transfer diagnosis and prospective repair
+chain showing that clean exposure alone is insufficient,
+while a small received-I/Q sidecar repairs both clean and
+hard-interference performance; and
+•a traceable evidence layer in which manuscript numbers
+and figures resolve to immutable artifact files and selec-
+tors.
+The claim is deliberately not that VIMD-Net is uniformly
+best. It is that compact physics-guided spectral allocation has a
+reproducible operating region, that the region can be predicted
+from physical covariates, and that its principal clean boundary
+is architectural rather than an unavoidable cost of compactness.
+II. RELATEDWORK ANDCLAIMBOUNDARY
+CNN and recurrent AMC systems learn directly from I/Q
+sequences [1], [2], [5]; later work preserves complex struc-
+ture, fuses temporal and spatial streams, or applies attention
+[3], [4], [6], [7]. Channel adaptation, masked or contrastive
+learning, and interference-tolerant features address different
+=== PAGE 2 ===
+2
+nuisance sources [9]–[12]. These papers motivate strong I/Q-
+domain comparators and prevent us from presenting masking
+or contrastive learning alone as novelty.
+The 2024–2026 frontier also includes overlapped-signal
+classification, denoising masked autoencoding, cross-domain
+prototypical adaptation, and a tensor method for malicious
+interference in MIMO systems [13]–[16]. Their signal models
+and information contracts are not interchangeable with our
+frozen jammer-factor protocol, so we cite them for positioning
+rather than importing published numbers into the unified-
+retraining table. Accordingly, our claim is an audited operating
+boundary and repair chain under controlled simulation, not
+universal state of the art.
+Time–frequency masks are established separation tar-
+gets. Binary, ratio, phase-sensitive, complex-ratio, and deep-
+clustering formulations have been studied extensively [17]–
+[21]. Our use differs in purpose: the mask allocates evidence
+for classification and does not reconstruct sources. The third
+route retains unexplained power and target–jammer ambiguity
+that a suppression system might otherwise discard.
+The main distinction of this work is evaluative. Rather than
+infer uniform superiority from a marginal score, we compare
+compact spectral and larger I/Q representations across an
+explicit physical plane, estimate an empirical boundary, test it
+on held-out regimes, and then intervene on the boundary. All
+evidence is restricted to TR 38.901 TDL-profile simulations.
+No claim is made about complete V2X geometry, waveform
+recovery, source separation, open-set recognition, or hardware
+deployment.
+III. SYSTEMMODEL ANDMETHOD
+A. Received Signal and Paired Views
+For source sequences[n]and jammeru[n], one received
+window is
+x[n] =R(H s(s)[n] +γH u(u)[n] +w[n]),(1)
+whereH s andH u are independently drawn fading and mo-
+bility operators,γcontrols SIR,wis receiver noise, andR
+applies the frozen receiver chain. Training pairs two indepen-
+dently impaired observations of the same immutable source.
+Inference uses one view. Pairing is therefore a training and
+statistical-alignment device, not additional test-time informa-
+tion.
+Unanchored in-taxonomy cochannel collisions are excluded.
+Without a physical target anchor, exchanging two admissible
+emitters can preserve the mixture while changing the requested
+single label, so that task requires a different label definition.
+B. Three-Route Representation Allocation
+LetZ= STFT(x)∈C F×T . The front end receives
+real, imaginary, and log-magnitude planes and produces logits
+As,A j,A o on the same lattice. The allocation masks are
+[Ms,M j,M o] = softmax([As,A j,A o]),
+Ms +M j +M o = 1. (2)
+An environment encoder produces a scalar ambiguous-route
+gateλand a bounded bypassρ. The modulation and jammer
+routes are
+Zm = (Ms +λM o +ρ)⊙Z,(3)
+Zj = (Mj + (1−λ)M o)⊙Z.(4)
+Because these weights are real and nonnegative, every retained
+coefficient keeps the mixture STFT phase. This elementary
+property does not imply source identifiability.
+C. Simulation-Component Teacher
+During training only, independently tracked post-channel
+target, jammer, and residual components define powers
+Ps,P j,P u on the student’s lattice. Withq k =P k/(Ps +P j +
+Pu), the fixed teacher is
+M ⋆
+s = [qs−q j]+, M ⋆
+j = [qj−q s]+,(5)
+M ⋆
+o =q u + 2 min(qs,q j).(6)
+The routes are nonnegative and sum to one. Common scaling
+cancels in the ratios. Negligible-energy cells are assigned to
+the uncertainty route by the finite-precision implementation.
+Jensen–Shannon supervision aligns student and teacher masks;
+modulation, jammer-family, and link-quality objectives con-
+strain route semantics; and an exact-source contrastive loss
+encourages condition invariance. The teacher is not needed at
+inference.
+IV. EVIDENCEPROTOCOL
+A. Frozen Simulation Campaign
+The artifact-locked campaign contains 12 model variants,
+10 algorithm seeds, 120 fits, 11 evaluation splits, and 100000
+training source sequences. Target classes cover PSK, QAM,
+continuous-phase, and FSK families. Structured jammer fami-
+lies span tone, multitone, chirp, partial band, pulse, broadband,
+and out-of-taxonomy modulated sources. TDL-A/C/D profiles
+are seen during training, while TDL-B/E profiles support held-
+channel evaluation. Jammer family, speed, channel, combined
+OOD, receiver stress, and clean-retention splits share source
+identities across model comparisons.
+Comparators include a shared direct spectral backbone (A0),
+MCLDNN, an IQFormer-inspired classifier, and an official-
+architecture CSSL supervised adaptation. The full method
+is A5. Ablations alter route count, teacher form, multi-task
+terms, contrastive learning, and the residual bypass. Strong
+comparators are anchors, not claims of exact reproduction of
+every original training recipe.
+B. Statistical Separation of Evidence Classes
+The sealed confirmatory family contains three hard-
+interference contrasts: the complete method versus A0, the
+margin teacher versus a proportional-power teacher, and the
+tri-route model versus a dual-route control. A joint non-
+studentized max-absolute-deviation hierarchical paired boot-
+strap supplies simultaneous intervals over seeds and class-
+stratified source clusters. The family gate requires every si-
+multaneous lower bound to exceed zero.
+=== PAGE 3 ===
+3
+0.0 2.5
+STFT frame
+−0.5
+0.0
+0.5
+Normalized frequency
+Received mixture
+0.0 2.5
+STFT frame
+−0.5
+0.0
+0.5
+Normalized frequency
+Tracked target
+0.0 2.5
+STFT frame
+−0.5
+0.0
+0.5
+Normalized frequency
+Tracked jammer
+0.0 2.5
+STFT frame
+−0.5
+0.0
+0.5
+Normalized frequency
+Noise + receiver artifact
+0.0 2.5
+STFT frame
+−0.5
+0.0
+0.5
+Normalized frequency
+Target-power
+dominant M ⋆
+s
+0.0 2.5
+STFT frame
+−0.5
+0.0
+0.5
+Normalized frequency
+Jammer-power
+dominant M ⋆
+j
+0.0 2.5
+STFT frame
+−0.5
+0.0
+0.5
+Normalized frequency
+Unexplained-or-
+power-ambiguous M ⋆
+o
+Immutable cache record
+split: hard_interference
+source index: 0, view: 1
+modulation: BPSK
+jammer: sweep
+SNR/SIR: -10.00/0.00 dB
+target/jammer TDL: TDL-D/TDL-D
+Admitted structured jammer.
+Teacher only; no learned
+prediction or performance
+evidence is shown.
+−50
+0
+Relative power (dB)
+0.0
+0.5
+1.0
+Teacher allocation
+Fig. 1. A fixed-teacher proxy visualization from an immutable simulation record. The upper row shows the received mixture and tracked components; the
+lower row shows the three allocations on the same STFT lattice. The image explains the teacher definition and is not performance evidence.
+All SIR-cell, occupancy, fusion, condition-transfer, probe,
+repair, and capacity analyses are exploratory. In particular,
+the severe SIR stratification is post hoc. Its robustness checks
+include the complete SNR–SIR map, multiplicity correction
+over inspected cells, source/seed bootstrap variants, and a sign-
+flip test. Tier-2 experiments were designed after inspecting
+the frozen evidence and are outside the frozen confirmatory
+family; they cannot retroactively change a sealed conclusion.
+The clean-retention gate was preregistered separately. It did
+not pass. Consequently, clean behavior is treated as a boundary
+to explain and repair, not as a preserved property of the sealed
+model.
+V. RESULTS
+A. Confirmed Whole-Method Effect, Bounded Component Ef-
+fects
+Table I reports the complete confirmatory family. The
+whole method improves over its shared A0 backbone by 4.57
+percentage points, with a simultaneous interval of[3.65,5.49]
+percentage points. This effect is about three times the design
+resolution of 1.31 percentage points. The teacher-form and
+route-count interventions do not clear zero individually; under
+the same joint interval their contributions are bounded within
+1.36 percentage points. Thus the architecture-level effect is
+resolved but cannot be assigned to either isolated component
+at this resolution. Because the family rule required all three
+contrasts, the family gate did not pass.
+At the same parameter tier, the residual-free A7 variant
+is nominally above A5 in the marginal hard-interference
+aggregate (Fig. 5). The difference is well below the design
+resolution and is consistent with the bounded component-level
+result. We therefore attribute the compact frontier position to
+the VIMD family at this budget, not uniquely to the bypass.
+TABLE I
+SEALEDCONFIRMATORYHARD-INTERFERENCEFAMILY. DIFFERENCES
+ARECANDIDATEMINUSREFERENCE INMACRO-F1 PERCENTAGE
+POINTS.
+Contrast Diff. Sim. low Sim. high
+Full method vs A0 4.57 3.65 5.49
+Margin vs proportional teacher 0.16 -0.76 1.08
+Tri-route vs dual-route 0.44 -0.47 1.36
+B. Rank Exchange across the Interference Plane
+Marginal hard-interference macro-F1 is 0.4406 for A5,
+0.4599 for MCLDNN, and 0.4872 for IQFormer-inspired.
+Those averages favor the larger models, but Fig. 2 shows why
+no single ranking is adequate. Rank changes with SNR and
+SIR.
+At SIR=−15dB, A5 gains 9.74 percentage points over
+MCLDNN ([7.52,12.14]) and 10.46 percentage points over
+IQFormer-inspired ([6.78,14.29]). All 10 seeds have the same
+sign, and the sign-flip permutation probability is 0.0018. Of
+64 inspected cells, 12 survive Holm correction; all are on
+the severe SIR row. These checks strengthen the corner result
+without converting the post-hoc analysis into confirmation.
+C. Occupancy-Indexed Envelope and Out-of-Regime Test
+The rank exchange motivates an empirical law rather than
+another marginal average. For referenceb, we fit
+∆b =β 0,b +β 1,bo+β 2,b SIR,(7)
+whereois jammer spectral occupancy and∆ b is A5 minus
+the reference macro-F1. Only ID and hard-interference cells
+enter the fit.
+=== PAGE 4 ===
+4
+-10 -6 -2 2 6 10 14 18
+SNR (dB)
+-15
+-10
+-5
+0
+SIR (dB)
+9* 11* 18* 11* 12* 7* 12* 6
+4 -1 4 2 1 0 -1 -0
+-3 -4 1 -4 -7 -8 -2 -2
+-2 -4 -11 -11 -9 -14 -11 -11
+A5 − MCLDNN (pp)
+-10 -6 -2 2 6 10 14 18
+SNR (dB)
+-15
+-10
+-5
+0
+7* 12* 16* 12* 15* 10* 12* 9*
+-1 -1 3 -3 -6 -6 -8 -7
+-5 -0 -2 -8 -13 -13 -8 -10
+1 -9 -11 -14 -12 -20 -15 -19
+A5 − IQFormer (pp)
+−15
+−10
+−5
+0
+5
+10
+15
+−15
+−10
+−5
+0
+5
+10
+15
+Fig. 2. Post-hoc operating map over all hard-interference SNR–SIR cells. Each entry is A5 minus the named strong baseline in macro-F1 percentage points;
+a star marks a positive lower paired interval. Displaying the full map prevents the severe corner from being read as a uniform ranking.
+A0 CSSL MCLDNN IQFormer A5-VIMD
+0.00
+0.05
+0.10
+0.15
+0.20
+0.25
+0.30
+0.35
+0.40
+macro-F1
+(a) SIR = −15 dB, hard interference
+0 2 4 6 8 10 12 14
+Δ macro-F1 (pp), 95% CI
+vs A0
+vs CSSL
+vs MCLDNN
+vs IQFormer
+(b) paired advantage, 10/10 seeds positive
+Fig. 3. Severe-interference corner. Left: absolute macro-F1 at SIR=−15dB. Right: source-paired A5 advantages with stratified bootstrap intervals. The
+comparison is exploratory and post hoc.
+Against IQFormer-inspired, the fitted occupancy coefficient
+is 11.39 percentage points per unit occupancy and the SIR
+coefficient is -0.666 percentage points per dB. On 81 cells
+from five unused regimes, the law obtains Pearsonr= 0.694,
+sign agreement 0.975, and RMSE 6.20 percentage points. The
+MCLDNN envelope gives sign agreement 0.951. Thus losses
+on clean and held-jammer conditions and gains in severe
+occupied interference are evaluations of one low-dimensional
+boundary, not unrelated exceptions.
+Solving Eq. (7) for zero gain yields the break-even occupan-
+cies in Table II. The required occupancy rises as interference
+becomes less severe, making the boundary directly usable as
+a model-selection diagnostic.
+The preregistered mechanism expectation was non-
+increasing gain with occupancy. The sealed directional test
+rejected that sign. Exploratory quintiles instead show mono-
+tonically increasing A5–CSSL gain, from a negative low-
+occupancy region to a strongly positive high-occupancy region.
+TABLE II
+EXPLORATORYBREAK-EVENJAMMERSPECTRALOCCUPANCY.
+SIR (dB) vs IQFormer vs MCLDNN
+−150.58 0.48
+−100.87 0.66
+Because occupancy and SIR co-vary in this design, Eq. (7) is
+predictive and descriptive, not a causal structural equation.
+D. Complementarity, Cost, and Selective Prediction
+A5 remains useful outside its winning region because its
+errors differ from those of the I/Q models. Probability fu-
+sion with IQFormer-inspired improves over the stronger con-
+stituent by 4.71 percentage points, whereas a same-architecture
+seed-ensemble control improves by only 1.49 percentage
+points. The corresponding MCLDNN fusion/control gains are
+=== PAGE 5 ===
+5
+0.0 0.2 0.4 0.6 0.8 1.0
+jammer spectral occupancy
+−20
+−15
+−10
+−5
+0
+5
+10
+Δ macro-F1 vs IQFormer (pp)
+(a) gain surface, all regimes
+id test
+hard interference
+unseen jammer
+unseen speed
+heldout channel
+combined ood
+clean retention
+law, SIR=-15 dB
+law, SIR=-5 dB
+law, SIR=0 dB
+−25 −20 −15 −10 −5 0 5 10
+predicted (pp), fitted on ID + hard only
+−25
+−20
+−15
+−10
+−5
+0
+5
+10
+observed (pp)
+(b) out-of-regime test: r=0.69, sign 98%
+Fig. 4. Exploratory occupancy–SIR envelope. Filled cells fit the law; open cells are unused regimes. The right panel compares out-of-regime predictions with
+artifact-derived outcomes.
+104 105 106 107
+parameters
+0.40
+0.42
+0.44
+0.46
+0.48
+hard-interference macro-F1
+A0
+A5-VIMD
+CSSL
+IQFormer
+MCLDNN
+Fig. 5. Hard-interference macro-F1 versus parameter count. Stars mark the
+artifact-derived Pareto set. The frontier is regime-specific.
+5.70/1.69 percentage points. This is evidence of complemen-
+tary decisions, not evidence that the compact model alone wins
+the marginal benchmark.
+A5 uses 39500 parameters and 41.8 million reported MACs,
+versus 354984 and 355.6 million for IQFormer-inspired. At
+30% retained coverage after validation-only confidence cal-
+ibration, A5 achieves 94.4% selective accuracy, close to
+the IQFormer-inspired 94.9%. Figure 6 shows the full risk–
+coverage curves rather than one selected point.
+E. Clean Boundary: Coverage, Representation, and Repair
+The clean-retention split contains all ten modulations, but
+the two training views expose jammer-free windows for only
+4 classes; the remaining 6 classes are a condition-transfer test.
+Among uncovered constellation-order cells, transfer failure
+occurs in 100% of compact-spectral cells versus 11% of I/Q
+high-capacity cells. The clean-retention gate did not pass.
+0.0 0.2 0.4 0.6 0.8 1.0
+coverage
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1.0
+selective accuracy
+A5-VIMD
+IQFormer
+MCLDNN
+CSSL
+A0
+Fig. 6. Selective accuracy versus coverage on hard interference. Thresholds
+are calibrated without using test labels.
+Figure 7 localizes the failure rather than hiding it in an
+aggregate.
+We then followed a prospective decision chain (Table III).
+Frozen-checkpoint linear and MLP probes used a correctly
+reconstructed jammer-free counterfactual and source-disjoint
+clean cross-validation. For A5, 5 of 6 design–seed cells lie
+below the preregistered high-order threshold 0.25; one cell is
+borderline. The strong I/Q baselines are above that threshold
+in 18 of 18 cells. The evidence therefore leans toward missing
+constellation information in the compact spectral representa-
+tion rather than a classification head that fails to use available
+information.
+Adding clean windows for every class tests the simpler
+coverage explanation. It changes clean macro-F1 by only 0.15
+percentage points([−0.31,0.63]) and hard macro-F1 by -0.30
+percentage points ([−0.91,0.27]). Coverage alone is therefore
+insufficient.
+=== PAGE 6 ===
+6
+BPSK*PI2BPSKQPSK*8PSK*16QAM*64QAM*256QAMGMSK*CPFSK*4FSK*
+0.0
+0.2
+0.4
+0.6
+0.8
+per-class F1
+(a) compact spectral family (A0--A7)
+hard interference
+jammer-free
+BPSK*PI2BPSKQPSK*8PSK*16QAM*64QAM*256QAMGMSK*CPFSK*4FSK*
+(b) IQ-domain high-capacity baselines
+Fig. 7. Condition-transfer taxonomy. Training coverage and discriminability type separate the compact spectral failure from classes whose envelope cues
+remain distinctive.
+A preregistered negative control gates the modula-
+tion route using predicted interference presence. Relative
+to A5, it changes clean macro-F1 by -0.30 percentage
+points([−0.66,0.08]) and hard macro-F1 by -0.18 percentage
+points([−0.72,0.35]). The learned gate averages 99.994% on
+clean windows and 99.991% under hard interference, so it
+saturates near the modulated route in both conditions rather
+than implementing the intended clean identity fallback. This
+arm does not repair clean performance; it is a negative control,
+not stand-alone evidence that a functional mask fallback was
+successfully learned.
+The next intervention adds a 46794-parameter received-
+I/Q sidecar while retaining the spectral routes and the same
+source mixture. It raises clean macro-F1 by 11.77 percentage
+points([11.06,12.49]) and hard macro-F1 by 4.37 percent-
+age points([3.44,5.31]). Its overall hard score is statistically
+near IQFormer-inspired (∆ =−0.29percentage points,
+[−1.95,1.46]), while at severe SIR it remains ahead by 12.09
+percentage points([8.32,15.88]). This repairs the clean bound-
+ary without erasing the structured-interference region.
+F . Capacity Ladder Separates Size from Representation
+Finally, we widen the spectral model without changing its
+representation domain. The S, M, and L tiers contain 39500,
+99596, and 233244 parameters. Relative to S, M improves hard
+macro-F1 by 1.94 percentage points and L by 3.18 percentage
+points. L also improves over M by 1.24 percentage points.
+Capacity therefore improves average fitting.
+Nevertheless, L remains below IQFormer-inspired
+on overall hard interference by -2.84 percentage
+points([−4.30,−1.31]). At SIR=−15dB, the same L
+model is ahead by 14.07 percentage points([9.55,18.51]).
+Increasing spectral capacity therefore shifts performance but
+does not remove the operating boundary. The result supports
+an architecture/representation interpretation rather than a pure
+parameter-count explanation.
+VI. DISCUSSION
+The evidence suggests a practical model-selection rule. A
+compact spectral front end is most attractive when interference
+is both severe and occupies enough of the time–frequency
+plane for learned allocation to matter. A larger I/Q model is
+preferable in weak, clean, or low-occupancy conditions unless
+the compact system includes an I/Q side channel. The two
+models are also complementary enough that late probability
+fusion can outperform either alone.
+The sequence of interventions matters scientifically. The
+frozen probe narrows the cause; the coverage arm rejects
+a cheap explanation; the I/Q sidecar repairs the predicted
+missing information; and the capacity ladder shows that width
+alone does not eliminate the boundary. This chain is more
+informative than a single improved score because each neg-
+ative or positive outcome discriminates between competing
+explanations.
+The envelope is intentionally empirical. Occupancy and SIR
+are correlated in the current design, jammer occupancy is
+estimated from simulator-tracked components, and the law has
+only been tested on regimes contained in the frozen cache.
+Its value is as a compact prediction and audit device. A
+future prospective campaign should randomize occupancy and
+SIR more independently and estimate deployment-available
+occupancy proxies.
+VII. LIMITATIONS ANDREPRODUCIBILITY
+The evidence has four explicit limits. First, all results
+are from source-disjoint TR 38.901 TDL-profile simulations,
+not a complete vehicular geometry. Second, the teacher uses
+simulation-component bookkeeping and cannot supervise un-
+referenced recordings. Third, the confirmatory family gate and
+clean-retention gate did not pass; only the complete A5–A0
+contrast is a positive sealed confirmatory result. Fourth, the
+envelope, severe-cell, fusion, condition-transfer, probe, sidecar,
+=== PAGE 7 ===
+7
+TABLE III
+PROSPECTIVETIER-2 DIAGNOSIS, REPAIR,ANDNEGATIVECONTROL. THESERESULTSAREEXPLORATORY ANDOUTSIDE THEFROZEN
+CONFIRMATORYFAMILY.
+Intervention Question Clean diff. [95% CI] Hard diff. [95% CI] Decision
+Per-class clean coverage Is exposure alone sufficient? 0.15 [-0.31,0.63] -0.30 [-0.91,0.27] No; clean gate misses by a wide margin.
+Presence-gated route vs A5 Is mask application the primary clean
+cause?
+-0.30 [-0.66,0.08] -0.18 [-0.72,0.35] No repair;g≈1in both conditions.
+Received-I/Q sidecar vs A5 Is the representation gap repairable? 11.77 [11.06,12.49] 4.37 [3.44,5.31] Yes; both intervals are positive.
+TABLE IV
+EXPLORATORYCAPACITYLADDER ONHARDINTERFERENCE.
+Contrast Diff. Low High
+M minus S 1.94 1.07 2.80
+L minus S 3.18 2.44 3.96
+L minus M 1.24 0.31 2.37
+L minus IQFormer -2.84 -4.30 -1.31
+and capacity analyses are exploratory, with post-hoc status
+stated where applicable.
+Reproducibility is enforced at the artifact boundary. Each
+manuscript macro stores the source path, row selector, ev-
+idence class, precision, and source SHA-256. Figures are
+rendered from CSV files and carry a separate provenance
+manifest. The frozen run stores cache identity, configura-
+tions, checkpoints, source-aligned predictions, seed aggre-
+gates, paired statistics, environment metadata, and execution
+records. These controls prevent a favorable Tier-2 result from
+overwriting an unfavorable sealed gate.
+VIII. CONCLUSION
+Compact physics-guided AMC and high-capacity I/Q AMC
+exchange rank across the structured-interference plane. An
+occupancy–SIR law predicts that exchange outside its fit
+regimes, and a post-hoc but statistically reinforced severe
+corner shows a reproducible advantage for the compact model.
+The sealed whole-method effect over a shared backbone is
+positive, while two isolated component effects are bounded
+and the confirmatory family gate does not pass. The clean-
+retention gate also does not pass, but the probe–coverage–
+sidecar chain localizes and repairs the representation gap;
+the capacity ladder shows that parameter count alone cannot
+explain the remaining boundary. The result is an honest
+simulation-only operating envelope with a concrete repair path,
+not a claim of uniform superiority.
+REFERENCES
+[1] T. J. O’Shea, J. Corgan, and T. C. Clancy, “Convolutional radio mod-
+ulation recognition networks,” inEngineering Applications of Neural
+Networks, 2016, pp. 213–226.
+[2] F. Meng, P. Chen, L. Wu, and X. Wang, “Automatic modulation
+classification: A deep learning enabled approach,”IEEE Trans. Veh.
+Technol., vol. 67, no. 11, pp. 10 760–10 772, 2018.
+[3] Y . Tu, Y . Lin, C. Hou, and S. Mao, “Complex-valued networks for
+automatic modulation classification,”IEEE Trans. Veh. Technol., vol. 69,
+no. 9, pp. 10 085–10 089, 2020.
+[4] Z. Zhang, H. Luo, C. Wang, C. Gan, and Y . Xiang, “Automatic modula-
+tion classification using CNN-LSTM based dual-stream structure,”IEEE
+Trans. Veh. Technol., vol. 69, no. 11, pp. 13 521–13 531, 2020.
+[5] J. Xu, C. Luo, G. Parr, and Y . Luo, “A spatiotemporal multi-channel
+learning framework for automatic modulation recognition,”IEEE Wire-
+less Commun. Lett., vol. 9, no. 10, pp. 1629–1632, 2020.
+[6] J. Cai, F. Gan, X. Cao, and W. Liu, “Signal modulation classification
+based on the transformer network,”IEEE Trans. Cogn. Commun. Netw.,
+vol. 8, no. 3, pp. 1348–1357, 2022.
+[7] M. Shao, D. Li, S. Hong, J. Qi, and H. Sun, “IQFormer: A novel
+transformer-based model with multi-modality fusion for automatic mod-
+ulation recognition,”IEEE Trans. Cogn. Commun. Netw., vol. 11, no. 3,
+pp. 1623–1634, 2025.
+[8] Y . Wang, J. Yang, M. Liu, and G. Gui, “LightAMC: Lightweight
+automatic modulation classification via deep learning and compressive
+sensing,”IEEE Trans. Veh. Technol., vol. 69, no. 3, pp. 3491–3495,
+2020.
+[9] S. Wang, H. Xing, C. Wang, H. Zhou, B. Hou, and L. Jiao, “SigDA: A
+superimposed domain adaptation framework for automatic modulation
+classification,”IEEE Trans. Wireless Commun., vol. 23, no. 10, pp.
+13 159–13 172, 2024.
+[10] C. Xiao, S. Yang, Z. Feng, and L. Jiao, “MCLHN: Toward automatic
+modulation classification via masked contrastive learning with hard
+negatives,”IEEE Trans. Wireless Commun., vol. 23, no. 10, pp. 14 304–
+14 319, 2024.
+[11] M. Du, J. Pan, and D. Bi, “A contrastive learner for automatic modula-
+tion classification,”IEEE Trans. Wireless Commun., vol. 24, no. 4, pp.
+3575–3589, 2025.
+[12] X. Sun, C. Wu, Y . Li, Y . Li, T. Huang, J. Yu, and H. Zhang, “Toward
+interference-tolerant automatic modulation recognition via multi-stage
+feature extraction network,”IEEE Trans. Veh. Technol., vol. 74, no. 8,
+pp. 12 629–12 640, 2025.
+[13] G. Jajoo and P. Singh, “Modulation classification for overlapped signals
+using deep learning,”IEEE Open J. Commun. Soc., vol. 5, pp. 3839–
+3851, 2024.
+[14] A. Faysal, M. Rostami, T. Boushine, R. G. Roshan, N. Muralidhar, Y .-
+D. Yao, and H. Wang, “DenoMAE2.0: Improving denoising masked
+autoencoders by classifying local patches for automatic modulation
+classification,”IEEE Trans. Commun., vol. 74, pp. 929–943, 2026.
+[15] W. Li, Z. Chen, T. Liu, H. Chen, and G. Xu, “Confidence-guided
+prototypical contrastive domain adaptation for cross-domain automatic
+modulation classification,”IEEE Trans. Cogn. Commun. Netw., vol. 12,
+pp. 6929–6941, 2026.
+[16] J. Zhang, X. Zhang, W. X. Zheng, Y . Chen, N. Zhao, J. Li, and M. Liu,
+“Modulation recognition via tensor analysis for MIMO systems with
+malicious interference,”IEEE Trans. Veh. Technol., vol. 75, no. 8, pp.
+18 609–18 613, 2026.
+[17] A. Narayanan and D. Wang, “Ideal ratio mask estimation using deep
+neural networks for robust speech recognition,” inProc. IEEE Int. Conf.
+Acoust., Speech Signal Process. (ICASSP), 2013, pp. 7092–7096.
+[18] Y . Wang, A. Narayanan, and D. Wang, “On training targets for su-
+pervised speech separation,”IEEE/ACM Trans. Audio, Speech, Lang.
+Process., vol. 22, no. 12, pp. 1849–1858, 2014.
+[19] H. Erdogan, J. R. Hershey, S. Watanabe, and J. Le Roux, “Phase-
+sensitive and recognition-boosted speech separation using deep recurrent
+neural networks,” inProc. IEEE Int. Conf. Acoust., Speech Signal
+Process. (ICASSP), 2015, pp. 708–712.
+[20] D. S. Williamson, Y . Wang, and D. Wang, “Complex ratio masking for
+monaural speech separation,”IEEE/ACM Trans. Audio, Speech, Lang.
+Process., vol. 24, no. 3, pp. 483–492, 2016.
+[21] J. R. Hershey, Z. Chen, J. Le Roux, and S. Watanabe, “Deep clustering:
+Discriminative embeddings for segmentation and separation,” inProc.
+IEEE Int. Conf. Acoust., Speech Signal Process. (ICASSP), 2016, pp.
+31–35.
